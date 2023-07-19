@@ -1,0 +1,16 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+query DimensionalityReduction(
+  $method: String!, 
+  $data:[[Float!]!]!, 
+  $nNeighbors: Int!,
+) {
+  dimensionalityReduction(method: $method, data:$data, nNeighbors:$nNeighbors) {
+    continuity
+    embeddings
+    normalizedStress
+    scree
+    shepard
+    trustworthiness
+  }
+}

@@ -1,0 +1,34 @@
+type PredictiveConfidence {
+    label: String!
+    confidence: Float!
+}
+
+type InputData {
+    file: String
+    dataIndex: Int!
+}
+
+type Sample {
+    coordinates: [Float!]! # the coordinates of this sample in the latent embedding space, as an array
+    inputData: InputData!
+    labels: [PredictiveConfidence!]!
+    ood: Float!
+}
+
+type LabelPoints {
+    label: String!
+    prototype: [Float!]!  # the coordinates of this prototype in the latent embedding space, as an array
+    trainingExamples: [Sample!]!
+}
+
+type FeatureData {
+    featureData: [Float!]!
+    columnHeaders: [String!]!
+}
+
+extend type Query {
+    getPrototypeSupportEmbeddings(modelFilename:String!): [LabelPoints!]!
+    renderInferenceFeatureData(runId:Int!, dataIndex:Int!): FeatureData!
+    renderSupportFeatureData(modelName:String!, dataIndex:Int!): FeatureData!
+}
+    

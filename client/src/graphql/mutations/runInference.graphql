@@ -1,0 +1,26 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+mutation RunInference(
+  $modelFilename: String!,
+  $sampleFilenames:[String]!
+) {
+  runInference(
+    modelFilename:$modelFilename,
+    sampleFilenames:$sampleFilenames
+  ) {
+    runId
+    samples {
+      coordinates
+      inputData {
+        file
+        dataIndex
+      }
+      labels {
+        label
+        confidence
+      }
+      ood
+    }
+    version
+  }
+}

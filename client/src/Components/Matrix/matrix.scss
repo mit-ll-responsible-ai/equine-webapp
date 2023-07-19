@@ -1,0 +1,27 @@
+// Copyright (c) 2023 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
+$tooltip-offset-y: calc(-100% - 20px);
+
+.matrix {
+  overflow: auto;
+  height: 100%;
+
+  .matrixTooltip {
+    position: fixed;
+    transform: translate(-50%,$tooltip-offset-y);
+    opacity: 1;
+
+    .arrow {
+      left: 50%;
+      transform: translate(-50%,0);
+    }
+  }
+}
+
+.dark {
+  .matrix {
+    .heading {
+      fill: white;
+    }
+  }
+}

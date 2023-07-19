@@ -1,0 +1,6 @@
+query RenderSupportFeatureData($modelName: String!, $dataIndex: Int!) {
+  renderSupportFeatureData(modelName:$modelName, dataIndex: $dataIndex){
+    featureData,
+    columnHeaders
+  }
+}

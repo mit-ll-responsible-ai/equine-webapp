@@ -1,0 +1,20 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+query GetPrototypeSupportEmbeddings($modelFilename:String!) {
+  getPrototypeSupportEmbeddings(modelFilename:$modelFilename) {
+    label
+    prototype
+    trainingExamples {
+      coordinates
+      inputData {
+        file
+        dataIndex
+      }
+      labels {
+        label
+        confidence
+      }
+      ood
+    }
+  }
+}

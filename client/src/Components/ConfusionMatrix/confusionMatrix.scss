@@ -1,0 +1,26 @@
+// Copyright (c) 2023 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
+.confusionMatrixContainer {
+  .confusionMatrix {
+    position: relative;
+    padding-top: 1em;
+    padding-left: 1em;
+  
+    .predictedAxis, .trueAxis {
+      position: absolute;
+      font-weight: bold;
+      font-size: 1.25em;
+    }
+    .predictedAxis {
+      top: 0;
+      left: 50%;
+      transform: translateY(-50%);
+    }
+  
+    .trueAxis {
+      top: 50%;
+      left: 0;
+      transform: rotate(-90deg) translateY(-2.5em);
+    }
+  }
+}

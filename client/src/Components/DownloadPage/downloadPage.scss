@@ -1,0 +1,17 @@
+// Copyright (c) 2023 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
+#downloadPage {
+  padding: 1em;
+
+  table {
+    margin-left: -0.5em;
+    margin-right: -0.5em;
+
+    th, td {
+      padding-top: 0.25em;
+      padding-bottom: 0.25em;
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+    }
+  }
+}

@@ -1,0 +1,16 @@
+// Copyright (c) 2023 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
+.samplesBarChartContainer {
+  .legend {
+    font-size: 0.8em;
+    text-align: center;
+
+    .labelColorBox {
+      display: inline-block;
+      width: 40px;
+      height: 1em;
+      margin-left: 1.5em;
+      margin-bottom: -2px;
+    }
+  }
+}

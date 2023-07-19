@@ -1,0 +1,17 @@
+type DimensionalityReductionOutput {
+  continuity: Float!,
+  embeddings: [[Float!]!]!,
+  normalizedStress: Float!,
+  scree: [Float!],
+  shepard: Float!,
+  trustworthiness: Float!,
+}
+
+extend type Query {
+  dimensionalityReduction(
+    method: String!,
+    data:[[Float!]!]!,
+    nNeighbors: Int!,
+    random_state: Int,
+  ): DimensionalityReductionOutput!
+}

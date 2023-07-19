@@ -1,0 +1,7 @@
+type UploadFileResult {
+    success: Boolean!
+}
+
+extend type Mutation {
+    uploadFile(file: Upload!): UploadFileResult
+}

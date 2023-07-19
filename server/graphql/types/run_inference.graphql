@@ -1,0 +1,15 @@
+scalar Upload
+
+type RunPipelineResult {
+    runId: Int!
+    samples: [Sample!]!
+    version: String!,
+}
+
+type Mutation {
+    runInference(
+        modelFilename: String!,
+        sampleFilenames: [String]!
+    ): RunPipelineResult!
+
+}

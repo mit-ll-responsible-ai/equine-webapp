@@ -1,0 +1,17 @@
+schema: ${REACT_APP_SERVER_URL}/graphql
+documents: './src/**/*.graphql'
+generates:
+  ./src/graphql/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-query # https://www.graphql-code-generator.com/plugins/typescript-react-query
+      - add:
+          placement: append
+          content: "export { fetcher }"
+    config:
+      fetcher:
+        endpoint: localStorage.getItem('serverUrl')+'/graphql'
+        fetchParams:
+          headers:
+            Content-Type: application/json # https://stackoverflow.com/questions/36691554/graphql-post-body-must-provide-query-string

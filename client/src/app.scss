@@ -1,0 +1,37 @@
+// Copyright (c) 2023 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
+@import "~utils/_variables";
+
+#app {
+  height: 100vh;
+  overflow-y: auto;
+  width: 100vw;
+  overflow-x: hidden;
+
+  #sidebarContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: $sidebar-width;
+    z-index: 99;
+  }
+  #content {
+    margin-left: $sidebar-width;
+    height: 100%;
+  }
+}
+#app.dark {
+  color: white;
+  background-color: #222;
+}
+
+.box {
+  margin: 0.5em;
+  padding: 1em;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  background: white;
+}
+.dark .box {
+  background: $box-dark-color;
+}

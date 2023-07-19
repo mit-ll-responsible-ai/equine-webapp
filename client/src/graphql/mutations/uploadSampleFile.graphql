@@ -1,0 +1,7 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+mutation UploadSampleFile($file: Upload!) {
+  uploadFile(file:$file) {
+    success
+  }
+}

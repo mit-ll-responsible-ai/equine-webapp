@@ -1,0 +1,8 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+query Models($extension: String!) {
+  models(extension:$extension) {
+    lastModified
+    name
+  }
+}

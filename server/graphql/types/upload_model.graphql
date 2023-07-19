@@ -1,0 +1,7 @@
+type UploadModelResult {
+    success: Boolean!
+}
+
+extend type Mutation {
+    uploadModel(modelFile: Upload!): UploadModelResult
+}

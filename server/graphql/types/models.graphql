@@ -1,0 +1,8 @@
+type Models {
+    name: String!
+    lastModified: Float!
+}
+
+extend type Query {
+    models(extension:String): [Models!]!
+}

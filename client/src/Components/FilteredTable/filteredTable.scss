@@ -1,0 +1,22 @@
+// Copyright (c) 2023 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
+@import "~utils/_variables";
+
+#filteredTable {
+
+  .filteredTableNoData {
+    width: 100%;
+    text-align: center;
+  }
+
+  div:first-child {
+    overflow: unset;
+    white-space: unset;
+  }
+}
+
+.dark #filteredTable .filteredTableNoData {
+  width: 100%;
+  text-align: center;
+  background-color: $box-dark-color;
+}

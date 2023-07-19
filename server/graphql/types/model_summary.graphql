@@ -1,0 +1,26 @@
+type LabelExamplesType {
+    label: String!
+    numExamples: Int!
+}
+
+type LabelFilesType {
+    files: [String!]!
+    label: String!
+}
+
+type ModelSummaryType {
+    # accuracy: Float!
+    # brierScore: Float!
+    # brierSkillScore: Float!
+    # confusionMatrix: [[Int!]!]!
+    dateTrained: String!
+    lastModified: Float!
+    # microF1Score: Float!
+    modelType: String!
+    # numTestExamples: [LabelExamplesType!]!
+    numTrainExamples: [LabelExamplesType!]!
+}
+
+type Query {
+    modelSummary(modelName: String!): ModelSummaryType
+}

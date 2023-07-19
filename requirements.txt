@@ -1,0 +1,7 @@
+#equine
+flask
+flask-cors
+ariadne
+h5py
+scikit-learn
+umap-learn

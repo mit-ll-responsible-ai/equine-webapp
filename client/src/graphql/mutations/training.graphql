@@ -1,0 +1,21 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+mutation StartTraining(
+  $embedModelName: String!,
+  $episodes: Int!,
+  $newModelName: String!,
+  $numInputFeatures: Int!,
+  $sampleFilenames: [Upload!]!,
+  $trainModelType: String!,
+) {
+  startTraining(
+    embedModelName: $embedModelName,
+    episodes: $episodes,
+    newModelName: $newModelName,
+    numInputFeatures: $numInputFeatures,
+    sampleFilenames: $sampleFilenames,
+    trainModelType: $trainModelType,
+  ) {
+    success
+  }
+}

@@ -1,0 +1,35 @@
+import os
+import pytest
+import shutil
+
+os.environ["TESTING"] = "True"
+
+from server.flask_server import app as my_app
+from server.tests.train_model_for_testing import train_model_for_testing
+from server.utils import SERVER_CONFIG
+
+@pytest.fixture()
+def app():
+    my_app.config.update({ "TESTING": True })
+    # other setup can go here
+    yield my_app
+    # clean up / reset resources here
+
+
+@pytest.fixture()
+def client(app):
+    return app.test_client()
+
+
+@pytest.fixture()
+def runner(app):
+    return app.test_cli_runner()
+
+
+def pytest_configure():
+    train_model_for_testing(os.path.join(SERVER_CONFIG.MODEL_FOLDER_PATH, "protonet_test_model.eq"))
+
+
+def pytest_sessionfinish(session, exitstatus):
+    shutil.rmtree(SERVER_CONFIG.OUTPUT_FOLDER)
+    pass
