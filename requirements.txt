@@ -1,7 +1,9 @@
-#equine
+ariadne
+equine
 flask
 flask-cors
-ariadne
-h5py
+numpy
 scikit-learn
+torch
+torchvision
 umap-learn

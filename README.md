@@ -10,6 +10,39 @@
 </p>
 
 
+## Setup Python Flask Server
+1. Create a new Anaconda environment
+```
+conda create --name equine-webapp python=3.10
+```
+
+2. Activate your new environment
+```
+conda activate equine-webapp
+```
+
+3. Install the necessary packages from pip
+```
+pip install -r requirements.txt
+```
+
+4. Start the Flask server
+```
+python start_server.py
+```
+
+### Flask Testing
+If you'd like to run our flask tests:
+1. Install pytest
+```
+pip install pytest
+```
+
+2. Run pytest
+```
+pytest
+```
+
 ## Disclaimer
 
 DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.

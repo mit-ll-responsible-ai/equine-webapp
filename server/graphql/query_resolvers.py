@@ -10,7 +10,6 @@ from scipy.spatial import distance_matrix
 import umap
 
 import torch
-import pandas as pd
 from ariadne import convert_kwargs_to_snake_case
 
 from server.utils import SERVER_CONFIG, load_equine_model, calc_continuity, calc_normalized_stress, calc_shepard_diagram_correlation, get_support_example_from_data_index, get_sample_from_data_index
