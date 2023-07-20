@@ -115,7 +115,7 @@ const DATA_OPTIONS = [
     inputDataType: "Image" as InputDataType,
     globalUmapData: mnistGlobalUmap,
     scatterUqData: mnistTableData,
-    getInferenceSampleImageSrc: (dataIndex: number) => `/ScatterUQ-demo-images/FashionMNIST-ID_MNIST-OOD/images/sample-${dataIndex}.jpg`,
+    getInferenceSampleImageSrc: (dataIndex: number) => `./ScatterUQ-demo-images/FashionMNIST-ID_MNIST-OOD/images/sample-${dataIndex}.jpg`,
     getInferenceSampleTabularData: async (dataIndex: number) => ({
       renderInferenceFeatureData: {columnHeaders: [], featureData: []} //this doesn't do anything
     }),
@@ -123,7 +123,7 @@ const DATA_OPTIONS = [
       const numSupportExamplesPerClass = mnistPrototypeSupportExamples[0].trainingExamples.length
       const supportIndex = dataIndex % numSupportExamplesPerClass
       const classIndex = Math.floor(dataIndex / numSupportExamplesPerClass)
-      return `/ScatterUQ-demo-images/FashionMNIST-ID_MNIST-OOD/images/class-${classIndex}_support-${supportIndex}.jpg`
+      return `./ScatterUQ-demo-images/FashionMNIST-ID_MNIST-OOD/images/class-${classIndex}_support-${supportIndex}.jpg`
     },
     getSupportExampleTabularData: async (dataIndex: number) => ({
       renderSupportFeatureData: {columnHeaders: [], featureData: []} //this doesn't do anything
