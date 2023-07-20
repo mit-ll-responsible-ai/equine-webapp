@@ -16,13 +16,13 @@ export default function FeedbackModal() {
     header,
     show,
   } = useAppSelector(state => state.modal)
-
+  console.log("show",show)
   return (
     <Modal
       aria-labelledby="feedbackModal"
       backdrop={canClose || "static"}
       centered
-      onHide={() => dispatch(closeModal)}
+      onHide={() => dispatch(closeModal())}
       show={show}
       size="lg"
     >
