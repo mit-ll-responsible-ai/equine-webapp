@@ -9,8 +9,29 @@
   This is a web application utilizing EQUINE for neural network uncertainty quantification through a visual user interface. The webapp allows you to upload your own model and data, and let the server retrain the model with EQUINE. The visualization dashboard also allows you to analyze your samples and view uncertainty quantification visualizations to explain model uncertainty.
 </p>
 
+## React Frontend
 
-## Setup Python Flask Server
+### ScatterUQ Static Demo
+We deployed the frontend application to GitHub pages. You can view a static demo of ScatterUQ here:
+
+https://mit-ll-responsible-ai.github.io/equine-webapp/#/demo
+
+### Development Server Setup
+1. Install node packages
+```
+cd client
+npm i
+```
+
+2. Start the development server
+```
+npm start
+```
+
+
+## Python Flask Server
+
+### Development Server Setup
 1. Create a new Anaconda environment
 ```
 conda create --name equine-webapp python=3.10
