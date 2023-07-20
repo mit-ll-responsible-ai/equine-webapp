@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/equine-webapp/static/css/main.13db4d3a.css",
+    "main.js": "/equine-webapp/static/js/main.04426f93.js",
+    "index.html": "/equine-webapp/index.html",
+    "main.13db4d3a.css.map": "/equine-webapp/static/css/main.13db4d3a.css.map",
+    "main.04426f93.js.map": "/equine-webapp/static/js/main.04426f93.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.13db4d3a.css",
+    "static/js/main.04426f93.js"
+  ]
+}
