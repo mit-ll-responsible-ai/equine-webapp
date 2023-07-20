@@ -1,3 +1,5 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
 from ariadne import QueryType, MutationType, make_executable_schema, load_schema_from_path
 import server.graphql.query_resolvers
 import server.graphql.mutation_resolvers

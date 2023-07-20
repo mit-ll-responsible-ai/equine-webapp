@@ -1,3 +1,5 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
 import json
 import numpy as np
 import os

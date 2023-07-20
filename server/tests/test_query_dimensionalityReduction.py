@@ -1,3 +1,5 @@
+# Copyright (c) 2023 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
 import pytest
 import random
 from server.tests.train_model_for_testing import TEST_MODEL_CONFIG
