@@ -16,7 +16,7 @@ export default function graphqlMultipartFormFetcher<TData, TVariables>(
     //the rest of the code is mostly copied from the generated graphql fetcher in 
     //client/src/graphql/generated.ts
     const res = await fetch(
-      process.env.REACT_APP_SERVER_URL+'/graphql' as string,
+      localStorage.getItem('serverUrl')+'/graphql' as string,
       { method:"POST", body }
     )
 
