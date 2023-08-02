@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/equine-webapp/static/css/main.b45db410.css",
-    "main.js": "/equine-webapp/static/js/main.ac97a15f.js",
+    "main.js": "/equine-webapp/static/js/main.8a0bdcff.js",
     "index.html": "/equine-webapp/index.html",
     "main.b45db410.css.map": "/equine-webapp/static/css/main.b45db410.css.map",
-    "main.ac97a15f.js.map": "/equine-webapp/static/js/main.ac97a15f.js.map"
+    "main.8a0bdcff.js.map": "/equine-webapp/static/js/main.8a0bdcff.js.map"
   },
   "entrypoints": [
     "static/css/main.b45db410.css",
-    "static/js/main.ac97a15f.js"
+    "static/js/main.8a0bdcff.js"
   ]
 }
