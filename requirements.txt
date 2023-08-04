@@ -1,5 +1,5 @@
 ariadne
-equine
+equine==0.1.1
 flask
 flask-cors
 numpy
