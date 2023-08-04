@@ -16,6 +16,11 @@ We deployed the frontend application to GitHub pages. You can view a static demo
 
 https://mit-ll-responsible-ai.github.io/equine-webapp/#/demo
 
+### ScatterUQ VIS 2023 Data
+Our data and analysis script can be found in this release:
+
+https://github.com/mit-ll-responsible-ai/equine-webapp/releases/tag/ScatterUQ-VIS-2023-Data
+
 ### Development Server Setup
 1. Install node packages
 ```
