@@ -12,6 +12,9 @@ import numpy as np
 from pathlib import Path
 
 class Config:
+    """
+    A class for loading server config files into a useable format.
+    """
     def __init__(self):
         conf_path = "./server/server_config.json"
         if os.environ.get('TESTING') == "True":
@@ -31,12 +34,37 @@ class Config:
 SERVER_CONFIG = Config()
 
 class SampleDataset:
+    """
+    A class to hold datasets of inference samples and the associated metadata.
+
+    Parameters
+    ----------
+    dataset : torch.utils.data.TensorDataset
+        TensorDataset to be stored.
+    filenames : List[str]
+        The filenames each sample in the TensorDataset came from.
+    column_headers : List[Any]
+        The list of column headers for the dataset.
+    """
     def __init__(self, tensor_dataset, filenames, column_headers):
         self.dataset = tensor_dataset
         self.filenames = filenames
         self.column_headers = column_headers
 
 def load_equine_model(model_path):
+    """
+    Function to load given equine model based on model type.
+
+    Parameters
+    ----------
+    model_path : str
+        Filepath of the model to be loaded.
+
+    Returns
+    -------
+    Equine
+        The loaded equine model.
+    """
     model_type = torch.load(model_path)["train_summary"]["modelType"]
 
     if model_type == "EquineProtonet":
@@ -50,6 +78,22 @@ def load_equine_model(model_path):
 
 
 def combine_data_files(filename_list, is_train=False):
+    """
+    Function to combine all given data files into one torch dataset.
+    Expects the column dimentions to be equivalent.
+
+    Parameters
+    ----------
+    filename_list : List[str]
+        List of data filenames to be combined.
+    is_train : bool
+        If using combined file for training, includes dataset labels in returned dataset.
+
+    Returns
+    -------
+    SampleDataset
+        A SampleDatset object containing the tensor dataset, along with the associated filenames and column headers.
+    """
     dataset_list = []
     dataset_filenames = []
     column_headers = []
@@ -130,6 +174,21 @@ def calc_shepard_diagram_correlation(high_dist_flat, low_dist_flat):
 
 
 def get_support_example_from_data_index(model_name, data_index):
+    """
+    Function to extract a specific support example from a trained equine model.
+
+    Parameters
+    ----------
+    model_name : str
+        Name of the model to get the support example from.
+    data_index : int
+        Index of the support example in the model.
+
+    Returns
+    -------
+    torch.Tensor, Dict
+        Selected model support tensor, along with full model support example dict.
+    """
     data_index = int(data_index)
     assert data_index >= 0
     
@@ -147,6 +206,21 @@ def get_support_example_from_data_index(model_name, data_index):
     return support[class_idx][support_idx], support
 
 def get_sample_from_data_index(run_id, data_index):
+    """
+    Function to extract a specific sample from a inference run.
+
+    Parameters
+    ----------
+    run_id : int
+        ID of the run to extract the sample from.
+    data_index : int
+        Index of the sample to get.
+
+    Returns
+    -------
+    torch.Tensor, SampleDataset
+        Selected sample tensor, along with the full Sample dataset.
+    """
     data_index = int(data_index)
     assert data_index >= 0
 
