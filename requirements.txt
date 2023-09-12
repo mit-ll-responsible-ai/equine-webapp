@@ -3,6 +3,7 @@ equine
 flask
 flask-cors
 numpy
+pandas
 scikit-learn
 torch
 torchvision

@@ -1,0 +1,26 @@
+// Copyright (c) 2023 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
+#filters {
+  .selectDeselectContainer {
+    font-size: 0.8em;
+    margin-bottom: 0.5em;
+
+    .selectDeselectOption {
+      cursor: pointer;
+      display: inline-block;
+      transition: 0.5s;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &:active {
+        transform: scale(0.9);
+      }
+    }
+  }
+}
+
+:global(.dark) #filters .selectDeselectContainer .selectDeselectOption {
+  color: white;
+}

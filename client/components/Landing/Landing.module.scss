@@ -1,0 +1,22 @@
+// Copyright (c) 2023 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
+#landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  img {
+    margin-top: 1em;
+    width: 50%;
+    background-color: white;
+  }
+
+  #landingSettingsFormContainer {
+    margin-top: 3em;
+    width: 50%;
+  }
+}
+
+:global(.dark) #landing {
+  background-color: #222;
+}
