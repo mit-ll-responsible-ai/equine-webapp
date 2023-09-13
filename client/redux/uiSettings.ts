@@ -40,7 +40,7 @@ const uiSettingsSlice = createSlice({
     },
     setServerUrl: (state, action: PayloadAction<string>) => {
       state.serverUrl = action.payload
-      setLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, INITIAL_STATE.serverUrl)
+      setLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, state.serverUrl)
     },
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.darkMode = action.payload

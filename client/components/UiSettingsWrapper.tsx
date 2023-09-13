@@ -17,6 +17,7 @@ export default function UiSettingsWrapper({children}:{children: JSX.Element[]}) 
     dispatch(setDarkMode(darkModeCookie))
 
     const serverUrlCookie = getLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, "")
+    console.log("serverUrlCookie",serverUrlCookie)
     if(serverUrlCookie) {
       dispatch(setServerUrl(serverUrlCookie))
     }
