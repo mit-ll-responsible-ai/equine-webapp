@@ -10,7 +10,6 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 
 import { ROUTES } from "@/utils/routes"
-import parseUrlQuery from "@/utils/parseUrlQuery"
 
 import { useModelsQuery } from "@/graphql/generated"
 
@@ -18,6 +17,7 @@ import { closeModal, showModal } from "@/redux/modal"
 import { useAppDispatch } from "@/redux/reduxHooks"
 
 import styles from "./SelectOrUploadModel.module.scss"
+import { useRouter } from "next/router"
 
 
 export const CUSTOM_MODEL_VALUE="custom"
@@ -44,6 +44,7 @@ export default function SelectOrUploadModel({
   title:string,
 }) {
   const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const { data:availableModels, error, isLoading } = useModelsQuery(
     {extension: modelExtension || ""}, 
@@ -51,9 +52,8 @@ export default function SelectOrUploadModel({
   )
   useEffect(() => {
     //check the URL to see if we need to pull out a model name
-    const urlQuery = parseUrlQuery(window.location.hash.slice(1))
-    const modelName = urlQuery.modelName // try to pull the model name out of the URL
-    if(modelName) {// if there is a model name in the URL
+    const modelName = router.query.modelName
+    if(typeof modelName === "string") {// if there is a model name in the URL
       setModelName(modelName) // preset the model name in the UI dropdown
     }
     else if(availableModels && availableModels.models[0]) { //else if there are available models

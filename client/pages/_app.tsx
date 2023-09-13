@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { AppProps } from 'next/app'
 import FeedbackModal from '@/components/FeedbackModal/FeedbackModal'
 import Sidebar from '@/components/Sidebar/Sidebar'
-import { useAppSelector } from '@/redux/reduxHooks'
+import UiSettingsWrapper from '@/components/UiSettingsWrapper'
 
 import 'chartkick/chart.js'
 
@@ -22,25 +22,16 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <DarkModeWrapper>
+        <UiSettingsWrapper>
           <div id="content">
             <Component {...pageProps} />
           </div>
+          
           <div id="sidebarContainer"><Sidebar/></div>
 
           <FeedbackModal/>
-        </DarkModeWrapper>
+        </UiSettingsWrapper>
       </Provider>
     </QueryClientProvider>
-  )
-}
-
-const DarkModeWrapper = ({children}:{children: JSX.Element[]}) => {
-  const darkMode = useAppSelector(state => state.uiSettings.darkMode)
-
-  return (
-    <div id="app" className={darkMode ? "dark" : ""}>
-      {children}
-    </div>
   )
 }

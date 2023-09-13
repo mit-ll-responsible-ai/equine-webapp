@@ -2,14 +2,13 @@
 // SPDX-License-Identifier: MIT
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import getLocalStorageItem from "utils/localStorage/getLocalStorageItem"
-import setLocalStorageItem from "utils/localStorage/setLocalStorageItem"
+import setLocalStorageItem from "@/utils/localStorage/setLocalStorageItem"
 import {
   DEFAULT_CONFIDENCE_FLOOR,
   DEFAULT_OOD_COLOR_INTERVALS,
   DEFAULT_OOD_COLOR_MODE,
-} from "utils/labelColors"
-import LOCAL_STORAGE_KEYS from "utils/localStorage/localStorageKeys"
+} from "@/utils/labelColors"
+import LOCAL_STORAGE_KEYS from '@/utils/localStorage/localStorageKeys'
 
 export interface ReduxUiSettingsState {
   colorBlindMode: boolean,
@@ -21,17 +20,16 @@ export interface ReduxUiSettingsState {
 
 export function setupInitialState() {
   return {
-    colorBlindMode: getLocalStorageItem("colorBlindMode", false),
-    darkMode: getLocalStorageItem("darkMode", false),
+    colorBlindMode: false,
+    darkMode: false,
     oodColorIntervals: DEFAULT_OOD_COLOR_INTERVALS,
     oodColorMode: DEFAULT_OOD_COLOR_MODE,
     confidenceFloor: DEFAULT_CONFIDENCE_FLOOR,
-    serverUrl: getLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, "") || process.env.REACT_APP_SERVER_URL || "http://localhost:5252",
+    serverUrl: "http://localhost:5252",
   }
 }
 
 export const INITIAL_STATE: ReduxUiSettingsState = setupInitialState()
-setLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, INITIAL_STATE.serverUrl)
 
 const uiSettingsSlice = createSlice({
   name: 'uiSettings',
@@ -42,14 +40,15 @@ const uiSettingsSlice = createSlice({
     },
     setServerUrl: (state, action: PayloadAction<string>) => {
       state.serverUrl = action.payload
+      setLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, INITIAL_STATE.serverUrl)
     },
-    toggleDarkMode: (state) => {
-      state.darkMode = !state.darkMode
-      setLocalStorageItem("darkMode", state.darkMode)
+    setDarkMode: (state, action: PayloadAction<boolean>) => {
+      state.darkMode = action.payload
+      setLocalStorageItem(LOCAL_STORAGE_KEYS.darkMode, state.darkMode)
     },
-    toggleColorBlindMode: (state) => {
-      state.colorBlindMode = !state.colorBlindMode
-      setLocalStorageItem("colorBlindMode", state.colorBlindMode)
+    setColorBlindMode: (state, action: PayloadAction<boolean>) => {
+      state.colorBlindMode = action.payload
+      setLocalStorageItem(LOCAL_STORAGE_KEYS.colorBlindMode, state.colorBlindMode)
     },
     toggleOodColorMode: (state) => {
       state.oodColorMode = !state.oodColorMode
@@ -57,5 +56,5 @@ const uiSettingsSlice = createSlice({
   },
 })
 
-export const { setOodColorIntervals, setServerUrl, toggleDarkMode, toggleColorBlindMode, toggleOodColorMode } = uiSettingsSlice.actions
+export const { setOodColorIntervals, setServerUrl, setDarkMode, setColorBlindMode, toggleOodColorMode } = uiSettingsSlice.actions
 export default uiSettingsSlice.reducer

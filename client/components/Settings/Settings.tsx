@@ -11,7 +11,7 @@ import {
 import { Container, Form } from "react-bootstrap";
 
 import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks";
-import { setServerUrl, toggleColorBlindMode, toggleDarkMode } from "@/redux/uiSettings";
+import { setServerUrl, setColorBlindMode, setDarkMode } from "@/redux/uiSettings";
 
 
 export default function Settings() {
@@ -45,7 +45,7 @@ export default function Settings() {
               checked={colorBlindMode}
               id="color-blind-mode-switch"
               label={<>Color Blind Mode <FontAwesomeIcon icon={faPalette}/></>}
-              onChange={() => dispatch(toggleColorBlindMode())}
+              onChange={() => dispatch(setColorBlindMode(!colorBlindMode))}
               type="switch"
             />
           </Form.Group>
@@ -57,7 +57,7 @@ export default function Settings() {
               checked={darkMode}
               id="dark-mode-switch"
               label={<>Dark Mode <FontAwesomeIcon icon={faMoon}/></>}
-              onChange={() => dispatch(toggleDarkMode())}
+              onChange={() => dispatch(setDarkMode(!darkMode))}
               type="switch"
             />
           </Form.Group>

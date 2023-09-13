@@ -454,7 +454,7 @@ export default function ScatterUQ({
         
       </div>
 
-      <div className="uq-viz-sidebar" style={{marginLeft: "1rem"}}>
+      <div className={styles["uq-viz-sidebar"]} style={{marginLeft: "1rem"}}>
         {rightHoverPoint && rightHoverPoint.msg}
       </div>
     </div>

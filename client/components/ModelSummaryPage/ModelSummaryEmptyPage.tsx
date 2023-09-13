@@ -1,7 +1,6 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import React, { useState, useEffect } from 'react'
-import { useHistory } from "react-router-dom"
 
 import Button from 'react-bootstrap/Button'
 
@@ -9,25 +8,26 @@ import {
   UploadModelDocument,
   UploadModelMutation,
   UploadModelMutationVariables,
-} from 'graphql/generated'
-import graphqlMultipartFormFetcher from 'utils/graphqlMultipartFormFetcher'
+} from '@/graphql/generated'
+import graphqlMultipartFormFetcher from '@/utils/graphqlMultipartFormFetcher'
 
-import { ROUTES } from "App"
 
-import { showModal } from 'redux/modal'
-import { useAppDispatch } from 'redux/reduxHooks'
+import { showModal } from '@/redux/modal'
+import { useAppDispatch } from '@/redux/reduxHooks'
 
-import SelectInputDataType from 'Components/SelectInputDataType/SelectInputDataType'
-import SelectOrUploadModel from 'Components/SelectOrUploadModel/SelectOrUploadModel'
+import SelectInputDataType from '@/components/SelectInputDataType/SelectInputDataType'
+import SelectOrUploadModel from '@/components/SelectOrUploadModel/SelectOrUploadModel'
 
-import setDocumentTitle from "utils/setDocumentTitle"
+import { ROUTES } from "@/utils/routes"
+import setDocumentTitle from "@/utils/setDocumentTitle"
 
-import "./modelSummaryEmptyPage.scss"
+import styles from "./ModelSummaryEmptyPage.module.scss"
+import { useRouter } from 'next/router'
 
 
 const EmptyPage = () => {
   const dispatch = useAppDispatch()
-  const history = useHistory()
+  const router = useRouter()
 
   const [customModelFile, setCustomModelFile] = useState<File | null>(null)
   const [selectedModel, setSelectedModel] = useState<string>("")
@@ -43,7 +43,7 @@ const EmptyPage = () => {
       )().then(data => {
         if(data.uploadModel?.success) {
           //then redirect to the newly uploaded model (without file extension)
-          history.push(`${ROUTES.MODEL_SUMMARY_PAGE}/${customModelFile.name}`)
+          router.push(`${ROUTES.MODEL_SUMMARY_PAGE}?modelName=${customModelFile.name}`)
         }
         else {
           throw new Error("Did not receive a success response")
@@ -59,7 +59,7 @@ const EmptyPage = () => {
     }
     else if(selectedModel !== "") {
       //redirect to the model summary page with this model name
-      history.push(`${ROUTES.MODEL_SUMMARY_PAGE}/${selectedModel}`)
+      router.push(`${ROUTES.MODEL_SUMMARY_PAGE}?modelName=${selectedModel}`)
     }
     else {
       dispatch(showModal({
@@ -72,7 +72,7 @@ const EmptyPage = () => {
   const submitButtonDisabled = selectedModel==="" || (selectedModel==="custom" && !customModelFile)
 
   return (
-    <div id="modelSummaryEmptyPage">
+    <div id={styles.modelSummaryEmptyPage}>
       <form onSubmit={submit}>
         <h1>Model Summary Page</h1>
 

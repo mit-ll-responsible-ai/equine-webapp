@@ -2,21 +2,20 @@
 // SPDX-License-Identifier: MIT
 import React, { useEffect } from "react"
 
-import { useAppDispatch, useAppSelector } from "redux/reduxHooks"
-
+import { showModal } from "@/redux/modal"
+import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks"
 
 import Button from 'react-bootstrap/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import { timeFormat } from 'd3'
 
-import { downloadUrlAsFile } from "utils/downloadFile"
-import setDocumentTitle from "utils/setDocumentTitle"
+import { downloadUrlAsFile } from "@/utils/downloadFile"
+import setDocumentTitle from "@/utils/setDocumentTitle"
 
-import { useModelsQuery } from "graphql/generated"
+import { useModelsQuery } from "@/graphql/generated"
 
-import "./downloadPage.scss"
-import { showModal } from "redux/modal"
+import styles from "./DownloadPage.module.scss"
 
 
 function DownloadPage() {
@@ -52,7 +51,7 @@ function DownloadPage() {
   const formatTime = timeFormat("%B %d, %Y %H:%M:%S")
 
   return (
-    <div id="downloadPage">
+    <div id={styles.downloadPage}>
       <h3>Available Models</h3>
       <table>
         <thead>

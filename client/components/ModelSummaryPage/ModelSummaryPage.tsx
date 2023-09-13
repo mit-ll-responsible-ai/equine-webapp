@@ -42,7 +42,7 @@ const ModelSummaryPage = () => {
   // const getColorFromLabel = useGetColorFromLabel()
 
   const router = useRouter()
-  const modelName = router.query.slug as string
+  const modelName = typeof router.query.modelName === "string" ? router.query.modelName : ""
 
   const { data, error, isLoading } = useModelSummaryQuery({ modelName })
 

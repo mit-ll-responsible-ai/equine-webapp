@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 
-import { InputData } from "graphql/generated"
+import { InputData } from "@/graphql/generated"
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export const INPUT_DATA_TYPES = ["Tabular", "Image"] as const

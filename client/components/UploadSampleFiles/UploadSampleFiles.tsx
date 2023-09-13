@@ -73,7 +73,7 @@ export default function UploadSampleFiles({
     <div className={styles.uploadSampleFiles}>
       <div>
         {/* THIS MUST BE A LABEL FOR loadSampleFiles */}
-        <label htmlFor="loadSampleFiles" className="btn btn-primary">{title} <FontAwesomeIcon icon={faUpload}/></label> &nbsp;
+        <label htmlFor={styles.loadSampleFiles} className="btn btn-primary">{title} <FontAwesomeIcon icon={faUpload}/></label> &nbsp;
         <input id={styles.loadSampleFiles} type="file" multiple onChange={selectSampleFiles}/>
       </div>
 
