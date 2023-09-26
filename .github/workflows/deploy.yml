@@ -57,6 +57,7 @@ jobs:
         with:
           node-version: "lts/*"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache-dependency-path: '**/package-lock.json'
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Restore cache
