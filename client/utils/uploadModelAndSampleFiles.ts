@@ -1,4 +1,4 @@
-import { UploadModelDocument, UploadModelMutation, UploadModelMutationVariables, UploadSampleFileDocument, UploadSampleFileMutation, UploadSampleFileMutationVariables } from "graphql/generated"
+import { UploadModelDocument, UploadModelMutation, UploadModelMutationVariables, UploadSampleFileDocument, UploadSampleFileMutation, UploadSampleFileMutationVariables } from "@/graphql/generated"
 import graphqlMultipartFormFetcher from "./graphqlMultipartFormFetcher"
 
 /**

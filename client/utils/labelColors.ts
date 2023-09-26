@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 import { scalePow } from 'd3'
 
-import getLocalStorageItem from 'utils/localStorage/getLocalStorageItem'
-import toHex from 'utils/toHex'
+import getLocalStorageItem from '@/utils/localStorage/getLocalStorageItem'
+import toHex from '@/utils/toHex'
 import { COLORS, COLOR_BLIND_COLORS } from './colors'
 
 export const DEFAULT_OOD_COLOR_INTERVALS = 5

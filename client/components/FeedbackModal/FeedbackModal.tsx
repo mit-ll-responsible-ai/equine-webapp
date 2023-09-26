@@ -3,8 +3,8 @@
 import React from "react"
 import Modal from 'react-bootstrap/Modal'
 
-import { closeModal } from "redux/modal"
-import { useAppDispatch, useAppSelector } from "redux/reduxHooks"
+import { closeModal } from "@/redux/modal"
+import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks"
 
 
 export default function FeedbackModal() {

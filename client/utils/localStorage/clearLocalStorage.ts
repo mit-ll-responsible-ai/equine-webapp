@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 import getLocalStorageItem from "./getLocalStorageItem"
 import setLocalStorageItem from "./setLocalStorageItem"
-import clientPackageJson from "../../../package.json"
+import clientPackageJson from "@/package.json"
 
 //if the site version is different
 if(getLocalStorageItem("version","") !== clientPackageJson.version) {

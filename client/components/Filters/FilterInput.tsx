@@ -31,7 +31,7 @@ const FilterInput = (props:Props) => {
           <Typeahead
             id={inputId}
             multiple
-            onChange={(values:string[]) => setFilterValues(values)}
+            onChange={(values) => setFilterValues(values as string[])}
             options={options}
             placeholder={placeholder}
           />

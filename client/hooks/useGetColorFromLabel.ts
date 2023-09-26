@@ -1,9 +1,9 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import { useAppSelector } from 'redux/reduxHooks'
-import { RootState } from 'redux/store'
+import { useAppSelector } from '@/redux/reduxHooks'
+import { RootState } from '@/redux/store'
 import { createSelector } from 'reselect'
-import { buildGetColorFromLabelFunction, colorBlindColors, colors, mapLabelToColor, mapLabelToColorBlindColor } from 'utils/labelColors'
+import { buildGetColorFromLabelFunction, colorBlindColors, colors, mapLabelToColor, mapLabelToColorBlindColor } from '@/utils/labelColors'
 
 export type GetColorFromLabelType = (label:string, thresholdIndex?: number) => string
 

@@ -3,15 +3,15 @@
 import React, { useCallback, useMemo } from 'react'
 import { scaleLinear } from 'd3'
 
-import { useAppSelector } from 'redux/reduxHooks'
+import { useAppSelector } from '@/redux/reduxHooks'
 
-import ColoredLabel from "Components/ColoredLabel/ColoredLabel"
-import InfoTooltip from "Components/InfoTooltip/InfoTooltip"
-import Matrix from "Components/Matrix/Matrix"
+import ColoredLabel from "@/components/ColoredLabel/ColoredLabel"
+import InfoTooltip from "@/components/InfoTooltip/InfoTooltip"
+import Matrix from "@/components/Matrix/Matrix"
 
-import useGetColorFromLabel from 'hooks/useGetColorFromLabel'
+import useGetColorFromLabel from '@/hooks/useGetColorFromLabel'
 
-import { COLORS, COLOR_BLIND_COLORS } from 'utils/colors'
+import { COLORS, COLOR_BLIND_COLORS } from '@/utils/colors'
 
 import "./confusionMatrix.scss"
 

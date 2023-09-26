@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react"
-import { AppClassType } from "redux/inferenceSettings"
+import { AppClassType } from "@/redux/inferenceSettings"
 
 export default function useFilters(labels: string[]) {
   const [filters, setFilters] = useState<string[]>([])

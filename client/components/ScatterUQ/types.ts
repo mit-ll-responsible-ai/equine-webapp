@@ -1,5 +1,5 @@
-import { GetPrototypeSupportEmbeddingsQuery, RenderInferenceFeatureDataQuery, RenderSupportFeatureDataQuery } from "graphql/generated";
-import { AppClassType, InputDataType, SampleType } from "redux/inferenceSettings";
+import { GetPrototypeSupportEmbeddingsQuery, RenderInferenceFeatureDataQuery, RenderSupportFeatureDataQuery } from "@/graphql/generated";
+import { AppClassType, InputDataType, SampleType } from "@/redux/inferenceSettings";
 
 export type Coordinate2DType = {x: number, y: number}
 export type WeightedCoordinate2DType = Coordinate2DType & {weight: number}

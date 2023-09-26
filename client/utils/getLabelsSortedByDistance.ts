@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import { GetPrototypeSupportEmbeddingsQuery } from "graphql/generated";
-import { SampleType } from "redux/inferenceSettings";
+import { GetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated";
+import { SampleType } from "@/redux/inferenceSettings";
 
 export default function getLabelsSortedByDistance(
   sample: SampleType,

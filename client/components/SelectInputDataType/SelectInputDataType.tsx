@@ -4,8 +4,8 @@ import React from 'react'
 
 import Form from 'react-bootstrap/Form'
 
-import { INPUT_DATA_TYPES, InputDataType, setInputDataType } from 'redux/inferenceSettings'
-import { useAppDispatch, useAppSelector } from 'redux/reduxHooks'
+import { INPUT_DATA_TYPES, InputDataType, setInputDataType } from '@/redux/inferenceSettings'
+import { useAppDispatch, useAppSelector } from '@/redux/reduxHooks'
 
 export default function SelectInputDataType({
   title="2) Select Your Input Data Type"

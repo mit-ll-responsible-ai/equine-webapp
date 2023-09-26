@@ -131,7 +131,7 @@ export default function EmptyDashboard() {
   return (
     <div id={styles.emptyDashboard}>
       <div>
-        <div><b>You don't have any data for the dashboard yet. You can:</b></div>
+        <div><b>You don&apos;t have any data for the dashboard yet. You can:</b></div>
         <br/>
         <div style={{marginBottom: "0.5em"}}>Go to the home page to run the pipeline</div>
 

@@ -21,7 +21,7 @@ export default function UiSettingsWrapper({children}:{children: JSX.Element[]}) 
     if(serverUrlCookie) {
       dispatch(setServerUrl(serverUrlCookie))
     }
-  },[])
+  },[dispatch])
 
   const darkMode = useAppSelector(state => state.uiSettings.darkMode)
   return (

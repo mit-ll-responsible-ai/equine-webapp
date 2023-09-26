@@ -1,9 +1,9 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import { useAppSelector } from 'redux/reduxHooks'
-import { RootState } from 'redux/store'
+import { useAppSelector } from '@/redux/reduxHooks'
+import { RootState } from '@/redux/store'
 import { createSelector } from 'reselect'
-import { DEFAULT_OOD_COLOR_THRESHOLDS } from 'utils/labelColors'
+import { DEFAULT_OOD_COLOR_THRESHOLDS } from '@/utils/labelColors'
 
 //This selector depends on oodColorIntervals in uiSettings in redux
 //It returns the oodThresholds array, given how many are desired

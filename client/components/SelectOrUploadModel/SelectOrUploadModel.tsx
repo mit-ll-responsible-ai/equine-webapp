@@ -52,9 +52,8 @@ export default function SelectOrUploadModel({
   )
   useEffect(() => {
     //check the URL to see if we need to pull out a model name
-    const modelName = router.query.modelName
-    if(typeof modelName === "string") {// if there is a model name in the URL
-      setModelName(modelName) // preset the model name in the UI dropdown
+    if(typeof router.query.modelName === "string") {// if there is a model name in the URL
+      setModelName(router.query.modelName) // preset the model name in the UI dropdown
     }
     else if(availableModels && availableModels.models[0]) { //else if there are available models
       setModelName(availableModels.models[0].name) //auto set to the first one
@@ -62,7 +61,7 @@ export default function SelectOrUploadModel({
     else {
       setModelName(CUSTOM_MODEL_VALUE) //otherwise set to custom
     }
-  },[availableModels, setModelName])
+  },[availableModels, router.query.modelName, setModelName])
   
   useEffect(() => {
     if(error) {

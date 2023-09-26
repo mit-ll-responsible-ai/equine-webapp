@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import { AppClassType } from "redux/inferenceSettings"
+import { AppClassType } from "@/redux/inferenceSettings"
 
 export type LabelCounter = {[label:string]: number}
 

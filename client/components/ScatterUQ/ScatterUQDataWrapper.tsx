@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react'
 
-import { AppClassType, InputDataType, SampleType } from 'redux/inferenceSettings'
+import { AppClassType, InputDataType, SampleType } from '@/redux/inferenceSettings'
 
-import { GetPrototypeSupportEmbeddingsQuery, RenderInferenceFeatureDataDocument, RenderInferenceFeatureDataQuery, RenderInferenceFeatureDataQueryVariables, RenderSupportFeatureDataDocument, RenderSupportFeatureDataQuery, RenderSupportFeatureDataQueryVariables, fetcher, useDimensionalityReductionQuery } from 'graphql/generated'
+import { GetPrototypeSupportEmbeddingsQuery, RenderInferenceFeatureDataDocument, RenderInferenceFeatureDataQuery, RenderInferenceFeatureDataQueryVariables, RenderSupportFeatureDataDocument, RenderSupportFeatureDataQuery, RenderSupportFeatureDataQueryVariables, fetcher, useDimensionalityReductionQuery } from '@/graphql/generated'
 
-import determineSampleCondition, { SAMPLE_CONDITIONS } from 'utils/determineSampleCondition'
+import determineSampleCondition, { SAMPLE_CONDITIONS } from '@/utils/determineSampleCondition'
 
 import { Coordinate2DType, ScatterUQDataProps, StructuredDimRedOutputType, WeightedCoordinate2DType } from './types'
 

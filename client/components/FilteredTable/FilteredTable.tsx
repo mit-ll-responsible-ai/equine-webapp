@@ -94,6 +94,7 @@ const FilteredTable = ({
           </div>
 
           <DataTable
+            //@ts-ignore
             columns={COLUMNS}
             data={tableData}
             noDataComponent={<div className={styles.filteredTableNoData}><NoDataMessage/></div>}

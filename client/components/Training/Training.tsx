@@ -288,7 +288,7 @@ const Training = () => {
           <br/>
 
           <FormLabel>Upload Labeled Data Files</FormLabel>
-          <p>Note that if you upload a .csv file, your headings MUST contain a column with the heading "label"</p>
+          <p>Note that if you upload a .csv file, your headings MUST contain a column with the heading &quot;label&quot;</p>
           <UploadSampleFiles
             sampleFiles={sampleFiles}
             setSampleFiles={setSampleFiles}

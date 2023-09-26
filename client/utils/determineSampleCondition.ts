@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import { GetPrototypeSupportEmbeddingsQuery } from "graphql/generated"
-import { AppClassType, SampleType } from "redux/inferenceSettings"
+import { GetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
+import { AppClassType, SampleType } from "@/redux/inferenceSettings"
 
 export enum SAMPLE_CONDITIONS { //the model thinks that this sample is
   IN_DISTRO_CONFIDENT="IN_DISTRO_CONFIDENT", //in distribution and part of the class(es)

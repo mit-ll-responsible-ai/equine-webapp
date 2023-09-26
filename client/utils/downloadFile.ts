@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import handleFetchResponse from "utils/handleFetchResponse"
+import handleFetchResponse from "@/utils/handleFetchResponse"
 
 /**
  * @param  data     data as a string to be put into file

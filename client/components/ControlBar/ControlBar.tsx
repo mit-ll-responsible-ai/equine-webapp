@@ -99,7 +99,7 @@ const ControlBar = (props: Props) => {
             <OverlayTrigger
               overlay={
                 <Tooltip id="classConfidenceThresholdTooltip">
-                 "I want the model to be at least {classConfidenceThreshold}% confident that the label is correct."
+                 &quot;I want the model to be at least {classConfidenceThreshold}% confident that the label is correct.&quot;
                 </Tooltip>
               }
               placement="bottom"

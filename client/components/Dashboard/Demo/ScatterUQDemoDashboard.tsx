@@ -333,6 +333,7 @@ const FilteredTable = ({
           </div>
 
           <DataTable
+            //@ts-ignore
             columns={COLUMNS}
             data={tableData}
             noDataComponent={<div className="filteredTableNoData"><NoDataMessage/></div>}

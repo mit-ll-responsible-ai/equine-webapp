@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import roundSigDigits from "utils/roundSigDigits"
+import roundSigDigits from "@/utils/roundSigDigits"
 
 /**
  * this function tries to format seconds

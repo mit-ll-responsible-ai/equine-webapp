@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 
-import type { AppClassType, SampleType } from "redux/inferenceSettings"
+import type { AppClassType, SampleType } from "@/redux/inferenceSettings"
 
 type StackDataType = {
   name: string,
