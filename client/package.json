@@ -7,9 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "graphql-codegen": "env-cmd -f .env.local graphql-codegen",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "graphql-codegen": "env-cmd -f .env.local graphql-codegen"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
@@ -29,7 +27,6 @@
     "d3": "^7.8.5",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
-    "gh-pages": "^6.0.0",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-bootstrap": "^2.8.0",

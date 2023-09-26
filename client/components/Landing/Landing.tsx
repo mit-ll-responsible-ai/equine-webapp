@@ -7,6 +7,8 @@ import SettingsForm from "./SettingsForm/SettingsForm"
 
 import setDocumentTitle from "@/utils/setDocumentTitle"
 
+import logo from "@/public/EQUI(NE)^2_Full_Logo.svg"
+
 import styles from "./Landing.module.scss"
 
 
@@ -18,7 +20,7 @@ const Landing = () => {
   return (
     <div id={styles.landing}>
       <br/><br/><br/><br/>
-      <img src="EQUI(NE)^2_Full_Logo.svg" alt="EQUINE"/>
+      <img src={logo} alt="EQUINE"/>
 
       <div id={styles.landingSettingsFormContainer}>
         <SettingsForm/>
