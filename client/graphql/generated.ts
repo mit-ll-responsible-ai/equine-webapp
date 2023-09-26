@@ -107,10 +107,10 @@ export type MutationRunInferenceArgs = {
 
 
 export type MutationStartTrainingArgs = {
+  embOutDim?: InputMaybe<Scalars['Int']['input']>;
   embedModelName: Scalars['String']['input'];
   episodes: Scalars['Int']['input'];
   newModelName: Scalars['String']['input'];
-  numInputFeatures?: InputMaybe<Scalars['Int']['input']>;
   sampleFilenames: Array<InputMaybe<Scalars['Upload']['input']>>;
   trainModelType: Scalars['String']['input'];
 };
@@ -229,9 +229,9 @@ export type StartTrainingMutationVariables = Exact<{
   embedModelName: Scalars['String']['input'];
   episodes: Scalars['Int']['input'];
   newModelName: Scalars['String']['input'];
-  numInputFeatures: Scalars['Int']['input'];
   sampleFilenames: Array<Scalars['Upload']['input']> | Scalars['Upload']['input'];
   trainModelType: Scalars['String']['input'];
+  embOutDim?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
@@ -328,14 +328,14 @@ export const useRunInferenceMutation = <
       options
     );
 export const StartTrainingDocument = `
-    mutation StartTraining($embedModelName: String!, $episodes: Int!, $newModelName: String!, $numInputFeatures: Int!, $sampleFilenames: [Upload!]!, $trainModelType: String!) {
+    mutation StartTraining($embedModelName: String!, $episodes: Int!, $newModelName: String!, $sampleFilenames: [Upload!]!, $trainModelType: String!, $embOutDim: Int) {
   startTraining(
     embedModelName: $embedModelName
     episodes: $episodes
     newModelName: $newModelName
-    numInputFeatures: $numInputFeatures
     sampleFilenames: $sampleFilenames
     trainModelType: $trainModelType
+    embOutDim: $embOutDim
   ) {
     success
   }

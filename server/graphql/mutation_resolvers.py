@@ -72,7 +72,7 @@ def resolve_run_inference(_, info, model_filename, sample_filenames):
 
 
 @convert_kwargs_to_snake_case
-def resolve_train_model(_, info, episodes, sample_filenames, embed_model_name, new_model_name, train_model_type, num_input_features = 0):
+def resolve_train_model(_, info, episodes, sample_filenames, embed_model_name, new_model_name, train_model_type, emb_out_dim = 0):
     model_file = embed_model_name if ".jit" in embed_model_name else embed_model_name + ".jit"
     model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
     embed_model = torch.jit.load(model_path)
@@ -84,15 +84,14 @@ def resolve_train_model(_, info, episodes, sample_filenames, embed_model_name, n
     Y = sample_dataset.dataset.tensors[1]
 
     dataset = torch.utils.data.TensorDataset(X, Y)
-
     num_classes = len(torch.unique(Y))
-    if num_input_features == 0: num_input_features = num_classes
+    if emb_out_dim == 0: emb_out_dim = num_classes
 
     if train_model_type == "EquineProtonet":
-        model = equine.EquineProtonet(embed_model, num_input_features)
+        model = equine.EquineProtonet(embed_model, emb_out_dim)
         model.train_model(dataset, num_episodes=episodes)
     elif train_model_type == "EquineGP":
-        model = equine.EquineGP(embed_model, num_input_features, num_classes)
+        model = equine.EquineGP(embed_model, emb_out_dim, num_classes)
 
         loss_fn = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.SGD(

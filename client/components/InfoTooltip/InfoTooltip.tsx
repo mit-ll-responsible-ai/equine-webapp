@@ -19,7 +19,7 @@ const InfoTooltip = (props:InfoTooltipProps) => {
   return (
     <OverlayTrigger
       placement={props.placement || "right"}
-      delay={{ show: 100, hide: 400 }}
+      delay={{ show: 100, hide: 1000 }}
       overlay={(bootstrapProps:any) => (
         <Tooltip {...bootstrapProps}>
           {props.tooltipContent}

@@ -4,17 +4,17 @@ mutation StartTraining(
   $embedModelName: String!,
   $episodes: Int!,
   $newModelName: String!,
-  $numInputFeatures: Int!,
   $sampleFilenames: [Upload!]!,
   $trainModelType: String!,
+  $embOutDim: Int,
 ) {
   startTraining(
     embedModelName: $embedModelName,
     episodes: $episodes,
     newModelName: $newModelName,
-    numInputFeatures: $numInputFeatures,
     sampleFilenames: $sampleFilenames,
     trainModelType: $trainModelType,
+    embOutDim: $embOutDim,
   ) {
     success
   }

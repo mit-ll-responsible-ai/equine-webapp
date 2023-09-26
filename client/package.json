@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "graphql-codegen": "env-cmd -f .env.development graphql-codegen",
+    "graphql-codegen": "env-cmd -f .env.local graphql-codegen",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
@@ -45,6 +45,7 @@
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
-    "@graphql-codegen/typescript-react-query": "^4.1.0"
+    "@graphql-codegen/typescript-react-query": "^4.1.0",
+    "env-cmd": "^10.1.0"
   }
 }

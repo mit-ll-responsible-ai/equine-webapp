@@ -19,7 +19,7 @@ extend type Mutation {
         embedModelName: String!,
         newModelName: String!,
         trainModelType: String!,
-        numInputFeatures: Int = 0
+        embOutDim: Int = 0
     ): StartTrainingResult!
 
 }

@@ -34,14 +34,15 @@ import UploadSampleFiles from "@/components/UploadSampleFiles/UploadSampleFiles"
 
 import styles from "./Training.module.scss"
 import { useRouter } from "next/router"
+import InfoTooltip from "../InfoTooltip/InfoTooltip"
 
 
 const Training = () => {
   /* State for GraphQL */
   const [episodes, setEpisodes] = useState<number>(10000)
-  const [numInputFeatures, setNumInputFeatures] = useState<number>(10)
+  const [embOutDim, setNumInputFeatures] = useState<number>(0)
   const [newModelName, setNewModelName] = useState<string>("")
-  const [trainModelType, setTrainModelType] = useState<string>("EquineGP")
+  const [trainModelType, setTrainModelType] = useState<"EquineGP" | "EquineProtonet">("EquineGP")
   const [sampleFiles, setSampleFiles] = useState<File[]>([])
 
 
@@ -126,7 +127,7 @@ const Training = () => {
         embedModelName,
         episodes,
         newModelName,
-        numInputFeatures,
+        embOutDim,
         sampleFilenames: sampleFiles.map(s => s.name),
         trainModelType,
       }
@@ -226,27 +227,32 @@ const Training = () => {
 
               <Form.Group controlId="trainModelType">
                 <Form.Label>Model Type</Form.Label>
-                <Form.Control as="select" value={trainModelType} onChange={(e:React.ChangeEvent<HTMLInputElement>) => setTrainModelType(e.target.value)}>
+                <Form.Control as="select" value={trainModelType} onChange={(e:React.ChangeEvent<HTMLInputElement>) => setTrainModelType(e.target.value as "EquineProtonet" | "EquineGP")}>
                   <option value="EquineProtonet">Equine Protonet</option>
                   <option value="EquineGP">Equine Gaussian Processes</option>
                 </Form.Control>
               </Form.Group>
+              <br/>
 
               {/* {getRetrainFormOptions()} */}
             </Col>
-
             <Col sm={12} lg={6}>
-              <Form.Group controlId="numInputFeatures">
-                <Form.Label>Number of Input Features</Form.Label>
+              <Form.Group controlId="embOutDim">
+                <Form.Label>
+                  Embedding Output Dimension &nbsp;
+                  <InfoTooltip
+                    tooltipContent={<p style={{paddingBottom: 0}}>This is the number of deep features from the feature embedding. Leave the value as <code>0</code> if you want to let EQUINE auto detect the embedding dimension. Documentation is <a href={trainModelType==="EquineGP"?"https://mit-ll-responsible-ai.github.io/equine/reference/equine/equine_gp/":"https://mit-ll-responsible-ai.github.io/equine/reference/equine/equine_protonet/"} target="_blank">here</a></p>}
+                  />
+                </Form.Label>
                 <Form.Control
-                  isInvalid={isNaN(numInputFeatures)}
+                  isInvalid={isNaN(embOutDim)}
                   onChange={e => setNumInputFeatures(parseInt(e.target.value))}
                   placeholder="Episodes"
                   step={1}
                   type="number"
-                  value={numInputFeatures}
+                  value={embOutDim}
                 />
-                <InputError error={isNaN(numInputFeatures) ? "Number of Input Features must be a number" : ""}/>
+                <InputError error={isNaN(embOutDim) ? "Number of Input Features must be a number" : ""}/>
               </Form.Group>
               
               <br/>
