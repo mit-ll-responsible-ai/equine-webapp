@@ -16,7 +16,7 @@ export default function FeedbackModal() {
     header,
     show,
   } = useAppSelector(state => state.modal)
-  console.log("show",show)
+
   return (
     <Modal
       aria-labelledby="feedbackModal"
