@@ -9,14 +9,19 @@
   This is a web application utilizing EQUINE for neural network uncertainty quantification through a visual user interface. The webapp allows you to upload your own model and data, and let the server retrain the model with EQUINE. The visualization dashboard also allows you to analyze your samples and view uncertainty quantification visualizations to explain model uncertainty.
 </p>
 
+<p align="center">
+  The EQUINE repository is here https://github.com/mit-ll-responsible-ai/equine
+</p>
+
+
 ## React Frontend
 
 ### ScatterUQ Static Demo
 We deployed the frontend application to GitHub pages. You can view a static demo of ScatterUQ here:
 
-https://mit-ll-responsible-ai.github.io/equine-webapp/#/demo
+https://mit-ll-responsible-ai.github.io/equine-webapp/demo
 
-[![ScatterUQ Out of Distribution Example](client/public/ood.png)](https://mit-ll-responsible-ai.github.io/equine-webapp/#/demo)
+[![ScatterUQ Out of Distribution Example](client/public/ood.png)](https://mit-ll-responsible-ai.github.io/equine-webapp/demo)
 
 ### ScatterUQ VIS 2023 Data
 Our data and analysis script can be found in this release:
