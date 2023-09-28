@@ -35,11 +35,13 @@ import UploadSampleFiles from "@/components/UploadSampleFiles/UploadSampleFiles"
 import styles from "./Training.module.scss"
 import { useRouter } from "next/router"
 import InfoTooltip from "../InfoTooltip/InfoTooltip"
+import { ButtonGroup } from "react-bootstrap"
 
 
 const Training = () => {
   /* State for GraphQL */
   const [episodes, setEpisodes] = useState<number>(10000)
+  const [embOutDimAutoDetect, setEmbOutDimAutoDetect] = useState<boolean>(true)
   const [embOutDim, setNumInputFeatures] = useState<number>(0)
   const [newModelName, setNewModelName] = useState<string>("")
   const [trainModelType, setTrainModelType] = useState<"EquineGP" | "EquineProtonet">("EquineGP")
@@ -127,7 +129,7 @@ const Training = () => {
         embedModelName,
         episodes,
         newModelName,
-        embOutDim,
+        embOutDim: embOutDimAutoDetect ? 0 : embOutDim,
         sampleFilenames: sampleFiles.map(s => s.name),
         trainModelType,
       }
@@ -206,7 +208,7 @@ const Training = () => {
 
     return (
       <React.Fragment>
-        <h3>{retrainModelName ? `Retrain "${retrainModelName}"` : "Train a New Model"}</h3>
+        <h3>{retrainModelName ? `Retrain "${retrainModelName}"` : "Train an EQUI(NE)² Model"}</h3>
         <br/>
         <Container>
           <Row>
@@ -237,26 +239,6 @@ const Training = () => {
               {/* {getRetrainFormOptions()} */}
             </Col>
             <Col sm={12} lg={6}>
-              <Form.Group controlId="embOutDim">
-                <Form.Label>
-                  Embedding Output Dimension &nbsp;
-                  <InfoTooltip
-                    tooltipContent={<p style={{paddingBottom: 0}}>This is the number of deep features from the feature embedding. Leave the value as <code>0</code> if you want to let EQUINE auto detect the embedding dimension. Documentation is <a href={trainModelType==="EquineGP"?"https://mit-ll-responsible-ai.github.io/equine/reference/equine/equine_gp/":"https://mit-ll-responsible-ai.github.io/equine/reference/equine/equine_protonet/"} target="_blank">here</a></p>}
-                  />
-                </Form.Label>
-                <Form.Control
-                  isInvalid={isNaN(embOutDim)}
-                  onChange={e => setNumInputFeatures(parseInt(e.target.value))}
-                  placeholder="Episodes"
-                  step={1}
-                  type="number"
-                  value={embOutDim}
-                />
-                <InputError error={isNaN(embOutDim) ? "Number of Input Features must be a number" : ""}/>
-              </Form.Group>
-              
-              <br/>
-
               <Form.Group controlId="episodes">
                 <Form.Label>Episodes</Form.Label>
                 <Form.Control
@@ -268,6 +250,43 @@ const Training = () => {
                   value={episodes}
                 />
                 <InputError error={episodeNumberError}/>
+              </Form.Group>
+              <br/>
+              <Form.Group controlId="embOutDim">
+                <Form.Label>
+                  Embedding Output Dimension &nbsp;
+                  <InfoTooltip
+                    placement="top"
+                    tooltipContent={<p style={{paddingBottom: 0}}>This is the number of deep features from the feature embedding. You can let the server auto detect your embedding output dimension or set a custom value. Documentation is <a href={trainModelType==="EquineGP"?"https://mit-ll-responsible-ai.github.io/equine/reference/equine/equine_gp/":"https://mit-ll-responsible-ai.github.io/equine/reference/equine/equine_protonet/"} target="_blank">here</a></p>}
+                  />
+                </Form.Label>
+                <br/>
+                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                  <ButtonGroup aria-label="Embedding Output Dimension">
+                    <Button variant={embOutDimAutoDetect ? "secondary" : "outline-secondary"} onClick={() => {
+                      setEmbOutDimAutoDetect(true)
+                    }}>Auto Detect</Button>
+                    <Button variant={embOutDimAutoDetect ? "outline-secondary" : "secondary"} onClick={() => {
+                      setEmbOutDimAutoDetect(false)
+                    }}>Custom</Button>
+                  </ButtonGroup>
+                  {!embOutDimAutoDetect && (
+                    <Form.Control
+                      isInvalid={isNaN(embOutDim)}
+                      onChange={e => setNumInputFeatures(parseInt(e.target.value))}
+                      placeholder="Episodes"
+                      step={1}
+                      min={0}
+                      type="number"
+                      value={embOutDim}
+                      style={{
+                        display: "inline-block",
+                        width: "calc(100% - 205px)",
+                      }}
+                    />
+                  )}
+                </div>
+                <InputError error={isNaN(embOutDim) ? "Number of Input Features must be a number" : ""}/>
               </Form.Group>
             </Col>
           </Row>
@@ -282,7 +301,7 @@ const Training = () => {
             setUploadModelFile={setUploadModelFile}
             showTrainModelButton={false}
             uploadModelFile={uploadModelFile}
-            title="Select .jit Model File"
+            title="Select existing .jit Model File"
           />
 
           <br/>

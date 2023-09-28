@@ -17,6 +17,7 @@ import {
 import { ROUTES } from "@/utils/routes"
 
 import styles from "./Sidebar.module.scss"
+import { faGithub } from "@fortawesome/free-brands-svg-icons"
 
 
 export default function Sidebar() {
@@ -36,7 +37,7 @@ export default function Sidebar() {
 
       <Link href={ROUTES.TRAINING}>
         <div className={styles.navLink}>
-          Train a New Model <FontAwesomeIcon icon={faSitemap}/>
+          Train an EQUI(NE)² Model <FontAwesomeIcon icon={faSitemap}/>
         </div>
       </Link>
 
@@ -52,6 +53,12 @@ export default function Sidebar() {
         </div>
       </Link>
 
+      <Link href={ROUTES.SETTINGS}>
+        <div className={styles.navLink}>
+          Settings Page <FontAwesomeIcon icon={faGear}/>
+        </div>
+      </Link>
+
       <br/><br/>
 
       <Link href={ROUTES.DEMO}>
@@ -60,11 +67,9 @@ export default function Sidebar() {
         </div>
       </Link>
 
-      <br/><br/>
-
-      <Link href={ROUTES.SETTINGS}>
+      <Link href="https://github.com/mit-ll-responsible-ai/equine-webapp">
         <div className={styles.navLink}>
-          Settings Page <FontAwesomeIcon icon={faGear}/>
+          GitHub Repository <FontAwesomeIcon icon={faGithub}/>
         </div>
       </Link>
     </div>
