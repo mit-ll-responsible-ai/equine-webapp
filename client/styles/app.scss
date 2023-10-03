@@ -20,6 +20,17 @@
     margin-left: $sidebar-width;
     height: 100%;
   }
+
+  @media screen and (max-width: 768px) {
+    #sidebarContainer {
+      left: -$mobile-sidebar-offset;
+    }
+    #content {
+      margin-left: 0;
+      margin-top: $mobile-navbar-height;
+      height: calc(100% - #{$mobile-navbar-height});
+    }
+  }
 }
 #app.dark {
   color: white;
@@ -27,11 +38,15 @@
 }
 
 .box {
-  margin: 0.5em;
-  padding: 1em;
+  margin: 0.5rem;
+  padding: 1rem;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   background: white;
 }
 .dark .box {
   background: $box-dark-color;
+}
+
+.svg-inline--fa {
+  max-height: 1em;
 }
