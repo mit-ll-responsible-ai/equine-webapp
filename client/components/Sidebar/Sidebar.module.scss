@@ -3,10 +3,6 @@
 @import "~utils/variables";
 
 #sidebar {
-  background: #444;
-  display: flex;
-  flex-direction: column;
-  padding-top: 1em;
   position: absolute;
   width: auto;
   top: 0;
@@ -14,41 +10,75 @@
   bottom: 0;
   transform: translateX(calc(#{$sidebar-width} - 100%));
   transition: 0.5s;
-  box-shadow: 2px 0 3px rgba(0,0,0,0.3);
 
   &:hover {
     transform: translateX(0);
-  }
 
-  a {
-    text-decoration: none;
-  }
+    @media screen and (max-width: 768px) {
+      transform: translateX($mobile-sidebar-offset);
 
-  .navLink {
-    color: white;
-    text-decoration: none;
-    cursor: pointer;
-    overflow: hidden;
-    white-space: nowrap;
+      #mobile-navbar {
+        left: 0;
+      }
+    }
+  }
+  
+  #mobile-navbar {
+    display: none;
     transition: 0.5s;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    padding-left: 0.5em;
-    padding-right: 50px;
-    position: relative;
-
-    &:hover {
-      background-color: #555;
-    }
-
-    svg {
-      text-align: center;
-      width: $sidebar-width;
-      position: absolute;
-      top: 50%;
-      right: 0;
-      transform: translateY(-50%);
+    z-index: -1;
+    @media screen and (max-width: 768px) {
+      display: block;
+      background: #777;
+      position: fixed;
+      top: 0;
+      left: calc(100% + 0.5rem - 1px);
+      width: calc(100vw + 1px);
+      height: $mobile-navbar-height;
+      color: white;
+      padding-left: 0.5rem;
+      padding-top: 0.25rem;
     }
   }
 
+  #sidebar-content {
+    background: #444;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 3px rgba(0,0,0,0.3);
+    top: 0;
+    left: 0;
+    height: 100vh;
+
+    a {
+      text-decoration: none;
+    }
+
+    .navLink {
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      white-space: nowrap;
+      transition: 0.5s;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      padding-left: 0.5rem;
+      padding-right: 50px;
+      position: relative;
+  
+      &:hover {
+        background-color: #555;
+      }
+  
+      svg {
+        text-align: center;
+        width: $sidebar-width;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+      }
+    }
+  }
 }
