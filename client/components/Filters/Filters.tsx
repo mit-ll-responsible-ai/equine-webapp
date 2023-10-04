@@ -5,6 +5,7 @@ import React from "react"
 import type { LabelCounter } from "@/components/Dashboard/getAppClassCounts"
 
 import styles from "./Filters.module.scss"
+import { Col, Row } from "react-bootstrap"
 
 type Props = {
   appClassCounts: LabelCounter,
@@ -22,6 +23,17 @@ const Filters = ({
   setFilters,
   toggleFilter,
 }: Props) => {
+  const columnCount = Math.ceil(labels.length / 4)
+  const sortedLabels = [...labels].sort((a,b) => {
+    if(a === "OTHER") return 1
+    if(b === "OTHER") return -1
+    return a<b ? -1 : 1
+  })
+  const columns = Array.from(Array(4).keys()).map((_,i) => {
+    return sortedLabels.slice(i*columnCount, (i+1)*columnCount)
+  })
+
+
   const labelsMapper = (label:string) => {
     const id = "label-" + label
 
@@ -32,6 +44,12 @@ const Filters = ({
       </div>
     )
   }
+
+  const columnMapper = (c:string[]) => (
+    <Col sm={12} md={6}>
+      {c.map(labelsMapper)}
+    </Col>
+  )
 
   return (
     <div className="box">
@@ -45,9 +63,19 @@ const Filters = ({
             &nbsp; <span className={styles.selectDeselectOption} onClick={e => setFilters([])}>Deselect All</span>
           </div>
 
-          <div style={{display:"flex", justifyContent: "space-between"}}>
-            {labels.map(labelsMapper)}
-          </div>
+          <Row>
+            <Col xs={12} sm={6}>
+              <Row>
+                {columns.slice(0,2).map(columnMapper)}
+              </Row>
+            </Col>
+
+            <Col xs={12} sm={6}>
+              <Row>
+                {columns.slice(2,4).map(columnMapper)}
+              </Row>
+            </Col>
+          </Row>
         </div>
       </div>
     </div>

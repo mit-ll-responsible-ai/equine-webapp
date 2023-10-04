@@ -33,7 +33,7 @@
       position: fixed;
       top: 0;
       left: calc(100% + 0.5rem - 1px);
-      width: calc(100vw + 1px);
+      width: calc(100vw + #{$mobile-sidebar-offset});
       height: $mobile-navbar-height;
       color: white;
       padding-left: 0.5rem;
