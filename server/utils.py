@@ -135,7 +135,7 @@ def get_support_example_from_data_index(model_name, data_index):
     
     model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_name)
     model = load_equine_model(model_path)
-    support = model.model.support
+    support = model.get_support()
 
     num_classes = len(support)
     num_support_per_class = support[0].shape[0]
