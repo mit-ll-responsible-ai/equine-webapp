@@ -291,7 +291,7 @@ const FilteredTable = ({
   const tableData = data.map((d, sampleIndex: number) => {
     const labelsSortedByProbability = getLabelsSortedByProbability(d.samples[0], d.prototypeSupportEmbeddings)
   
-    const sampleCondition = determineSampleCondition(d.inDistributionThreshold,d.processedAppClasses[0], d.samples[0])
+    const sampleCondition = determineSampleCondition(d.processedAppClasses[0])
     const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
 
     return {

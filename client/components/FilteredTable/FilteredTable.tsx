@@ -51,6 +51,7 @@ const FilteredTable = ({
   prototypeSupportEmbeddings,
 }: Props) => {
   const darkMode = useAppSelector(state => state.uiSettings.darkMode)
+  console.log("processedAppClasses.length",processedAppClasses.length,"filteredSamples.length",filteredSamples.length)
 
   const tableData = useMemo(() => (
     filteredSamples.map((sample:SampleType, sampleIndex: number) => {
@@ -60,10 +61,11 @@ const FilteredTable = ({
         id: sampleIndex,
         labels: Object.keys(processedAppClass).filter((label:string) => processedAppClass[label]===1).join(", "),
         dim_red: (
-          <LocalUMAP
+          <LocalPlot
             inDistributionThreshold={inDistributionThreshold}
             processedAppClass={processedAppClass}
             sample={sample}
+            sampleIndex={sampleIndex}
             prototypeSupportEmbeddings={prototypeSupportEmbeddings}
           />
         ),
@@ -112,15 +114,17 @@ export default FilteredTable
 
 
 
-function LocalUMAP({
+function LocalPlot({
   inDistributionThreshold,
   processedAppClass,
   prototypeSupportEmbeddings,
   sample,
+  sampleIndex,
 }:{
   inDistributionThreshold: number,
   processedAppClass: AppClassType,
   sample: SampleType,
+  sampleIndex: number,
   prototypeSupportEmbeddings?: GetPrototypeSupportEmbeddingsQuery,
 }) {
   const {
@@ -132,8 +136,11 @@ function LocalUMAP({
 
   const labelsSortedByProbability = getLabelsSortedByProbability(sample, prototypeSupportEmbeddings)
   
-  const sampleCondition = determineSampleCondition(inDistributionThreshold,processedAppClass, sample)
+  const sampleCondition = determineSampleCondition(processedAppClass)
   const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
+  if(sampleIndex === 0) {
+    console.log("TEST",sample.app_class, processedAppClass, sampleCondition)
+  }
 
   return (
     <div>
@@ -184,7 +191,7 @@ function filterUqVizData(
           getPrototypeSupportEmbeddings: prototypeSupportEmbeddings.getPrototypeSupportEmbeddings.filter(label => processedAppClass[label.label] === 1)
         }
       }
-      case SAMPLE_CONDITIONS.IN_DISTRO_UNSURE: {
+      case SAMPLE_CONDITIONS.CLASS_CONFUSION: {
         return {
           ...prototypeSupportEmbeddings,
           getPrototypeSupportEmbeddings: labelsSortedByDistance.slice(0,2),

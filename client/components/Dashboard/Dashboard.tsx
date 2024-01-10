@@ -19,8 +19,6 @@ import Filters from "@/components/Filters/Filters"
 import FilteredTable from "@/components/FilteredTable/FilteredTable"
 import InfoTooltip from "@/components/InfoTooltip/InfoTooltip"
 import SamplesBarChart from "@/components/SamplesBarChart/SamplesBarChart"
-import ScatterUQ from "@/components/ScatterUQ/ScatterUQ"
-import ScatterUQDataWrapper from "@/components/ScatterUQ/ScatterUQDataWrapper"
 
 import useFilters, { sampleMatchesFilters } from "@/hooks/useFilters"
 
@@ -52,7 +50,7 @@ export default function Dashboard() {
     runId,
     samples,
   } = useAppSelector(state => state.inferenceSettings)
-  const serverUrl = useAppSelector(state => state.uiSettings.serverUrl)
+  // const serverUrl = useAppSelector(state => state.uiSettings.serverUrl)
 
   useEffect(() => setDocumentTitle("Dashboard"))
 
@@ -100,7 +98,7 @@ export default function Dashboard() {
     if(samples.length > 0) {
       const {
         filteredSamples,
-        // filteredProcessedAppClasses,
+        filteredProcessedAppClasses,
       } = samples.map((sample,i) => ({
         sample,
         processedAppClass: processedAppClasses[i],
@@ -186,11 +184,11 @@ export default function Dashboard() {
             )}
             filteredSamples={filteredSamples}
             inDistributionThreshold={inDistributionThreshold}
-            processedAppClasses={processedAppClasses}
+            processedAppClasses={filteredProcessedAppClasses}
             prototypeSupportEmbeddings={prototypeSupportEmbeddings}
           />
 
-          <div className="box">
+          {/* <div className="box">
             <h4>Global Scatterplot with UMAP</h4>
             {(() => {
               if(uqVizIsLoading) {
@@ -222,7 +220,7 @@ export default function Dashboard() {
                 </ScatterUQDataWrapper>
               )
             })()}
-          </div>
+          </div> */}
           
         </div>
       )
