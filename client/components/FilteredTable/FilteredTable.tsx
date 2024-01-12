@@ -27,10 +27,16 @@ import styles from "./FilteredTable.module.scss"
 //https://www.npmjs.com/package/react-data-table-component
 //https://github.com/jbetancur/react-data-table-component/blob/master/src/DataTable/themes.js
 
+type TableRowType = {
+  id: number;
+  labels: string;
+  dim_red: React.JSX.Element;
+}
+
 const COLUMNS = [
   {
     name: 'Local Dimensionality Reduction Plots using PCA',
-    selector: 'dim_red',
+    selector: (row:TableRowType) => row.dim_red,
     sortable: false,
   },
 ];
@@ -53,7 +59,7 @@ const FilteredTable = ({
   const darkMode = useAppSelector(state => state.uiSettings.darkMode)
   console.log("processedAppClasses.length",processedAppClasses.length,"filteredSamples.length",filteredSamples.length)
 
-  const tableData = useMemo(() => (
+  const tableData:TableRowType[] = useMemo(() => (
     filteredSamples.map((sample:SampleType, sampleIndex: number) => {
       const processedAppClass = processedAppClasses[sampleIndex]
       

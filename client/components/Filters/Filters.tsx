@@ -48,8 +48,8 @@ const Filters = ({
     )
   }
 
-  const columnMapper = (c:string[]) => (
-    <Col sm={12} md={6}>
+  const columnMapper = (c:string[], i:number) => (
+    <Col key={i} sm={12} md={6}>
       {c.map(labelsMapper)}
     </Col>
   )
