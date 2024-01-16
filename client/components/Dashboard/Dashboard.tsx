@@ -19,8 +19,6 @@ import Filters from "@/components/Filters/Filters"
 import FilteredTable from "@/components/FilteredTable/FilteredTable"
 import InfoTooltip from "@/components/InfoTooltip/InfoTooltip"
 import SamplesBarChart from "@/components/SamplesBarChart/SamplesBarChart"
-import ScatterUQ from "@/components/ScatterUQ/ScatterUQ"
-import ScatterUQDataWrapper from "@/components/ScatterUQ/ScatterUQDataWrapper"
 
 import useFilters, { sampleMatchesFilters } from "@/hooks/useFilters"
 
@@ -38,6 +36,8 @@ import processConfidenceThresholds from "./processConfidenceThresholds"
 
 import styles from "./Dashboard.module.scss"
 import Link from "next/link"
+import ScatterUQ from "../ScatterUQ/ScatterUQ"
+import ScatterUQDataWrapper from "../ScatterUQ/ScatterUQDataWrapper"
 
 
 export default function Dashboard() {
@@ -100,7 +100,7 @@ export default function Dashboard() {
     if(samples.length > 0) {
       const {
         filteredSamples,
-        // filteredProcessedAppClasses,
+        filteredProcessedAppClasses,
       } = samples.map((sample,i) => ({
         sample,
         processedAppClass: processedAppClasses[i],
@@ -186,7 +186,7 @@ export default function Dashboard() {
             )}
             filteredSamples={filteredSamples}
             inDistributionThreshold={inDistributionThreshold}
-            processedAppClasses={processedAppClasses}
+            processedAppClasses={filteredProcessedAppClasses}
             prototypeSupportEmbeddings={prototypeSupportEmbeddings}
           />
 
@@ -205,10 +205,10 @@ export default function Dashboard() {
                   inputDataType={inputDataType}
                   method="umap"
                   modelName={modelFilename}
-                  processedAppClasses={processedAppClasses}
+                  processedAppClasses={filteredProcessedAppClasses}
                   prototypeSupportEmbeddings={prototypeSupportEmbeddings}
                   runId={runId}
-                  samples={samples}
+                  samples={filteredSamples}
                   serverUrl={serverUrl}
                 >
                   {props => (

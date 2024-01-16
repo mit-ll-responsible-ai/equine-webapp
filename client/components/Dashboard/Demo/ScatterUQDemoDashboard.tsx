@@ -167,11 +167,23 @@ export default function ScatterUQDemoDashboard() {
     CLASS_CONFIDENCE_THRESHOLD,
     IN_DISTRO_THRESHOLD,
   ),[globalUmapData.samples])
+
+  //memoize saving the processed app classes to the respective inference samples
+  useMemo(() => {
+    scatterUqData.forEach((s,i) => {
+      //s.processedAppClasses is initially an empty array
+      //add the processedAppClass for this sample we just calculated above
+      s.processedAppClasses = [ processedAppClasses[i] ]
+    })
+  }, [processedAppClasses, scatterUqData])
+
+
   const { appClassCounts, labels } = useMemo(() => getAppClassCounts(processedAppClasses), [processedAppClasses])
 
   const { filters, setFilters, toggleFilter } = useFilters(labels)
 
-  const filteredTableData = scatterUqData.filter(({processedAppClasses}) => sampleMatchesFilters(filters, processedAppClasses[0]))
+  
+  const filteredTableData = scatterUqData.filter(({processedAppClasses},i) => sampleMatchesFilters(filters, processedAppClasses[0]))
 
 
   return (
@@ -251,11 +263,16 @@ export default function ScatterUQDemoDashboard() {
 }
 
 
+type TableRowType = {
+  id: number;
+  labels: string;
+  dim_red: React.JSX.Element;
+}
 
 const COLUMNS = [
   {
     name: 'Local Dimensionality Reduction Plots using PCA',
-    selector: 'dim_red',
+    selector: (row:TableRowType) => row.dim_red,
     sortable: false,
   },
 ];
@@ -288,10 +305,10 @@ const FilteredTable = ({
 }) => {
   const darkMode = useAppSelector(state => state.uiSettings.darkMode)
 
-  const tableData = data.map((d, sampleIndex: number) => {
+  const tableData:TableRowType[] = data.map((d, sampleIndex: number) => {
     const labelsSortedByProbability = getLabelsSortedByProbability(d.samples[0], d.prototypeSupportEmbeddings)
   
-    const sampleCondition = determineSampleCondition(d.inDistributionThreshold,d.processedAppClasses[0], d.samples[0])
+    const sampleCondition = determineSampleCondition(d.processedAppClasses[0])
     const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
 
     return {

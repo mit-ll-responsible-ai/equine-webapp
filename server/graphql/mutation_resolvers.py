@@ -100,7 +100,7 @@ def resolve_train_model(_, info, episodes, sample_filenames, embed_model_name, n
             momentum=0.9,
             weight_decay=0.0001,
         )
-        # model.train_model(num_epochs=episodes, loss_fn=loss_fn, opt=optimizer)
+        model.train_model(dataset, num_epochs=episodes, loss_fn=loss_fn, opt=optimizer, vis_support=True, support_size=10)
     else:
         raise ValueError(f"Given train_model_type '{train_model_type}' is not valid.")
     

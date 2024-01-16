@@ -27,10 +27,16 @@ import styles from "./FilteredTable.module.scss"
 //https://www.npmjs.com/package/react-data-table-component
 //https://github.com/jbetancur/react-data-table-component/blob/master/src/DataTable/themes.js
 
+type TableRowType = {
+  id: number;
+  labels: string;
+  dim_red: React.JSX.Element;
+}
+
 const COLUMNS = [
   {
     name: 'Local Dimensionality Reduction Plots using PCA',
-    selector: 'dim_red',
+    selector: (row:TableRowType) => row.dim_red,
     sortable: false,
   },
 ];
@@ -52,7 +58,7 @@ const FilteredTable = ({
 }: Props) => {
   const darkMode = useAppSelector(state => state.uiSettings.darkMode)
 
-  const tableData = useMemo(() => (
+  const tableData:TableRowType[] = useMemo(() => (
     filteredSamples.map((sample:SampleType, sampleIndex: number) => {
       const processedAppClass = processedAppClasses[sampleIndex]
       
@@ -60,7 +66,7 @@ const FilteredTable = ({
         id: sampleIndex,
         labels: Object.keys(processedAppClass).filter((label:string) => processedAppClass[label]===1).join(", "),
         dim_red: (
-          <LocalUMAP
+          <LocalPlot
             inDistributionThreshold={inDistributionThreshold}
             processedAppClass={processedAppClass}
             sample={sample}
@@ -112,7 +118,7 @@ export default FilteredTable
 
 
 
-function LocalUMAP({
+function LocalPlot({
   inDistributionThreshold,
   processedAppClass,
   prototypeSupportEmbeddings,
@@ -132,7 +138,7 @@ function LocalUMAP({
 
   const labelsSortedByProbability = getLabelsSortedByProbability(sample, prototypeSupportEmbeddings)
   
-  const sampleCondition = determineSampleCondition(inDistributionThreshold,processedAppClass, sample)
+  const sampleCondition = determineSampleCondition(processedAppClass)
   const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
 
   return (
@@ -184,7 +190,7 @@ function filterUqVizData(
           getPrototypeSupportEmbeddings: prototypeSupportEmbeddings.getPrototypeSupportEmbeddings.filter(label => processedAppClass[label.label] === 1)
         }
       }
-      case SAMPLE_CONDITIONS.IN_DISTRO_UNSURE: {
+      case SAMPLE_CONDITIONS.CLASS_CONFUSION: {
         return {
           ...prototypeSupportEmbeddings,
           getPrototypeSupportEmbeddings: labelsSortedByDistance.slice(0,2),

@@ -5,6 +5,7 @@ import { scalePow } from 'd3'
 import getLocalStorageItem from '@/utils/localStorage/getLocalStorageItem'
 import toHex from '@/utils/toHex'
 import { COLORS, COLOR_BLIND_COLORS } from './colors'
+import { SAMPLE_CONDITIONS } from './determineSampleCondition'
 
 export const DEFAULT_OOD_COLOR_INTERVALS = 5
 export const DEFAULT_CONFIDENCE_FLOOR = 0.8
@@ -57,15 +58,19 @@ export function createLabelColorsMap(
   map: MapLabelToColorType = {},
 ):MapLabelToColorType {
   const processedLabels = labels.filter(label => {
-    if(label.toUpperCase() === "OTHER") {
-      console.warn("'OTHER' is a reserved label and will be skipped")
+    if(label.toUpperCase() === SAMPLE_CONDITIONS.OOD) {
+      console.warn(`'${SAMPLE_CONDITIONS.OOD}' is a reserved label and will be skipped`)
+      return false
+    }
+    else if(label.toUpperCase() === SAMPLE_CONDITIONS.CLASS_CONFUSION) {
+      console.warn(`'${SAMPLE_CONDITIONS.CLASS_CONFUSION}' is a reserved label and will be skipped`)
       return false
     }
     return true
   })
 
   //input validation
-  if(processedLabels.length === 0) console.warn("No valid labels. label-colors map will only have OTHER")
+  if(processedLabels.length === 0) console.warn("No valid labels.")
   if(colors.length === 0) console.warn("No valid colors. All labels will be #999999")
   if(colors.length === 1) console.warn(`Only one color provided. All labels will have the same color ${colors[0]}`)
 
@@ -98,7 +103,8 @@ export function createLabelColorsMap(
     }
   })
 
-  map.OTHER = () => "#999999" //manually set OTHER
+  map[SAMPLE_CONDITIONS.CLASS_CONFUSION] = () => "#999999"
+  map[SAMPLE_CONDITIONS.OOD] = () => "#999999"
 
   return map
 }

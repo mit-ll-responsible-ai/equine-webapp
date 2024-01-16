@@ -52,14 +52,15 @@ def resolve_get_protonet_support_embeddings(_, info, model_filename): #TODO how 
         raise ValueError(f"Model File '{model_path}' not found")
     
     model = load_equine_model(model_path)
-    support_examples = model.model.support
+    support_examples = model.get_support()
+    prototypes = model.get_prototypes()
     
     dataIndex = 0 # initialize the data index counter for the support examples
     support_data_points = []
     for i, label in enumerate(support_examples.keys()):
         label_point = {
             "label": str(label),
-            "prototype": model.model.prototypes[i],
+            "prototype": prototypes[i],
             "trainingExamples": []
         }
 

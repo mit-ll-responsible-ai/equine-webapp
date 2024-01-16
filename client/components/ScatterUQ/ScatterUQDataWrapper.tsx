@@ -233,11 +233,8 @@ function shouldWeightByOOD(
   if(dashboardSamples && processedAppClasses && inDistributionThreshold) {
     //return true if every sample is OOD
     return dashboardSamples.every((s,sIdx) => //check if every sample is in the OOD condition
-      determineSampleCondition( //check if this sample is in the OOD condition
-        inDistributionThreshold,
-        processedAppClasses[sIdx],
-        s
-      ) === SAMPLE_CONDITIONS.OOD
+      //check if this sample is in the OOD condition
+      determineSampleCondition(processedAppClasses[sIdx]) === SAMPLE_CONDITIONS.OOD
     )
   }
   return false //we don't have samples data, weight by confidence

@@ -6,6 +6,7 @@ import type { LabelCounter } from "@/components/Dashboard/getAppClassCounts"
 
 import styles from "./Filters.module.scss"
 import { Col, Row } from "react-bootstrap"
+import { SAMPLE_CONDITIONS } from "@/utils/determineSampleCondition"
 
 type Props = {
   appClassCounts: LabelCounter,
@@ -25,8 +26,10 @@ const Filters = ({
 }: Props) => {
   const columnCount = Math.ceil(labels.length / 4)
   const sortedLabels = [...labels].sort((a,b) => {
-    if(a === "OTHER") return 1
-    if(b === "OTHER") return -1
+    if(a === SAMPLE_CONDITIONS.CLASS_CONFUSION) return 1
+    if(a === SAMPLE_CONDITIONS.OOD) return 1
+    if(b === SAMPLE_CONDITIONS.CLASS_CONFUSION) return -1
+    if(b === SAMPLE_CONDITIONS.OOD) return -1
     return a<b ? -1 : 1
   })
   const columns = Array.from(Array(4).keys()).map((_,i) => {
@@ -45,8 +48,8 @@ const Filters = ({
     )
   }
 
-  const columnMapper = (c:string[]) => (
-    <Col sm={12} md={6}>
+  const columnMapper = (c:string[], i:number) => (
+    <Col key={i} sm={12} md={6}>
       {c.map(labelsMapper)}
     </Col>
   )

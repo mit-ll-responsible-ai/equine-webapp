@@ -89,7 +89,6 @@ export default function SelectOrUploadModel({
   }
 
   const showUploadModelButton = () => {
-    console.log("modelName",modelName)
     if(modelName === CUSTOM_MODEL_VALUE) {
       return (
         <div>
