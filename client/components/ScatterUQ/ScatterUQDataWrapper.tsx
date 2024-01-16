@@ -40,10 +40,6 @@ export default function ScatterUQDataWrapper({
     () => flattenVectors(prototypeSupportEmbeddings?.getPrototypeSupportEmbeddings,samples),
     [prototypeSupportEmbeddings, samples]
   )
-  // console.log("flattenVectors.length",flattenVectors.length, method)
-  // if(flattenVectors.length === 2) {
-  //   console.log("samples",samples,flattenVectors)
-  // }
 
   const { data: dimRedQueryData, error: dimRedError, isLoading: dimRedIsLoading } = useDimensionalityReductionQuery(
     {method, data:flattenedVectors, nNeighbors: 5},

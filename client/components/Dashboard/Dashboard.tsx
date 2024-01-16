@@ -36,6 +36,8 @@ import processConfidenceThresholds from "./processConfidenceThresholds"
 
 import styles from "./Dashboard.module.scss"
 import Link from "next/link"
+import ScatterUQ from "../ScatterUQ/ScatterUQ"
+import ScatterUQDataWrapper from "../ScatterUQ/ScatterUQDataWrapper"
 
 
 export default function Dashboard() {
@@ -50,7 +52,7 @@ export default function Dashboard() {
     runId,
     samples,
   } = useAppSelector(state => state.inferenceSettings)
-  // const serverUrl = useAppSelector(state => state.uiSettings.serverUrl)
+  const serverUrl = useAppSelector(state => state.uiSettings.serverUrl)
 
   useEffect(() => setDocumentTitle("Dashboard"))
 
@@ -188,7 +190,7 @@ export default function Dashboard() {
             prototypeSupportEmbeddings={prototypeSupportEmbeddings}
           />
 
-          {/* <div className="box">
+          <div className="box">
             <h4>Global Scatterplot with UMAP</h4>
             {(() => {
               if(uqVizIsLoading) {
@@ -203,10 +205,10 @@ export default function Dashboard() {
                   inputDataType={inputDataType}
                   method="umap"
                   modelName={modelFilename}
-                  processedAppClasses={processedAppClasses}
+                  processedAppClasses={filteredProcessedAppClasses}
                   prototypeSupportEmbeddings={prototypeSupportEmbeddings}
                   runId={runId}
-                  samples={samples}
+                  samples={filteredSamples}
                   serverUrl={serverUrl}
                 >
                   {props => (
@@ -220,7 +222,7 @@ export default function Dashboard() {
                 </ScatterUQDataWrapper>
               )
             })()}
-          </div> */}
+          </div>
           
         </div>
       )

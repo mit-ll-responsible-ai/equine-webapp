@@ -46,7 +46,6 @@ export function setProcessedAppClass(
     && (inDistributionThreshold < 100) //if the threshold is 100, consider all samples to be OOD
   )
 
-  processed_app_class[SAMPLE_CONDITIONS.OOD] = isOOD ? 1 : 0
   if(isOOD) { //if this sample is out of distribution
     for(const label in app_class) { //loop through the classes
       processed_app_class[label] = 0 //set the value to 0
@@ -73,6 +72,7 @@ export function setProcessedAppClass(
     
     processed_app_class[SAMPLE_CONDITIONS.CLASS_CONFUSION] = isClassConfusion ? 1 : 0
   }
+  processed_app_class[SAMPLE_CONDITIONS.OOD] = isOOD ? 1 : 0
 
   return processed_app_class
 }

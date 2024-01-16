@@ -57,7 +57,6 @@ const FilteredTable = ({
   prototypeSupportEmbeddings,
 }: Props) => {
   const darkMode = useAppSelector(state => state.uiSettings.darkMode)
-  console.log("processedAppClasses.length",processedAppClasses.length,"filteredSamples.length",filteredSamples.length)
 
   const tableData:TableRowType[] = useMemo(() => (
     filteredSamples.map((sample:SampleType, sampleIndex: number) => {
@@ -71,7 +70,6 @@ const FilteredTable = ({
             inDistributionThreshold={inDistributionThreshold}
             processedAppClass={processedAppClass}
             sample={sample}
-            sampleIndex={sampleIndex}
             prototypeSupportEmbeddings={prototypeSupportEmbeddings}
           />
         ),
@@ -125,12 +123,10 @@ function LocalPlot({
   processedAppClass,
   prototypeSupportEmbeddings,
   sample,
-  sampleIndex,
 }:{
   inDistributionThreshold: number,
   processedAppClass: AppClassType,
   sample: SampleType,
-  sampleIndex: number,
   prototypeSupportEmbeddings?: GetPrototypeSupportEmbeddingsQuery,
 }) {
   const {
@@ -144,9 +140,6 @@ function LocalPlot({
   
   const sampleCondition = determineSampleCondition(processedAppClass)
   const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
-  if(sampleIndex === 0) {
-    console.log("TEST",sample.app_class, processedAppClass, sampleCondition)
-  }
 
   return (
     <div>
