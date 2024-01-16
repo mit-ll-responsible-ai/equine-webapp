@@ -57,9 +57,9 @@ const ControlBar = (props: Props) => {
             <OverlayTrigger
               overlay={
                 <Tooltip id="inDistributionThresholdTooltip">
-                   <p> Screen out predictions for data that the model may not have seen before.</p>
-                   Moves to "out of distribution" (OOD) those examples that are farther from the mean of the predicted class than {Math.min(inDistributionThreshold, 99)}% of the training data. 
-                   A high tolerance lets the model make its best guess from its known classes; a low tolerance filters out more outliers to OOD.
+                   <p>Screen out predictions for data that the model may not have seen before.</p>
+                   <p>Moves to &quot;out of distribution&quot; (OOD) those examples that are farther from the mean of the predicted class than {Math.min(inDistributionThreshold, 99)}% of the training data. 
+                   A high tolerance lets the model make its best guess from its known classes; a low tolerance filters out more outliers to OOD.</p>
                 </Tooltip>
               }
               placement="bottom"
