@@ -85,18 +85,19 @@ def resolve_get_protonet_support_embeddings(_, info, model_filename): #TODO how 
 
 @convert_kwargs_to_snake_case
 def resolve_dimensionality_reduction(_, info, method, data, n_neighbors, random_state=42):
+    high_dimensions = len(data[0])
+    num_samples = len(data)
+
     if method == "pca":
         # ideally we want to get up to 5 scree values
         # but that is not possible if the number of dimensions is less than 5
-        high_dimensions = len(data[0])
         technique = PCA(n_components=min(high_dimensions, 5)) # we have more than 2 components so we can get the scree values
     elif method == "tsne":
         technique = TSNE(n_components=2, perplexity=5, random_state=random_state)
     elif method == "mds":
         technique = MDS(n_components=2, normalized_stress=True, metric=False, random_state=random_state)
     else:
-        technique = umap.UMAP(densmap=True, n_neighbors=n_neighbors, random_state=random_state) #densmap=True,
-    
+        technique = umap.UMAP(densmap=True, n_neighbors=min(high_dimensions, num_samples, n_neighbors), random_state=random_state, n_jobs=1) #densmap=True,
     data = np.array(data).astype(float)
     embeddings = technique.fit_transform(data)
 

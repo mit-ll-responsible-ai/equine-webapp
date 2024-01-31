@@ -199,6 +199,9 @@ export default function Dashboard() {
               else if(uqVizError) {
                 return <p>Error: {(uqVizError as Error).message}</p>
               }
+              else if(filteredSamples.length === 0) {
+                return <p>No data to display</p>
+              }
               return (
                 <ScatterUQDataWrapper
                   inDistributionThreshold={inDistributionThreshold}
