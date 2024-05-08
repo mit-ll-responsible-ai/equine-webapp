@@ -3,7 +3,6 @@
 import React, { useMemo } from "react";
 import DataTable from 'react-data-table-component';
 
-import type { AppClassType, SampleType } from "@/redux/inferenceSettings"
 import { useAppSelector } from "@/redux/reduxHooks";
 
 import Button from 'react-bootstrap/Button'
@@ -17,12 +16,10 @@ import NoDataMessage from "@/components/NoDataMessage"
 import ScatterUQ from "@/components/ScatterUQ/ScatterUQ";
 import ScatterUQDataWrapper from "@/components/ScatterUQ/ScatterUQDataWrapper";
 
-import determineSampleCondition, { getSampleConditionText, SAMPLE_CONDITIONS } from "@/utils/determineSampleCondition";
-import getLabelsSortedByProbability from "@/utils/getLabelsSortedByProbability";
-
-import { GetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated";
+import { getSampleConditionText } from "@/utils/determineSampleCondition";
 
 import styles from "./FilteredTable.module.scss"
+import { PlotDataForSample } from "@/utils/getPlotDataForSample";
 
 //https://www.npmjs.com/package/react-data-table-component
 //https://github.com/jbetancur/react-data-table-component/blob/master/src/DataTable/themes.js
@@ -43,39 +40,33 @@ const COLUMNS = [
 
 type Props = {
   downloadFilteredData: () => void,
-  filteredSamples: SampleType[],
   inDistributionThreshold: number,
-  processedAppClasses: AppClassType[],
-  prototypeSupportEmbeddings?: GetPrototypeSupportEmbeddingsQuery,
+  plotDataForSamples: PlotDataForSample[],
 }
 
 const FilteredTable = ({
   downloadFilteredData,
-  filteredSamples,
   inDistributionThreshold,
-  processedAppClasses,
-  prototypeSupportEmbeddings,
+  plotDataForSamples,
 }: Props) => {
   const darkMode = useAppSelector(state => state.uiSettings.darkMode)
 
   const tableData:TableRowType[] = useMemo(() => (
-    filteredSamples.map((sample:SampleType, sampleIndex: number) => {
-      const processedAppClass = processedAppClasses[sampleIndex]
-      
+    plotDataForSamples.map((plotDataForSample, sampleIndex) => {
+      const { processedAppClass } = plotDataForSample
+
       return {
         id: sampleIndex,
         labels: Object.keys(processedAppClass).filter((label:string) => processedAppClass[label]===1).join(", "),
         dim_red: (
           <LocalPlot
             inDistributionThreshold={inDistributionThreshold}
-            processedAppClass={processedAppClass}
-            sample={sample}
-            prototypeSupportEmbeddings={prototypeSupportEmbeddings}
+            plotDataForSample={plotDataForSample}
           />
         ),
       }
     })
-  ), [filteredSamples, inDistributionThreshold, processedAppClasses, prototypeSupportEmbeddings])
+  ), [inDistributionThreshold, plotDataForSamples])
 
 
   return (
@@ -120,14 +111,16 @@ export default FilteredTable
 
 function LocalPlot({
   inDistributionThreshold,
-  processedAppClass,
-  prototypeSupportEmbeddings,
-  sample,
+  plotDataForSample: {
+    getPrototypeSupportEmbeddings,
+    labelsSortedByProbability,
+    processedAppClass,
+    sample,
+    sampleCondition,
+  },
 }:{
   inDistributionThreshold: number,
-  processedAppClass: AppClassType,
-  sample: SampleType,
-  prototypeSupportEmbeddings?: GetPrototypeSupportEmbeddingsQuery,
+  plotDataForSample: PlotDataForSample,
 }) {
   const {
     inputDataType,
@@ -136,9 +129,7 @@ function LocalPlot({
   } = useAppSelector(state => state.inferenceSettings)
   const serverUrl = useAppSelector(state => state.uiSettings.serverUrl)
 
-  const labelsSortedByProbability = getLabelsSortedByProbability(sample, prototypeSupportEmbeddings)
   
-  const sampleCondition = determineSampleCondition(processedAppClass)
   const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
 
   return (
@@ -152,14 +143,7 @@ function LocalPlot({
             inputDataType={inputDataType}
             modelName={modelFilename}
             processedAppClasses={[processedAppClass]}
-            prototypeSupportEmbeddings={
-              filterUqVizData(
-                labelsSortedByProbability,
-                processedAppClass,
-                sampleCondition,
-                prototypeSupportEmbeddings
-              )
-            }
+            prototypeSupportEmbeddings={getPrototypeSupportEmbeddings}
             runId={runId}
             samples={[sample]}
             serverUrl={serverUrl}
@@ -173,40 +157,3 @@ function LocalPlot({
     </div>
   )
 }
-
-
-function filterUqVizData(
-  labelsSortedByDistance: GetPrototypeSupportEmbeddingsQuery["getPrototypeSupportEmbeddings"],
-  processedAppClass: AppClassType,
-  sampleCondition: SAMPLE_CONDITIONS,
-  prototypeSupportEmbeddings?: GetPrototypeSupportEmbeddingsQuery,
-):GetPrototypeSupportEmbeddingsQuery | undefined {
-  if(prototypeSupportEmbeddings) {
-
-    switch (sampleCondition) {
-      case SAMPLE_CONDITIONS.IN_DISTRO_CONFIDENT: {
-        return {
-          ...prototypeSupportEmbeddings,
-          getPrototypeSupportEmbeddings: prototypeSupportEmbeddings.getPrototypeSupportEmbeddings.filter(label => processedAppClass[label.label] === 1)
-        }
-      }
-      case SAMPLE_CONDITIONS.CLASS_CONFUSION: {
-        return {
-          ...prototypeSupportEmbeddings,
-          getPrototypeSupportEmbeddings: labelsSortedByDistance.slice(0,2),
-        }
-      }
-      default: { //SAMPLE_CONDITIONS.OOD
-        return {
-          ...prototypeSupportEmbeddings,
-          getPrototypeSupportEmbeddings: labelsSortedByDistance.slice(0,1),
-        }
-      }
-    }
-  }
-
-  return prototypeSupportEmbeddings
-}
-
-
-
