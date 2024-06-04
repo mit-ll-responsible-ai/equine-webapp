@@ -13,6 +13,10 @@
   The EQUINE repository is here https://github.com/mit-ll-responsible-ai/equine
 </p>
 
+## ScatterUQ at IEEE VIS 2023
+We presented ScatterUQ at IEEE VIS 2023: https://ieeexplore.ieee.org/document/10360884
+
+Our data and analysis script can be found in this release: https://github.com/mit-ll-responsible-ai/equine-webapp/releases/tag/ScatterUQ-VIS-2023-Data
 
 ## React Frontend
 
@@ -22,11 +26,6 @@ We deployed the frontend application to GitHub pages. You can view a static demo
 https://mit-ll-responsible-ai.github.io/equine-webapp/demo
 
 [![ScatterUQ Out of Distribution Example](client/public/ood.png)](https://mit-ll-responsible-ai.github.io/equine-webapp/demo)
-
-### ScatterUQ VIS 2023 Data
-Our data and analysis script can be found in this release:
-
-https://github.com/mit-ll-responsible-ai/equine-webapp/releases/tag/ScatterUQ-VIS-2023-Data
 
 ### Development Server Setup
 1. Install node packages
@@ -74,6 +73,21 @@ pip install pytest
 2. Run pytest
 ```
 pytest
+```
+
+## Bibliography
+
+```
+@INPROCEEDINGS{10360884,
+  author={Li, Harry X. and Jorgensen, Steven and Holodnak, John and Wollaber, Allan B.},
+  booktitle={2023 IEEE Visualization and Visual Analytics (VIS)}, 
+  title={ScatterUQ: Interactive Uncertainty Visualizations for Multiclass Deep Learning Problems}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={246-250},
+  keywords={Deep learning;Dimensionality reduction;Training;Uncertainty;Visual analytics;Soft sensors;Interactive systems;Uncertainty quantification;Machine learning;Dimensionality reduction;Visualization;Explainable AI},
+  doi={10.1109/VIS54172.2023.00058}}
 ```
 
 ## Disclaimer
