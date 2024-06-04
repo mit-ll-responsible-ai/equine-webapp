@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col'
 
 import { useMutation } from "@tanstack/react-query"
 
-import { AppClassType, setSamples, setModelFileName, setRunId } from "@/redux/inferenceSettings"
+import { AppClassType, setSamples, setModelName, setRunId } from "@/redux/inferenceSettings"
 import { showModal } from "@/redux/modal"
 import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks"
 
@@ -31,10 +31,10 @@ export default function SettingsForm() {
   const router = useRouter()
 
   const dispatch = useAppDispatch()
-  const modelFilename = useAppSelector(state => state.inferenceSettings.modelFilename)
+  const modelName = useAppSelector(state => state.inferenceSettings.modelName)
 
   const [uploadModelFile, setUploadModelFile] = useState<File | null>(null)
-  const [modelSelection, setModelSelection] = useState<string>(modelFilename)//preset the dropdown to the value from redux
+  const [modelSelection, setModelSelection] = useState<string>(modelName)//preset the dropdown to the value from redux
   const [sampleFiles, setSampleFiles] = useState<File[]>([])
 
   const {mutate:runPipeline, isLoading: runPipelineIsLoading} = useMutation({
@@ -49,7 +49,7 @@ export default function SettingsForm() {
       const data = await graphqlMultipartFormFetcher<RunInferenceMutation, RunInferenceMutationVariables>(
         RunInferenceDocument, 
         { 
-          modelFilename: runPipelineModelName,
+          modelName: runPipelineModelName,
           sampleFilenames: sampleFiles.map(d => d.name),
         }
       )()
@@ -68,7 +68,7 @@ export default function SettingsForm() {
         }))
       ))
       dispatch(setRunId(data.runInference.runId))
-      dispatch(setModelFileName(runPipelineModelName))
+      dispatch(setModelName(runPipelineModelName))
       router.push(ROUTES.DASHBOARD) //redirect to dashboard
     },
     onError: (error) => {

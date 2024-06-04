@@ -101,7 +101,7 @@ export type Mutation = {
 
 
 export type MutationRunInferenceArgs = {
-  modelFilename: Scalars['String']['input'];
+  modelName: Scalars['String']['input'];
   sampleFilenames: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
@@ -152,7 +152,7 @@ export type QueryDimensionalityReductionArgs = {
 
 
 export type QueryGetPrototypeSupportEmbeddingsArgs = {
-  modelFilename: Scalars['String']['input'];
+  modelName: Scalars['String']['input'];
 };
 
 
@@ -218,7 +218,7 @@ export type UploadModelResult = {
 };
 
 export type RunInferenceMutationVariables = Exact<{
-  modelFilename: Scalars['String']['input'];
+  modelName: Scalars['String']['input'];
   sampleFilenames: Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>;
 }>;
 
@@ -261,7 +261,7 @@ export type DimensionalityReductionQueryVariables = Exact<{
 export type DimensionalityReductionQuery = { __typename?: 'Query', dimensionalityReduction: { __typename?: 'DimensionalityReductionOutput', continuity: number, embeddings: Array<Array<number>>, normalizedStress: number, scree?: Array<number> | null, shepard: number, trustworthiness: number } };
 
 export type GetPrototypeSupportEmbeddingsQueryVariables = Exact<{
-  modelFilename: Scalars['String']['input'];
+  modelName: Scalars['String']['input'];
 }>;
 
 
@@ -299,8 +299,8 @@ export type RenderSupportFeatureDataQuery = { __typename?: 'Query', renderSuppor
 
 
 export const RunInferenceDocument = `
-    mutation RunInference($modelFilename: String!, $sampleFilenames: [String]!) {
-  runInference(modelFilename: $modelFilename, sampleFilenames: $sampleFilenames) {
+    mutation RunInference($modelName: String!, $sampleFilenames: [String]!) {
+  runInference(modelName: $modelName, sampleFilenames: $sampleFilenames) {
     runId
     samples {
       coordinates
@@ -407,8 +407,8 @@ export const useDimensionalityReductionQuery = <
       options
     );
 export const GetPrototypeSupportEmbeddingsDocument = `
-    query GetPrototypeSupportEmbeddings($modelFilename: String!) {
-  getPrototypeSupportEmbeddings(modelFilename: $modelFilename) {
+    query GetPrototypeSupportEmbeddings($modelName: String!) {
+  getPrototypeSupportEmbeddings(modelName: $modelName) {
     label
     prototype
     trainingExamples {

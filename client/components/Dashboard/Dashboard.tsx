@@ -49,7 +49,7 @@ export default function Dashboard() {
   const dispatch = useAppDispatch()
   const {
     inputDataType,
-    modelFilename,
+    modelName,
     runId,
     samples,
   } = useAppSelector(state => state.inferenceSettings)
@@ -72,11 +72,11 @@ export default function Dashboard() {
     data:prototypeSupportEmbeddings, 
     error: uqVizError, 
     isLoading: uqVizIsLoading,
-  } = useGetPrototypeSupportEmbeddingsQuery({modelFilename}, {staleTime: Infinity})
+  } = useGetPrototypeSupportEmbeddingsQuery({modelName}, {staleTime: Infinity})
 
 
   const downloadData = (samples: SampleType[], runId: number, fileName: string) => {
-    if(modelFilename === "") {
+    if(modelName === "") {
       dispatch(showModal({
         body: `This could indicate a bug in the app state. This data file should still mostly work. But if you were to upload this data file later, the app will not know what model was used.`,
         canClose: true,
@@ -85,7 +85,7 @@ export default function Dashboard() {
     }
 
     const data:DashboardDataType = {
-      modelFilename,
+      modelName,
       runId,
       samples,
       version: packageJson.version,
@@ -117,10 +117,10 @@ export default function Dashboard() {
       return (
         <div id={styles.isData}>
           <div className="box">
-            <h2>Results for model: {formatModelName(modelFilename)}</h2>
+            <h2>Results for model: {formatModelName(modelName)}</h2>
 
             <div>
-              <Link href={`${ROUTES.MODEL_SUMMARY_PAGE}/${modelFilename}`}>
+              <Link href={`${ROUTES.MODEL_SUMMARY_PAGE}?${new URLSearchParams({modelName,inputDataType})}`}>
                 <Button variant="secondary">Go to Model Summary Page <FontAwesomeIcon icon={faNewspaper}/></Button>
               </Link>
 
@@ -215,7 +215,7 @@ export default function Dashboard() {
                   inDistributionThreshold={inDistributionThreshold}
                   inputDataType={inputDataType}
                   method="umap"
-                  modelName={modelFilename}
+                  modelName={modelName}
                   processedAppClasses={filteredProcessedAppClasses}
                   prototypeSupportEmbeddings={{
                     getPrototypeSupportEmbeddings: mergedPrototypeSupportEmbeddings

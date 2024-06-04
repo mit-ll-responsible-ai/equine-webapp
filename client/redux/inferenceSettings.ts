@@ -9,7 +9,7 @@ export type InputDataType = typeof INPUT_DATA_TYPES[number]
 
 export interface ReduxInferenceSettingsState {
   inputDataType: InputDataType,
-  modelFilename: string,
+  modelName: string,
   runId: number,
   sampleFilenames: string[],
   samples: SampleType[],
@@ -17,7 +17,7 @@ export interface ReduxInferenceSettingsState {
 
 const INITIAL_STATE: ReduxInferenceSettingsState = {
   inputDataType: "Tabular",
-  modelFilename: "",
+  modelName: "",
   runId: -1,
   sampleFilenames: [],
   samples: [],
@@ -61,8 +61,8 @@ const inferenceSettingsSlice = createSlice({
     setInputDataType: (state, action: PayloadAction<InputDataType>) => {
       state.inputDataType = action.payload
     },
-    setModelFileName: (state, action: PayloadAction<string>) => {
-      state.modelFilename = action.payload
+    setModelName: (state, action: PayloadAction<string>) => {
+      state.modelName = action.payload
     },
     setRunId: (state, action: PayloadAction<number>) => {
       state.runId = action.payload
@@ -76,5 +76,5 @@ const inferenceSettingsSlice = createSlice({
   },
 })
 
-export const { setInputDataType, setModelFileName, setRunId, setSampleFileNames, setSamples } = inferenceSettingsSlice.actions
+export const { setInputDataType, setModelName, setRunId, setSampleFileNames, setSamples } = inferenceSettingsSlice.actions
 export default inferenceSettingsSlice.reducer

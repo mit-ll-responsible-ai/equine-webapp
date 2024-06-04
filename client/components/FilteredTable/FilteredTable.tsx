@@ -124,7 +124,7 @@ function LocalPlot({
 }) {
   const {
     inputDataType,
-    modelFilename,
+    modelName,
     runId,
   } = useAppSelector(state => state.inferenceSettings)
   const serverUrl = useAppSelector(state => state.uiSettings.serverUrl)
@@ -141,7 +141,7 @@ function LocalPlot({
           <ScatterUQDataWrapper
             inDistributionThreshold={inDistributionThreshold}
             inputDataType={inputDataType}
-            modelName={modelFilename}
+            modelName={modelName}
             processedAppClasses={[processedAppClass]}
             prototypeSupportEmbeddings={getPrototypeSupportEmbeddings}
             runId={runId}

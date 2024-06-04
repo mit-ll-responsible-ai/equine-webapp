@@ -45,8 +45,8 @@ def resolve_model_summary(_, info, model_name):
     return summary
 
 @convert_kwargs_to_snake_case
-def resolve_get_protonet_support_embeddings(_, info, model_filename): #TODO how does this work with EquineGP?
-    model_file = model_filename if SERVER_CONFIG.MODEL_EXT in model_filename else model_filename + SERVER_CONFIG.MODEL_EXT
+def resolve_get_protonet_support_embeddings(_, info, model_name): #TODO how does this work with EquineGP?
+    model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
     model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
     if not os.path.isfile(model_path):
         raise ValueError(f"Model File '{model_path}' not found")

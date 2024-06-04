@@ -15,7 +15,7 @@ def test_mutation_runInference(client):
     response = client.post("/graphql", json={
         "query": """
             mutation Test {
-              runInference(modelFilename: "protonet_test_model.eq", sampleFilenames: ["test_no_labels.csv"]) {
+              runInference(modelName: "protonet_test_model.eq", sampleFilenames: ["test_no_labels.csv"]) {
                 samples {
                   coordinates
                   inputData {

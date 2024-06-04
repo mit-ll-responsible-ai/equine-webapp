@@ -17,8 +17,8 @@ def test_query_models(client):
 
     response = client.post("/graphql", json={
         "query": """
-            query GetPrototypeSupportEmbeddings($modelFilename:String!) {
-              getPrototypeSupportEmbeddings(modelFilename:$modelFilename) {
+            query GetPrototypeSupportEmbeddings($modelName:String!) {
+              getPrototypeSupportEmbeddings(modelName:$modelName) {
                 label
                 prototype
                 trainingExamples {
@@ -35,7 +35,7 @@ def test_query_models(client):
               }
             }
         """,
-        "variables": {"modelFilename": "protonet_test_model.eq"},
+        "variables": {"modelName": "protonet_test_model.eq"},
     })
 
     embeddings = response.json["data"]["getPrototypeSupportEmbeddings"]
