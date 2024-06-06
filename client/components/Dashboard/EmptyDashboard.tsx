@@ -6,7 +6,7 @@ import Link from "next/link"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faUpload } from '@fortawesome/free-solid-svg-icons'
 
-import { SampleType, setSamples, rawSampleSchema, setModelFileName, setRunId } from "@/redux/inferenceSettings"
+import { SampleType, setSamples, rawSampleSchema, setModelName, setRunId } from "@/redux/inferenceSettings"
 import { closeModal, showModal } from "@/redux/modal"
 import { useAppDispatch } from "@/redux/reduxHooks"
 
@@ -21,7 +21,7 @@ const dashboardDataSchema = {
   $id: "/dashboardDataSchema",
   type: "object",
   properties: {
-    modelFilename: {type: "string"},
+    modelName: {type: "string"},
     samples: {
       type: "array",
       items: {$ref: "/rawSampleSchema"},
@@ -32,7 +32,7 @@ const dashboardDataSchema = {
 };
 
 export type DashboardDataType = {
-  modelFilename: string,
+  modelName: string,
   runId: number,
   samples: SampleType[],
   version: string,
@@ -92,7 +92,7 @@ export default function EmptyDashboard() {
                 }
               })
 
-              dispatch(setModelFileName(data.modelFilename))
+              dispatch(setModelName(data.modelName))
               dispatch(setRunId(data.runId))
               dispatch(setSamples(data.samples))
             }

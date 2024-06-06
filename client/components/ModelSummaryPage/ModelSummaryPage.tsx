@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faHome, faUndo, faAngleDoubleRight } from '@fortawesome/free-solid-svg-icons'
 
 
-import { useAppSelector } from '@/redux/reduxHooks';
+import { useAppDispatch, useAppSelector } from '@/redux/reduxHooks';
 
 // import ConfusionMatrix from "@/components/ConfusionMatrix/ConfusionMatrix"
 // import InfoTooltip from "@/components/InfoTooltip/InfoTooltip"
@@ -26,23 +26,31 @@ import { useModelSummaryQuery, useGetPrototypeSupportEmbeddingsQuery } from '@/g
 
 import styles from "./ModelSummaryPage.module.scss"
 import { useRouter } from 'next/router';
+import { INPUT_DATA_TYPES, setInputDataType } from '@/redux/inferenceSettings';
+import { isIn } from '@/utils/isIn';
 
 
 const formatTime = timeFormat("%B %d, %Y %H:%M:%S")
 
 
 const ModelSummaryPage = () => {
+  const dispatch = useAppDispatch()
   const {
     inputDataType,
     runId,
     samples,
   } = useAppSelector(state => state.inferenceSettings)
-  const { darkMode, serverUrl } = useAppSelector(state => state.uiSettings)
-
-  // const getColorFromLabel = useGetColorFromLabel()
+  const { serverUrl } = useAppSelector(state => state.uiSettings)
 
   const router = useRouter()
   const modelName = typeof router.query.modelName === "string" ? router.query.modelName : ""
+  const queryInputDataType = typeof router.query.inputDataType === "string" ? router.query.inputDataType : ""
+  useEffect(() => {
+    //if there is an input data type in the URL query AND it's different AND it's a valid input data type
+    if(queryInputDataType && queryInputDataType!==inputDataType && isIn(INPUT_DATA_TYPES,queryInputDataType)) {
+      dispatch(setInputDataType(queryInputDataType))
+    }
+  }, [queryInputDataType, inputDataType])
 
   const { data, error, isLoading } = useModelSummaryQuery({ modelName })
 
@@ -52,7 +60,7 @@ const ModelSummaryPage = () => {
     data: prototypeSupportEmbeddings,
     error: prototypeSupportEmbeddingsError,
     isLoading: prototypeSupportEmbeddingsIsLoading
-  } = useGetPrototypeSupportEmbeddingsQuery({modelFilename: modelName.replace(".eq", "")})
+  } = useGetPrototypeSupportEmbeddingsQuery({modelName: modelName.replace(".eq", "")})
 
 
   const getButtons = () => {
@@ -72,7 +80,7 @@ const ModelSummaryPage = () => {
                 </Link>
               )
               : ( //else offer to use this model to run the pipeline
-                <Link href={`${ROUTES.LANDING}?modelName=${modelName}`}>
+                <Link href={`${ROUTES.LANDING}?${new URLSearchParams({modelName})}`}>
                   <Button variant="secondary">Analyze files with this Model <FontAwesomeIcon icon={faHome}/></Button>
                 </Link>
               )

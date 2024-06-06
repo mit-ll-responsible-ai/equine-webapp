@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks"
 import type { AppClassType, SampleType } from "@/redux/inferenceSettings"
 import { showModal } from "@/redux/modal"
 
-import { useGetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
+import { GetPrototypeSupportEmbeddingsQuery, useGetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
 
 import ControlBar from "@/components/ControlBar/ControlBar"
 import EmptyDashboard, { DashboardDataType } from "./EmptyDashboard"
@@ -38,6 +38,7 @@ import styles from "./Dashboard.module.scss"
 import Link from "next/link"
 import ScatterUQ from "../ScatterUQ/ScatterUQ"
 import ScatterUQDataWrapper from "../ScatterUQ/ScatterUQDataWrapper"
+import { getPlotDataForSample } from "@/utils/getPlotDataForSample"
 
 
 export default function Dashboard() {
@@ -48,7 +49,7 @@ export default function Dashboard() {
   const dispatch = useAppDispatch()
   const {
     inputDataType,
-    modelFilename,
+    modelName,
     runId,
     samples,
   } = useAppSelector(state => state.inferenceSettings)
@@ -71,11 +72,11 @@ export default function Dashboard() {
     data:prototypeSupportEmbeddings, 
     error: uqVizError, 
     isLoading: uqVizIsLoading,
-  } = useGetPrototypeSupportEmbeddingsQuery({modelFilename}, {staleTime: Infinity})
+  } = useGetPrototypeSupportEmbeddingsQuery({modelName}, {staleTime: Infinity})
 
 
   const downloadData = (samples: SampleType[], runId: number, fileName: string) => {
-    if(modelFilename === "") {
+    if(modelName === "") {
       dispatch(showModal({
         body: `This could indicate a bug in the app state. This data file should still mostly work. But if you were to upload this data file later, the app will not know what model was used.`,
         canClose: true,
@@ -84,7 +85,7 @@ export default function Dashboard() {
     }
 
     const data:DashboardDataType = {
-      modelFilename,
+      modelName,
       runId,
       samples,
       version: packageJson.version,
@@ -98,33 +99,28 @@ export default function Dashboard() {
 
   const getContent = () => {
     if(samples.length > 0) {
-      const {
-        filteredSamples,
-        filteredProcessedAppClasses,
-      } = samples.map((sample,i) => ({
+      //filter the samples depending on the selections the user made in the filters
+      const filteredPlotDataForSamples = samples.map((sample,i) => ({
         sample,
         processedAppClass: processedAppClasses[i],
       })).filter(
         ({sample, processedAppClass}) => sampleMatchesFilters(filters, processedAppClass)
-      ).reduce(
-        (acc, {sample, processedAppClass}) => {
-          acc.filteredSamples.push(sample)
-          acc.filteredProcessedAppClasses.push(processedAppClass)
-          return acc
-        },
-        {filteredSamples:[], filteredProcessedAppClasses:[]} as {
-          filteredSamples: SampleType[],
-          filteredProcessedAppClasses: AppClassType[],
-        }
+      ).map(
+        //we want to run getPlotDataForSample here, once for each sample,
+        //because it's used for each local plot and for the global plot
+        ({sample, processedAppClass}) => getPlotDataForSample(sample,processedAppClass,prototypeSupportEmbeddings)
       )
+      const filteredSamples = filteredPlotDataForSamples.map(d => d.sample)
+      const filteredProcessedAppClasses = filteredPlotDataForSamples.map(d => d.processedAppClass)
+      
 
       return (
         <div id={styles.isData}>
           <div className="box">
-            <h2>Results for model: {formatModelName(modelFilename)}</h2>
+            <h2>Results for model: {formatModelName(modelName)}</h2>
 
             <div>
-              <Link href={`${ROUTES.MODEL_SUMMARY_PAGE}/${modelFilename}`}>
+              <Link href={`${ROUTES.MODEL_SUMMARY_PAGE}?${new URLSearchParams({modelName,inputDataType})}`}>
                 <Button variant="secondary">Go to Model Summary Page <FontAwesomeIcon icon={faNewspaper}/></Button>
               </Link>
 
@@ -184,14 +180,13 @@ export default function Dashboard() {
               runId,
               "equine_filtered_data.json",
             )}
-            filteredSamples={filteredSamples}
+            plotDataForSamples={filteredPlotDataForSamples}
             inDistributionThreshold={inDistributionThreshold}
-            processedAppClasses={filteredProcessedAppClasses}
-            prototypeSupportEmbeddings={prototypeSupportEmbeddings}
           />
 
           <div className="box">
             <h4>Global Scatterplot with UMAP</h4>
+
             {(() => {
               if(uqVizIsLoading) {
                 return <p>Loading...</p>
@@ -199,14 +194,32 @@ export default function Dashboard() {
               else if(uqVizError) {
                 return <p>Error: {(uqVizError as Error).message}</p>
               }
+              else if(filteredSamples.length === 0) {
+                return <p>No data to display</p>
+              }
+              
+              //Each local plot has its one or two relevant prototypeSupportEmbeddings.
+              //We need to merge all of them together for the global plot.
+              //This is basically a set merging operation.
+              const mergedPrototypeSupportEmbeddings = Object.values(
+                filteredPlotDataForSamples.reduce((acc,d) => {
+                  d.getPrototypeSupportEmbeddings?.getPrototypeSupportEmbeddings.forEach(pse => {
+                    acc[pse.label] = pse //add this relevant PSE to the set
+                  })
+                  return acc
+                }, {} as {[label:string]: GetPrototypeSupportEmbeddingsQuery["getPrototypeSupportEmbeddings"][number]})
+              )
+
               return (
                 <ScatterUQDataWrapper
                   inDistributionThreshold={inDistributionThreshold}
                   inputDataType={inputDataType}
                   method="umap"
-                  modelName={modelFilename}
+                  modelName={modelName}
                   processedAppClasses={filteredProcessedAppClasses}
-                  prototypeSupportEmbeddings={prototypeSupportEmbeddings}
+                  prototypeSupportEmbeddings={{
+                    getPrototypeSupportEmbeddings: mergedPrototypeSupportEmbeddings
+                  }}
                   runId={runId}
                   samples={filteredSamples}
                   serverUrl={serverUrl}
