@@ -10,7 +10,7 @@ type RunPipelineResult {
 
 type Mutation {
     runInference(
-        modelFilename: String!,
+        modelName: String!,
         sampleFilenames: [String]!
     ): RunPipelineResult!
 

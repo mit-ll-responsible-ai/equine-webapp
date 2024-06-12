@@ -14,14 +14,17 @@ from server.utils import SERVER_CONFIG, load_equine_model, calc_continuity, calc
 import os
 import torch
 
+# TODO eventually this script should do a parameter sweep on different values of tolerance levels
 OUTLIER_TOLERANCE = 0.95
 CLASS_CONFIDENCE_THRESHOLD = 0.7
 
+# these are the model files we want to evaluate
 model_files = [
     "vis_MNIST_GP_32D.eq",
     "vis_MNIST_GP_1024D.eq",
 ]
 
+# these are the files of test samples to evaluate on
 sample_files = [
     "some_digits.pt",
     "some_fashion.pt",
@@ -211,23 +214,28 @@ def format_avg_std(np_array):
     return f"{np.average(np_array):.10f} (± {np.std(np_array):.10f})"
 
 
-for model_file in model_files:
-    model_file = model_file if SERVER_CONFIG.MODEL_EXT in model_file else model_file + SERVER_CONFIG.MODEL_EXT
-    model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
-    if not os.path.isfile(model_path):
-        raise ValueError(f"Model File '{model_path}' not found")
-    
-    model = load_equine_model(model_path)
-    uq_data = get_uq_data(model)
-    samples = []
 
-    for sample_file in sample_files:
-        samples = samples + run_inference(model, sample_file)
-    
-    metrics_dict = get_metrics_for_method(samples, uq_data, "pca")
+if __name__ == "__main__":
+    # iterate over the models we are evaluating
+    for model_file in model_files:
+        # try to find and open the model
+        model_file = model_file if SERVER_CONFIG.MODEL_EXT in model_file else model_file + SERVER_CONFIG.MODEL_EXT
+        model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
+        if not os.path.isfile(model_path):
+            raise ValueError(f"Model File '{model_path}' not found")
+        model = load_equine_model(model_path)
+        
 
-    metrics_list = metrics_dict["ood"] + metrics_dict["confident"] + metrics_dict["confused_class"]
+        # get all the samples from the files
+        samples = []
+        for sample_file in sample_files:
+            samples = samples + run_inference(model, sample_file)
+        
 
-    get_metrics_as_np_arrays(metrics_list, model_file, "pca")
+        # calculate metrics
+        uq_data = get_uq_data(model)
+        metrics_dict = get_metrics_for_method(samples, uq_data, "pca")
+        metrics_list = metrics_dict["ood"] + metrics_dict["confident"] + metrics_dict["confused_class"]
+        get_metrics_as_np_arrays(metrics_list, model_file, "pca")
 
     

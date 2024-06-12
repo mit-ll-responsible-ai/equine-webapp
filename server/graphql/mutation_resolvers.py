@@ -31,10 +31,10 @@ def resolve_upload_file(_, info, file): #TODO Deduplicate code from upload model
         raise OSError("File not saved")
 
 @convert_kwargs_to_snake_case
-def resolve_run_inference(_, info, model_filename, sample_filenames):
+def resolve_run_inference(_, info, model_name, sample_filenames):
     run_id = int(time.time()) #TODO Better way to generate ID?
     
-    model_file = model_filename if SERVER_CONFIG.MODEL_EXT in model_filename else model_filename + SERVER_CONFIG.MODEL_EXT
+    model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
     model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
     if not os.path.isfile(model_path):
         raise ValueError(f"Model File '{model_path}' not found")
