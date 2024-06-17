@@ -16,7 +16,7 @@ model_files = [
 
 # these are the files of test samples to evaluate on
 test_sample_files = [
-    # "some_digits.pt",
+    "some_digits.pt",
     "some_fashion.pt",
 ]
 

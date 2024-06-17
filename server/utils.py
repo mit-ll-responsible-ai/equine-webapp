@@ -84,7 +84,7 @@ def combine_data_files(filename_list, is_train=False):
         dataset_filenames += [filename]*len(tensor_dataset.tensors[0])
         dataset_list.append(tensor_dataset)
 
-    dataset = torch.concat([data.tensors[0] for data in dataset_list], dim=1)
+    dataset = torch.concat([data.tensors[0] for data in dataset_list], dim=0)
     
     if is_train:
         dataset_labels = torch.concat([data.tensors[1] for data in dataset_list], dim=0)
