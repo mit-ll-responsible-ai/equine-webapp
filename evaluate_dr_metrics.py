@@ -1,12 +1,16 @@
+# This script is used to evaluate the dimensionality reduction (DR) metrics for ScatterUQ
+# You have to provide the model_files and test_sample_files
+# This script does DR in the same way as ScatterUQ, evaluates the DR metrics,
+# and prints the average metrics and standard deviations
+
 import heapq
 import numpy as np
 
 from server.graphql.query_resolvers import resolve_get_protonet_support_embeddings, resolve_dimensionality_reduction
 from server.graphql.mutation_resolvers import resolve_run_inference
 
-# TODO eventually this script should do a parameter sweep on different values of tolerance levels
-OUTLIER_TOLERANCE = 0.95
-CLASS_CONFIDENCE_THRESHOLD = 0.7
+# limit the number of samples we get per condition to avoid skewing our metrics too much
+NUM_SAMPLES_PER_CONDITION=10
 
 # these are the model files we want to evaluate
 model_files = [
@@ -21,54 +25,44 @@ test_sample_files = [
 ]
 
 
-def get_metrics_for_method(samples, uq_viz_data, method):
+def get_metrics_for_method(samples, uq_viz_data, method, outlier_tolerance, class_confidence_threshold):
+    # this diciontary tracks the DR metrics for each condition
     metrics_dict = {
         "ood": [],
         "confident": [],
         "confused_class": [],
     }
 
-    ood_count = 0
-    confused_count = 0
-    confident_count = 0
-    for sample in samples: # loop through all the samples to determine their condition
-        if sample["ood"] > OUTLIER_TOLERANCE: # if this is an OOD sample
-            if ood_count > 10:
-                continue
-            ood_count += 1
-            closest_label = max( # find the label with the highest confidence which will be the closest class
-            sample["labels"], 
+    for sample in samples: # loop through all the samples
+        # determine which condition this sample falls under
+        condition = "" # refers to whether the sample is in the OOD, confident, or class confusion use case
+        if sample["ood"] > outlier_tolerance: # if this is an OOD sample
+            condition = "ood"
+        elif any(l["confidence"]>class_confidence_threshold for l in sample["labels"]): # if this is a confident sample
+            condition = "confident"
+        else: # else the model is confused about which class
+            condition = "confused_class"
+
+        # if we have too many samples in this condition, skip this sample
+        if len(metrics_dict[condition]) >= NUM_SAMPLES_PER_CONDITION:
+            continue
+        
+        dr_points = [sample["coordinates"]] # add this sample to the points for DR
+        if condition=="ood" or condition=="confident": # if this is an OOD or confident sample
+            # the DR in ScatterUQ is the same for OOD and confident conditions
+            # we need to find the closest, ie most confident, label + training examples for DR
+            # "training examples" are synonymous with "support examples"
+            closest_label = max(
+                sample["labels"], 
                 key=lambda l:l["confidence"]
             )
             closest_label = next( # get the coordinates for the highest label
                 x for x in uq_viz_data if x["label"]==closest_label["label"]
             )
-            points = [closest_label["prototype"]] # add the prototype
-            points = points + [t["coordinates"] for t in closest_label["trainingExamples"]] # add the training examples
-            points = points + [sample["coordinates"]] # add the coordinates for this sample
-            points = list(p.detach().numpy() for p in points)
-            metrics_dict["ood"].append(resolve_dimensionality_reduction(None, {},method=method, data=points, n_neighbors=5)) # get the metrics
-        elif any(l["confidence"]>CLASS_CONFIDENCE_THRESHOLD for l in sample["labels"]): # if this is a confident sample
-            if confident_count > 10:
-                continue
-            confident_count += 1
-            most_confident_label = max( # find the label with the highest confidence
-                sample["labels"], 
-                key=lambda l:l["confidence"]
-            )
-            most_confident_label = next( # get the coordinates for the highest label
-                x for x in uq_viz_data if x["label"]==most_confident_label["label"]
-            )
-            points = [most_confident_label["prototype"]] # add the prototype
-            points = points + [t["coordinates"] for t in most_confident_label["trainingExamples"]] # add the training examples
-            points = points + [sample["coordinates"]] # add the coordinates for this sample
-            points = list(p.detach().numpy() for p in points)
-            metrics_dict["confident"].append(resolve_dimensionality_reduction(None, {},method=method, data=points, n_neighbors=5)) # get the metrics
-        else: # else the model is confused about which class
-            # find the two classes with the highest confidences
-            if confused_count > 10:
-                continue
-            confused_count += 1
+            dr_points = dr_points + [closest_label["prototype"]] # add the prototype
+            dr_points = dr_points + [t["coordinates"] for t in closest_label["trainingExamples"]] # add the training examples
+        else: # else the model is confused about which class the sample belongs to
+            # we need to find the two closest labels + training examples for DR 
             [most_confident_label, second_confident_label] = heapq.nlargest(
                 2, sample["labels"],
                 key=lambda l:l["confidence"]
@@ -79,15 +73,21 @@ def get_metrics_for_method(samples, uq_viz_data, method):
             second_confident_label = next( # get the coordinates
                 x for x in uq_viz_data if x["label"]==second_confident_label["label"]
             )
-            points = [most_confident_label["prototype"]] # add the prototype
-            points = points + [t["coordinates"] for t in most_confident_label["trainingExamples"]] # add the training examples
-            points = points + [second_confident_label["prototype"]] # add the prototype
-            points = points + [t["coordinates"] for t in second_confident_label["trainingExamples"]] # add the training examples
-            points = points + [sample["coordinates"]] # add the coordinates for this sample
-            points = list(p.detach().numpy() for p in points)
-            metrics_dict["confused_class"].append(resolve_dimensionality_reduction(None, {}, method=method, data=points, n_neighbors=5)) # get the metrics
+            if(most_confident_label["label"] == second_confident_label["label"]):
+                raise ValueError("The most and second most confident labels should not be the same")
+            
+            dr_points = dr_points + [most_confident_label["prototype"]] # add the closest prototype
+            dr_points = dr_points + [t["coordinates"] for t in most_confident_label["trainingExamples"]] # add the training examples
+            dr_points = dr_points + [second_confident_label["prototype"]] # add the second closest prototype
+            dr_points = dr_points + [t["coordinates"] for t in second_confident_label["trainingExamples"]] # add the training examples
+        
+        dr_points = list(p.detach().numpy() for p in dr_points) # detach the pytorch tensors for numpy
+        # do DR and get the metrics
+        metrics_dict[condition].append(
+            resolve_dimensionality_reduction(None, {}, method=method, data=dr_points, n_neighbors=5)
+        )
 
-    # print("ood_count",ood_count,"confused_count",confused_count,"confident_count",confident_count)
+    # print("ood count",len(metrics_dict["ood"]),"confused_class count",len(metrics_dict["confused_class"]),"confident count",len(metrics_dict["confident"]))
 
     return metrics_dict
 
@@ -110,17 +110,35 @@ def format_avg_std(np_array):
 
 
 if __name__ == "__main__":
+    outlier_tolerances = [0.2,0.4,0.6,0.8]
+    class_confidence_thresholds = [0.2,0.4,0.6,0.8]
+
     # iterate over the models we are evaluating
     for model_file in model_files:
-        # run inference all the test samples from the files
+        metrics_list = [] # this list will hold all the metrics for this model
+
+        # run inference on all the test samples from the files
         inference_data = resolve_run_inference(None, {}, model_file, test_sample_files)
         samples = inference_data["samples"]
-        
 
-        # calculate metrics
-        uq_data = resolve_get_protonet_support_embeddings(None, {}, model_file)
-        metrics_dict = get_metrics_for_method(samples, uq_data, "pca")
-        metrics_list = metrics_dict["ood"] + metrics_dict["confident"] + metrics_dict["confused_class"]
+        # get the prototype and support example embeddings for this model
+        uq_viz_data = resolve_get_protonet_support_embeddings(None, {}, model_file)
+
+        # sweep over several combinations of outlier tolerances and class confidence thresholds
+        for outlier_tolerance in outlier_tolerances:
+            for class_confidence_threshold in class_confidence_thresholds:
+                # calculate metrics
+                metrics_dict = get_metrics_for_method(
+                    samples=samples, 
+                    uq_viz_data=uq_viz_data, 
+                    method="pca",
+                    outlier_tolerance=outlier_tolerance,
+                    class_confidence_threshold=class_confidence_threshold
+                )
+
+                # append all the metrics into the main metrics list
+                metrics_list = metrics_list + metrics_dict["ood"] + metrics_dict["confident"] + metrics_dict["confused_class"]
+
         get_metrics_as_np_arrays(metrics_list, model_file, "pca")
 
     
