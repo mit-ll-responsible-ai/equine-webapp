@@ -39,13 +39,12 @@ def resolve_model_summary(_, info, model_name):
     
     model_save = torch.load(model_path)
     summary = model_save["train_summary"]
-    print("summary",summary)
     summary["lastModified"] = os.path.getmtime(model_path)
 
     return summary
 
 @convert_kwargs_to_snake_case
-def resolve_get_protonet_support_embeddings(_, info, model_name): #TODO how does this work with EquineGP?
+def resolve_get_protonet_support_embeddings(_, info, model_name):
     model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
     model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
     if not os.path.isfile(model_path):
@@ -105,7 +104,6 @@ def resolve_dimensionality_reduction(_, info, method, data, n_neighbors, random_
     if method == "pca":  
         scree = technique.explained_variance_ratio_.tolist()
         embeddings = embeddings[:,0:2] # slice off dimensions 3+ that we don't need
-        print(embeddings)
 
     # https://github.com/scikit-learn/scikit-learn/blob/9aaed498795f68e5956ea762fef9c440ca9eb239/sklearn/manifold/_mds.py#L148
     data_dist = distance_matrix(data,data)
