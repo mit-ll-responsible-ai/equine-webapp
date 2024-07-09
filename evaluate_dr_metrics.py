@@ -2,6 +2,10 @@
 # You have to provide the model_files and test_sample_files
 # This script does DR in the same way as ScatterUQ, evaluates the DR metrics,
 # and prints the average metrics and standard deviations
+# from server.utils import load_equine_model
+
+# there's a weird bug when we need to import torch first before importing zadu (which imports faiss). if you don't import torch first, the faiss import in zadu will cause a seg fault 11 when you try to call torch.linalg.qr
+import torch
 
 import heapq
 import numpy as np
@@ -97,12 +101,12 @@ def get_metrics_as_np_arrays(metrics_list, title, method):
     # time = np.array([m['time'] for m in metrics_list])
     trust = np.array([m['trustworthiness'] for m in metrics_list])
     continuity = np.array([m['continuity'] for m in metrics_list])
-    stress = np.array([m['normalizedStress'] for m in metrics_list])
-    shepard = np.array([m['shepard'] for m in metrics_list])
+    stress = np.array([m['stress'] for m in metrics_list])
+    srho = np.array([m['srho'] for m in metrics_list])
 
-    print(f"Method: {method} {title}, Continuity: {format_avg_std(continuity)},  Stress: { format_avg_std(stress)}, Shepard: {format_avg_std(shepard)},  Trust: {format_avg_std(trust)}")
+    print(f"Method: {method} {title}, Continuity: {format_avg_std(continuity)},  Stress: { format_avg_std(stress)}, Spearman’s R: {format_avg_std(srho)},  Trust: {format_avg_std(trust)}")
 
-    return continuity, shepard, stress, trust
+    return continuity, srho, stress, trust
 
 def format_avg_std(np_array):
     return f"{np.average(np_array):.10f} (± {np.std(np_array):.10f})"
