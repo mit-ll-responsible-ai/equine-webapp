@@ -1,18 +1,20 @@
 # Copyright (c) 2023 Massachusetts Institute of Technology
 # SPDX-License-Identifier: MIT
+from zadu import zadu
+
 import os
 
 # dimensionality reduction
 import numpy as np
-from sklearn.manifold import MDS, trustworthiness, TSNE
+from sklearn.manifold import MDS, TSNE
 from sklearn.decomposition import PCA
-from scipy.spatial import distance_matrix
 import umap
+
 
 import torch
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, load_equine_model, calc_continuity, calc_normalized_stress, calc_shepard_diagram_correlation, get_support_example_from_data_index, get_sample_from_data_index
+from server.utils import SERVER_CONFIG, load_equine_model, get_support_example_from_data_index, get_sample_from_data_index
 
 @convert_kwargs_to_snake_case
 def resolve_available_models(_, info, extension):
@@ -105,25 +107,25 @@ def resolve_dimensionality_reduction(_, info, method, data, n_neighbors, random_
         scree = technique.explained_variance_ratio_.tolist()
         embeddings = embeddings[:,0:2] # slice off dimensions 3+ that we don't need
 
-    # https://github.com/scikit-learn/scikit-learn/blob/9aaed498795f68e5956ea762fef9c440ca9eb239/sklearn/manifold/_mds.py#L148
-    data_dist = distance_matrix(data,data)
-    embedding_dist = distance_matrix(embeddings,embeddings)
+    zadu_obj = zadu.ZADU([
+        { "id": "tnc", "params": {"k": n_neighbors} },
+        { "id": "stress" },
+        { "id": "srho" }
+    ], data)
+    scores = zadu_obj.measure(embeddings)
 
-    # calculate metrics
-    continuity = calc_continuity(high_dist=data_dist, low_dist=embedding_dist, k=n_neighbors)
-    normalized_stress = calc_normalized_stress(high_dist=data_dist, low_dist=embedding_dist)
-    shepard = calc_shepard_diagram_correlation(high_dist_flat=data_dist.flatten(), low_dist_flat=embedding_dist.flatten())
-    trust = trustworthiness(data, embeddings, n_neighbors=n_neighbors, metric='euclidean')
-
-    
+    trustworthiness = scores[0]["trustworthiness"]
+    continuity = scores[0]["continuity"]
+    stress = scores[1]["stress"]
+    srho = scores[2]["spearman_rho"]
 
     return {
         "continuity": continuity,
         "embeddings": embeddings,
-        "normalizedStress": normalized_stress,
+        "stress": stress,
         "scree": scree,
-        "shepard": shepard[0],
-        "trustworthiness": trust,
+        "srho": srho,
+        "trustworthiness": trustworthiness,
     }
 
 @convert_kwargs_to_snake_case

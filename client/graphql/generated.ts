@@ -40,9 +40,9 @@ export type DimensionalityReductionOutput = {
   __typename?: 'DimensionalityReductionOutput';
   continuity: Scalars['Float']['output'];
   embeddings: Array<Array<Scalars['Float']['output']>>;
-  normalizedStress: Scalars['Float']['output'];
   scree?: Maybe<Array<Scalars['Float']['output']>>;
-  shepard: Scalars['Float']['output'];
+  srho: Scalars['Float']['output'];
+  stress: Scalars['Float']['output'];
   trustworthiness: Scalars['Float']['output'];
 };
 
@@ -258,7 +258,7 @@ export type DimensionalityReductionQueryVariables = Exact<{
 }>;
 
 
-export type DimensionalityReductionQuery = { __typename?: 'Query', dimensionalityReduction: { __typename?: 'DimensionalityReductionOutput', continuity: number, embeddings: Array<Array<number>>, normalizedStress: number, scree?: Array<number> | null, shepard: number, trustworthiness: number } };
+export type DimensionalityReductionQuery = { __typename?: 'Query', dimensionalityReduction: { __typename?: 'DimensionalityReductionOutput', continuity: number, embeddings: Array<Array<number>>, stress: number, scree?: Array<number> | null, srho: number, trustworthiness: number } };
 
 export type GetPrototypeSupportEmbeddingsQueryVariables = Exact<{
   modelName: Scalars['String']['input'];
@@ -387,9 +387,9 @@ export const DimensionalityReductionDocument = `
   dimensionalityReduction(method: $method, data: $data, nNeighbors: $nNeighbors) {
     continuity
     embeddings
-    normalizedStress
+    stress
     scree
-    shepard
+    srho
     trustworthiness
   }
 }

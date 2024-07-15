@@ -8,9 +8,9 @@ query DimensionalityReduction(
   dimensionalityReduction(method: $method, data:$data, nNeighbors:$nNeighbors) {
     continuity
     embeddings
-    normalizedStress
+    stress
     scree
-    shepard
+    srho
     trustworthiness
   }
 }

@@ -37,11 +37,11 @@ export default function ScatterUQ({
   getSupportExampleTabularData,
   inDistributionThreshold,
   inputDataType,
-  normalizedStress,
+  stress,
   processedAppClasses,
   samples,
   scree,
-  shepard,
+  srho,
   startingHeight=400,
   startingWidth=500,
   structuredEmbeddings,
@@ -442,9 +442,9 @@ export default function ScatterUQ({
                 <p><b>Dimensionality Reduction Metrics</b></p>
                 <div style={{width: "100%"}}>
                   <p style={{marginBottom: "0"}}><b>Continuity:</b> <span style={{float: "right"}}>{formatConfidence(continuity, 5)}</span></p>
-                  <p style={{marginBottom: "0"}}><b>Normalized Stress: &nbsp;</b> <span style={{float: "right"}}>{formatConfidence(normalizedStress, 5)}</span></p>
+                  <p style={{marginBottom: "0"}}><b>Stress: &nbsp;</b> <span style={{float: "right"}}>{formatConfidence(stress, 5)}</span></p>
                   {scree && <p style={{marginBottom: "0"}}><b>Scree Values:</b>&nbsp;<span style={{float: "right"}}>[{scree.map(s => s.toFixed(2)).join(", ")}]</span></p>}
-                  <p style={{marginBottom: "0"}}><b>Shepard:</b> <span style={{float: "right"}}>{formatConfidence(shepard, 5)}</span></p>
+                  <p style={{marginBottom: "0"}}><b>Spearman's Rank:</b> <span style={{float: "right"}}>{formatConfidence(srho, 5)}</span></p>
                   <p style={{marginBottom: "0"}}><b>Trustworthiness:</b> <span style={{float: "right"}}>{formatConfidence(trustworthiness, 5)}</span></p>
                 </div>
               </div>

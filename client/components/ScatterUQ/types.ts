@@ -21,12 +21,12 @@ export type ScatterUQDataProps = {
   getSupportExampleTabularData: (dataIndex: number) => Promise<RenderSupportFeatureDataQuery | undefined>,
   inDistributionThreshold?: number, //possibly undefined from the model summary page
   inputDataType: InputDataType,
-  normalizedStress: number,
+  stress: number,
   processedAppClasses?: AppClassType[], //possibly undefined from the model summary page
   prototypeSupportEmbeddings: GetPrototypeSupportEmbeddingsQuery,
   samples?: SampleType[], //possibly undefined from the model summary page
   scree?: number[] | null,
-  shepard: number,
+  srho: number,
   structuredEmbeddings: StructuredDimRedOutputType,
   trustworthiness: number,
 }

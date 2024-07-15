@@ -51,21 +51,21 @@ const IN_DISTRO_THRESHOLD = 95
 type UnpopulatedRowDataType = {
   continuity: number,
   inDistributionThreshold: number,
-  normalizedStress: number,
+  stress: number,
   processedAppClasses: AppClassType[],
   prototypeSupportEmbeddings: { getPrototypeSupportEmbeddings: string[] }, //we will replace the label strings with the actual prototypeSupportEmbedding
   samples: number[], //we will replace the dataIndex numbers with the actual inference sample
-  shepard: number,
+  srho: number,
   structuredEmbeddings: StructuredDimRedOutputType;
   trustworthiness: number;
 }
 type UnpopulatedGlobalUmapType = {
   continuity: number,
   inDistributionThreshold: number,
-  normalizedStress: number,
+  stress: number,
   prototypeSupportEmbeddings: { getPrototypeSupportEmbeddings: string[] }, //we will replace the label strings with the actual prototypeSupportEmbedding
   samples: number[], //we will replace the dataIndex numbers with the actual inference sample
-  shepard: number,
+  srho: number,
   structuredEmbeddings: StructuredDimRedOutputType;
   trustworthiness: number;
 }
@@ -288,12 +288,12 @@ const FilteredTable = ({
   data: {
     continuity: number,
     inDistributionThreshold: number,
-    normalizedStress: number,
+    stress: number,
     processedAppClasses: AppClassType[],
     prototypeSupportEmbeddings: GetPrototypeSupportEmbeddingsQuery,
     samples: SampleType[],
     scree?: number[] | null,
-    shepard: number,
+    srho: number,
     structuredEmbeddings: StructuredDimRedOutputType,
     trustworthiness: number,
   }[],

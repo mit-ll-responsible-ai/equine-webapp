@@ -98,37 +98,6 @@ def combine_data_files(filename_list, is_train=False):
     return SampleDataset(tensor_dataset, dataset_filenames, column_headers)
 
 
-# Continuity, Normalized Stress, and Shepard correlation functions taken from 
-# https://github.com/mespadoto/proj-quant-eval/blob/master/code/01_data_collection/metrics.py
-def calc_continuity(high_dist, low_dist, k):
-    num_samples = int(high_dist.shape[0])
-
-    nn_orig = high_dist.argsort()
-    nn_proj = low_dist.argsort()
-
-    knn_orig = nn_orig[:, :k + 1][:, 1:]
-    knn_proj = nn_proj[:, :k + 1][:, 1:]
-
-    sum_i = 0
-
-    for i in range(num_samples):
-        V = np.setdiff1d(knn_orig[i], knn_proj[i])
-
-        sum_j = 0
-        for j in range(V.shape[0]):
-            sum_j += np.where(nn_proj[i] == V[j])[0] - k
-
-        sum_i += sum_j
-
-    return float((1 - (2 / (num_samples * k * (2 * num_samples - 3 * k - 1)) * sum_i)))
-
-def calc_normalized_stress(high_dist, low_dist):
-    return np.sum((high_dist - low_dist)**2) / np.sum(high_dist**2)
-
-def calc_shepard_diagram_correlation(high_dist_flat, low_dist_flat):
-    return spearmanr(high_dist_flat, low_dist_flat)
-
-
 def get_support_example_from_data_index(model_name, data_index):
     data_index = int(data_index)
     assert data_index >= 0

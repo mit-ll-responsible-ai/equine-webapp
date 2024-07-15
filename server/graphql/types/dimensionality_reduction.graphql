@@ -3,9 +3,9 @@
 type DimensionalityReductionOutput {
   continuity: Float!,
   embeddings: [[Float!]!]!,
-  normalizedStress: Float!,
+  stress: Float!,
   scree: [Float!],
-  shepard: Float!,
+  srho: Float!,
   trustworthiness: Float!,
 }
 
