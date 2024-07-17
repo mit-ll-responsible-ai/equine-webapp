@@ -10,9 +10,11 @@ import Col from 'react-bootstrap/Col'
 
 import { useMutation } from "@tanstack/react-query"
 
-import { AppClassType, setSamples, setModelName, setRunId } from "@/redux/inferenceSettings"
+import { AppClassType, setModelName, setRunId } from "@/redux/inferenceSettings"
 import { showModal } from "@/redux/modal"
 import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks"
+
+import { useProcessAndSetSamples } from "@/hooks/useProcessAndSetSamples"
 
 import { ROUTES } from "@/utils/routes"
 import uploadModelAndSampleFiles from "@/utils/uploadModelAndSampleFiles"
@@ -31,6 +33,7 @@ export default function SettingsForm() {
   const router = useRouter()
 
   const dispatch = useAppDispatch()
+  const processAndSetSamples = useProcessAndSetSamples()
   const modelName = useAppSelector(state => state.inferenceSettings.modelName)
 
   const [uploadModelFile, setUploadModelFile] = useState<File | null>(null)
@@ -56,7 +59,7 @@ export default function SettingsForm() {
 
 
       /* Save data and go to dashboard */
-      dispatch(setSamples( //process and add the samples to redux
+      processAndSetSamples(
         data.runInference.samples.map(s => ({
           app_class: s.labels.reduce((acc, l) => {
             acc[l.label] = l.confidence
@@ -66,7 +69,7 @@ export default function SettingsForm() {
           inputData: s.inputData,
           ood: s.ood,
         }))
-      ))
+      )
       dispatch(setRunId(data.runInference.runId))
       dispatch(setModelName(runPipelineModelName))
       router.push(ROUTES.DASHBOARD) //redirect to dashboard
