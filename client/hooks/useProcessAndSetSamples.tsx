@@ -23,7 +23,7 @@ export function useProcessAndSetSamples() {
     const invalidScores: InvalidScoreTrackerType[] = []
 
     //loop over all the samples to make sure the scores are valid
-    samples.map((s,index) => {
+    samples.forEach((s,index) => {
       //check that the OOD values make sense
       if(s.ood < 0) {
         invalidScores.push({index, label:"", score: s.ood, type: "negative OOD"})
