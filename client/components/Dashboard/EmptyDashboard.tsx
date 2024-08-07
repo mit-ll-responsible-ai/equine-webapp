@@ -6,10 +6,11 @@ import Link from "next/link"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faUpload } from '@fortawesome/free-solid-svg-icons'
 
-import { SampleType, setSamples, rawSampleSchema, setModelName, setRunId } from "@/redux/inferenceSettings"
+import { SampleType, rawSampleSchema, setModelName, setRunId } from "@/redux/inferenceSettings"
 import { closeModal, showModal } from "@/redux/modal"
 import { useAppDispatch } from "@/redux/reduxHooks"
 
+import { useProcessAndSetSamples } from "@/hooks/useProcessAndSetSamples"
 
 import packageJson from "@/package.json"
 import ajvValidate from "@/utils/ajvValidate"
@@ -41,6 +42,7 @@ export type DashboardDataType = {
 
 export default function EmptyDashboard() {
   const dispatch = useAppDispatch()
+  const processAndSetSamples = useProcessAndSetSamples()
 
   const uploadDataFile = async (e:React.ChangeEvent<HTMLInputElement>) => {
     dispatch(showModal({ //open the modal
@@ -94,7 +96,7 @@ export default function EmptyDashboard() {
 
               dispatch(setModelName(data.modelName))
               dispatch(setRunId(data.runId))
-              dispatch(setSamples(data.samples))
+              processAndSetSamples(data.samples)
             }
           }
           else {
