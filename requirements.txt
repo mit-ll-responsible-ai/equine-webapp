@@ -8,4 +8,4 @@ scikit-learn
 torch
 torchvision
 umap-learn
-zadu
+zadu==0.1.1
