@@ -75,7 +75,7 @@ def resolve_get_protonet_support_embeddings(_, info, model_name):
                 "labels": [{
                     "label": str(idx),
                     "confidence": d,
-                } for idx,d in enumerate(predictions.classes[i])],
+                } for idx,d in enumerate(predictions.classes[j])],
                 "ood": predictions.ood_scores[j]
             })
             dataIndex += 1 # increment the data index counter
