@@ -30,7 +30,7 @@ type FeatureData {
 
 extend type Query {
     getPrototypeSupportEmbeddings(modelName:String!): [LabelPoints!]!
-    renderInferenceFeatureData(runId:Int!, dataIndex:Int!): FeatureData!
+    renderInferenceFeatureData(runId:Int!, modelName:String!, dataIndex:Int!): FeatureData!
     renderSupportFeatureData(modelName:String!, dataIndex:Int!): FeatureData!
 }
     

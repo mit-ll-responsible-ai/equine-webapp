@@ -8,7 +8,7 @@ import torch
 import equine
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, load_equine_model, combine_data_files
+from server.utils import SERVER_CONFIG, load_equine_model, combine_data_files, get_model_path
 
 @convert_kwargs_to_snake_case
 def resolve_upload_model(_, info, model_file):
@@ -34,29 +34,34 @@ def resolve_upload_file(_, info, file): #TODO Deduplicate code from upload model
 def resolve_run_inference(_, info, model_name, sample_filenames):
     run_id = int(time.time()) #TODO Better way to generate ID?
     
-    model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
-    model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
-    if not os.path.isfile(model_path):
-        raise ValueError(f"Model File '{model_path}' not found")
-    
+    # load the model
+    model_path = get_model_path(model_name)
     model = load_equine_model(model_path)
     input_dtype = next(model.embedding_model.parameters()).dtype
+    
+    # run inference on the samples
     sample_dataset = combine_data_files(sample_filenames)
     predictions = model.predict(sample_dataset.dataset.tensors[0].to(input_dtype))
+
+    # get the string names of the labels that the model was trained on
+    label_names = model.get_label_names()
+    
+    # this list will hold all the samples data to send back to the client
     samples_json = []
 
-    for i in range(len(sample_dataset.dataset)):
+    # loop through all the samples
+    for sample_idx in range(len(sample_dataset.dataset)):
         json_data = {
-            "coordinates": predictions.embeddings[i],
+            "coordinates": predictions.embeddings[sample_idx],
             "inputData": {
-                "file": sample_dataset.filenames[i],
-                "dataIndex" : i
+                "file": sample_dataset.filenames[sample_idx],
+                "dataIndex" : sample_idx
             },
             "labels": [{
-                "label": str(idx),
+                "label": label_names[label_idx] if label_names is not None else str(label_idx),
                 "confidence": d,
-            } for idx,d in enumerate(predictions.classes[i])],
-            "ood": predictions.ood_scores[i]
+            } for label_idx,d in enumerate(predictions.classes[sample_idx])],
+            "ood": predictions.ood_scores[sample_idx]
         }
 
         samples_json.append(json_data)

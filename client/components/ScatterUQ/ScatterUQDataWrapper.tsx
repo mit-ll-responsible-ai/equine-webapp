@@ -66,7 +66,7 @@ export default function ScatterUQDataWrapper({
       getInferenceSampleImageSrc: (dataIndex: number) => `${serverUrl}/render-image/inference/${runId}/${dataIndex}`,
       getInferenceSampleTabularData: async (dataIndex: number) => {
         return fetcher<RenderInferenceFeatureDataQuery, RenderInferenceFeatureDataQueryVariables>(
-          RenderInferenceFeatureDataDocument, {dataIndex, runId}
+          RenderInferenceFeatureDataDocument, {dataIndex, modelName, runId}
         )()
       },
       getSupportExampleImageSrc: (dataIndex: number) => `${serverUrl}/render-image/support/${modelName}/${dataIndex}`,

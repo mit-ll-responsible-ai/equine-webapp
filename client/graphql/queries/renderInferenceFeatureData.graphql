@@ -1,5 +1,5 @@
-query RenderInferenceFeatureData($runId: Int!, $dataIndex: Int!) {
-  renderInferenceFeatureData(runId: $runId, dataIndex: $dataIndex){
+query RenderInferenceFeatureData($runId: Int!, $modelName: String!, $dataIndex: Int!) {
+  renderInferenceFeatureData(runId: $runId, modelName: $modelName, dataIndex: $dataIndex){
     featureData,
     columnHeaders
   }

@@ -168,6 +168,7 @@ export type QueryModelsArgs = {
 
 export type QueryRenderInferenceFeatureDataArgs = {
   dataIndex: Scalars['Int']['input'];
+  modelName: Scalars['String']['input'];
   runId: Scalars['Int']['input'];
 };
 
@@ -283,6 +284,7 @@ export type ModelsQuery = { __typename?: 'Query', models: Array<{ __typename?: '
 
 export type RenderInferenceFeatureDataQueryVariables = Exact<{
   runId: Scalars['Int']['input'];
+  modelName: Scalars['String']['input'];
   dataIndex: Scalars['Int']['input'];
 }>;
 
@@ -480,8 +482,12 @@ export const useModelsQuery = <
       options
     );
 export const RenderInferenceFeatureDataDocument = `
-    query RenderInferenceFeatureData($runId: Int!, $dataIndex: Int!) {
-  renderInferenceFeatureData(runId: $runId, dataIndex: $dataIndex) {
+    query RenderInferenceFeatureData($runId: Int!, $modelName: String!, $dataIndex: Int!) {
+  renderInferenceFeatureData(
+    runId: $runId
+    modelName: $modelName
+    dataIndex: $dataIndex
+  ) {
     featureData
     columnHeaders
   }

@@ -102,9 +102,10 @@ def get_support_example_from_data_index(model_name, data_index):
     data_index = int(data_index)
     assert data_index >= 0
     
-    model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_name)
+    model_path = get_model_path(model_name)
     model = load_equine_model(model_path)
     support = model.get_support()
+    feature_names = model.get_feature_names()
 
     num_classes = len(support)
     num_support_per_class = support[0].shape[0]
@@ -113,14 +114,25 @@ def get_support_example_from_data_index(model_name, data_index):
     support_idx = data_index % num_support_per_class
     class_idx = int(data_index / num_support_per_class)
 
-    return support[class_idx][support_idx], support
+    return support[class_idx][support_idx], support, feature_names
 
-def get_sample_from_data_index(run_id, data_index):
+def get_sample_from_data_index(run_id, model_name, data_index):
     data_index = int(data_index)
     assert data_index >= 0
+
+    model_path = get_model_path(model_name)
+    model = load_equine_model(model_path)
+    feature_names = model.get_feature_names()
 
     run_id = int(run_id)
     sample_dataset = torch.load(os.path.join(SERVER_CONFIG.UPLOAD_FOLDER_PATH, f"{run_id}_run_data.pt"))
     assert len(sample_dataset.dataset) > data_index
     
-    return sample_dataset.dataset[data_index][0], sample_dataset
+    return sample_dataset.dataset[data_index][0], sample_dataset, feature_names
+
+def get_model_path(model_name:str):
+    model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
+    model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
+    if not os.path.isfile(model_path):
+        raise ValueError(f"Model File '{model_path}' not found")
+    return model_path
