@@ -16,7 +16,7 @@ type Props = {
   method?: string,
   modelName: string,
   processedAppClasses?: AppClassType[], //possibly undefined from the model summary page
-  prototypeSupportEmbeddings?: GetPrototypeSupportEmbeddingsQuery, //possibly undefined while still querying
+  prototypeSupportEmbeddings: GetPrototypeSupportEmbeddingsQuery,
   runId: number,
   samples?: SampleType[], //possibly undefined from the model summary page
   serverUrl: string,

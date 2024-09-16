@@ -8,7 +8,7 @@ import torch
 import equine
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, load_equine_model, combine_data_files, get_model_path
+from server.utils import SERVER_CONFIG, load_equine_model, combine_data_files, get_model_path, use_label_names
 
 @convert_kwargs_to_snake_case
 def resolve_upload_model(_, info, model_file):
@@ -44,7 +44,7 @@ def resolve_run_inference(_, info, model_name, sample_filenames):
     predictions = model.predict(sample_dataset.dataset.tensors[0].to(input_dtype))
 
     # get the string names of the labels that the model was trained on
-    label_names = model.get_label_names()
+    label_names = use_label_names(model, predictions.classes.shape[-1])
     
     # this list will hold all the samples data to send back to the client
     samples_json = []

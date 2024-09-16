@@ -7,9 +7,8 @@ import json
 import torch
 import equine
 import pandas as pd
-from scipy.stats import spearmanr
-import numpy as np
 from pathlib import Path
+from typing import Optional
 
 class Config:
     def __init__(self):
@@ -116,13 +115,15 @@ def get_support_example_from_data_index(model_name, data_index):
 
     return support[class_idx][support_idx], support, feature_names
 
-def get_sample_from_data_index(run_id, model_name, data_index):
+def get_sample_from_data_index(run_id, data_index, model_name:Optional[str]=None):
     data_index = int(data_index)
     assert data_index >= 0
 
-    model_path = get_model_path(model_name)
-    model = load_equine_model(model_path)
-    feature_names = model.get_feature_names()
+    feature_names = None
+    if model_name is not None:
+        model_path = get_model_path(model_name)
+        model = load_equine_model(model_path)
+        feature_names = model.get_feature_names()
 
     run_id = int(run_id)
     sample_dataset = torch.load(os.path.join(SERVER_CONFIG.UPLOAD_FOLDER_PATH, f"{run_id}_run_data.pt"))
@@ -136,3 +137,10 @@ def get_model_path(model_name:str):
     if not os.path.isfile(model_path):
         raise ValueError(f"Model File '{model_path}' not found")
     return model_path
+
+def use_label_names(model, num_labels:int):
+    label_names = model.get_label_names()
+    if len(label_names) != num_labels:
+        print(f"The number of label names ({len(label_names)}) does not match the number of classes ({num_labels}) in the predictions. The server will ignore the label names.")
+        return None
+    return label_names

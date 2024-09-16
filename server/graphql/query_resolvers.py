@@ -14,7 +14,7 @@ import umap
 import torch
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, load_equine_model, get_support_example_from_data_index, get_sample_from_data_index, get_model_path
+from server.utils import SERVER_CONFIG, load_equine_model, get_support_example_from_data_index, get_sample_from_data_index, get_model_path, use_label_names
 
 @convert_kwargs_to_snake_case
 def resolve_available_models(_, info, extension):
@@ -52,7 +52,7 @@ def resolve_get_protonet_support_embeddings(_, info, model_name):
     dataIndex = 0
 
     # get the string names of the labels that the model was trained on
-    label_names = model.get_label_names()
+    label_names = use_label_names(model, len(support_examples.keys()))
 
     # this list will hold all the prototype and support example embedding data for all labels
     embedding_data = []
@@ -135,14 +135,14 @@ def resolve_dimensionality_reduction(_, info, method, data, n_neighbors, random_
 
 @convert_kwargs_to_snake_case
 def resolve_render_inference_feature_data(_, info, run_id, model_name, data_index):
-    featureData, sample_dataset, columnHeaders = get_sample_from_data_index(run_id, model_name, data_index)
+    featureData, _, columnHeaders = get_sample_from_data_index(run_id, data_index, model_name=model_name)
     assert len(featureData) == len(columnHeaders)
     
     return {"featureData": featureData, "columnHeaders": columnHeaders}
 
 @convert_kwargs_to_snake_case
 def resolve_render_support_feature_data(_, info, model_name, data_index):
-    support_example, support, feature_names = get_support_example_from_data_index(model_name, data_index)
+    support_example, _, feature_names = get_support_example_from_data_index(model_name, data_index)
     featureData = support_example.tolist()
     columnHeaders = feature_names if feature_names is not None else list(range(len(featureData)))
     assert len(featureData) == len(columnHeaders)

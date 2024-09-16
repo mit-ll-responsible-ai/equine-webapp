@@ -138,18 +138,20 @@ function LocalPlot({
       {(
         <div>
           <p style={{width: "calc(900px + 2em)"}}>{confidenceMsg}</p>
-          <ScatterUQDataWrapper
-            inDistributionThreshold={inDistributionThreshold}
-            inputDataType={inputDataType}
-            modelName={modelName}
-            processedAppClasses={[processedAppClass]}
-            prototypeSupportEmbeddings={getPrototypeSupportEmbeddings}
-            runId={runId}
-            samples={[sample]}
-            serverUrl={serverUrl}
-          >
-            {props => <ScatterUQ {...props}/>}
-          </ScatterUQDataWrapper>
+          {getPrototypeSupportEmbeddings ? (
+            <ScatterUQDataWrapper
+              inDistributionThreshold={inDistributionThreshold}
+              inputDataType={inputDataType}
+              modelName={modelName}
+              processedAppClasses={[processedAppClass]}
+              prototypeSupportEmbeddings={getPrototypeSupportEmbeddings}
+              runId={runId}
+              samples={[sample]}
+              serverUrl={serverUrl}
+            >
+              {props => <ScatterUQ {...props}/>}
+            </ScatterUQDataWrapper>
+          ) : <p>There was an error getting the prototype support embeddings for this sample.</p>}
         </div>
       )}
 

@@ -100,7 +100,7 @@ const ModelSummaryPage = () => {
     else if(error) {
       return <div className="box">Error: {(error as Error).message}</div>
     }
-    else if(data?.modelSummary) {
+    else if(data?.modelSummary && prototypeSupportEmbeddings) {
       const modelSummary = data.modelSummary
 
       // const colors = modelSummary.numTrainExamples.map(e => getColorFromLabel(e.label))
