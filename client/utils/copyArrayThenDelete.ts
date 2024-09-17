@@ -9,7 +9,7 @@
  * @param  deleteIndex index of element to be deleted
  * @return             copied array with element deleted
  */
-export default function copyArrayDelete(arr: any[], deleteIndex: number) {
+export default function copyArrayThenDelete(arr: any[], deleteIndex: number) {
   const copy = arr.slice()
   copy.splice(deleteIndex, 1)
   return copy

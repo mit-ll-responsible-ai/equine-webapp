@@ -8,7 +8,7 @@ import { faDownload, faNewspaper } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks"
-import type { ClassProbabilitiesType, SampleType } from "@/redux/inferenceSettings"
+import type { SampleType } from "@/redux/inferenceSettings"
 import { showModal } from "@/redux/modal"
 
 import { GetPrototypeSupportEmbeddingsQuery, useGetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
@@ -23,7 +23,6 @@ import SamplesBarChart from "@/components/SamplesBarChart/SamplesBarChart"
 import useFilters, { sampleMatchesFilters } from "@/hooks/useFilters"
 
 import { downloadStringAsFile } from "@/utils/downloadFile"
-import formatModelName from "@/utils/formatModelName"
 import getLocalStorageItem from "@/utils/localStorage/getLocalStorageItem"
 import { ROUTES } from "@/utils/routes"
 import setDocumentTitle from "@/utils/setDocumentTitle"
@@ -114,7 +113,7 @@ function DashboardContent() {
   else if(uqVizError) {
     return (
       <div className="box">
-        <p>Error getting the prototype and support example embeddings for model {formatModelName(modelName)}:</p>
+        <p>Error getting the prototype and support example embeddings for model {modelName}:</p>
         <pre>{(uqVizError as Error).message}</pre>
       </div>
     )
@@ -138,7 +137,7 @@ function DashboardContent() {
     return (
       <div id={styles.isData}>
         <div className="box">
-          <h2>Results for model: {formatModelName(modelName)}</h2>
+          <h2>Results for model: {modelName}</h2>
 
           <div>
             <Link href={`${ROUTES.MODEL_SUMMARY_PAGE}?${new URLSearchParams({modelName,inputDataType})}`}>

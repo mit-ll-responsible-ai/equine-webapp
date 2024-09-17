@@ -29,7 +29,6 @@ import { useRouter } from 'next/router';
 import { INPUT_DATA_TYPES, setInputDataType } from '@/redux/inferenceSettings';
 import { isIn } from '@/utils/isIn';
 import useGetColorFromLabel from '@/hooks/useGetColorFromLabel';
-import formatModelName from '@/utils/formatModelName';
 
 
 const formatTime = timeFormat("%B %d, %Y %H:%M:%S")
@@ -125,7 +124,7 @@ const ModelSummaryPage = () => {
               else if(prototypeSupportEmbeddingsError) {
                 return (
                   <>
-                    <p>Error getting the prototype and support example embeddings for model {formatModelName(modelName)}:</p>
+                    <p>Error getting the prototype and support example embeddings for model {modelName}:</p>
                     <pre>{(prototypeSupportEmbeddingsError as Error).message}</pre>
                   </>
                 )
@@ -189,7 +188,7 @@ const ModelSummaryPage = () => {
   return (
     <div id={styles.modelSummaryPage}>
       <div className="box">
-        <h2>Summary for {formatModelName(modelName)}</h2>
+        <h2>Summary for {modelName}</h2>
 
         <div>
           <Link href={ROUTES.MODEL_SUMMARY_PAGE}>
