@@ -37,7 +37,7 @@ def resolve_model_summary(_, info, model_name):
     model_save = torch.load(model_path)
     summary = model_save["train_summary"]
     summary["lastModified"] = os.path.getmtime(model_path)
-
+    print("summary",summary)
     return summary
 
 @convert_kwargs_to_snake_case

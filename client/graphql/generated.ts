@@ -273,7 +273,7 @@ export type ModelSummaryQueryVariables = Exact<{
 }>;
 
 
-export type ModelSummaryQuery = { __typename?: 'Query', modelSummary?: { __typename?: 'ModelSummaryType', dateTrained: string, lastModified: number, modelType: string } | null };
+export type ModelSummaryQuery = { __typename?: 'Query', modelSummary?: { __typename?: 'ModelSummaryType', dateTrained: string, lastModified: number, modelType: string, numTrainExamples: Array<{ __typename?: 'LabelExamplesType', label: string, numExamples: number }> } | null };
 
 export type ModelsQueryVariables = Exact<{
   extension: Scalars['String']['input'];
@@ -446,6 +446,10 @@ export const ModelSummaryDocument = `
     dateTrained
     lastModified
     modelType
+    numTrainExamples {
+      label
+      numExamples
+    }
   }
 }
     `;
