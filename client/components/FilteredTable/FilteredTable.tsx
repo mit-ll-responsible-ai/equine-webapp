@@ -53,11 +53,11 @@ const FilteredTable = ({
 
   const tableData:TableRowType[] = useMemo(() => (
     plotDataForSamples.map((plotDataForSample, sampleIndex) => {
-      const { processedAppClass } = plotDataForSample
+      const { processedClassProbabilities } = plotDataForSample
 
       return {
         id: sampleIndex,
-        labels: Object.keys(processedAppClass).filter((label:string) => processedAppClass[label]===1).join(", "),
+        labels: Object.keys(processedClassProbabilities).filter((label:string) => processedClassProbabilities[label]===1).join(", "),
         dim_red: (
           <LocalPlot
             inDistributionThreshold={inDistributionThreshold}
@@ -114,7 +114,7 @@ function LocalPlot({
   plotDataForSample: {
     getPrototypeSupportEmbeddings,
     labelsSortedByProbability,
-    processedAppClass,
+    processedClassProbabilities,
     sample,
     sampleCondition,
   },
@@ -143,7 +143,7 @@ function LocalPlot({
               inDistributionThreshold={inDistributionThreshold}
               inputDataType={inputDataType}
               modelName={modelName}
-              processedAppClasses={[processedAppClass]}
+              processedClassesProbabilities={[processedClassProbabilities]}
               prototypeSupportEmbeddings={getPrototypeSupportEmbeddings}
               runId={runId}
               samples={[sample]}

@@ -11,7 +11,7 @@ export default function getLabelsSortedByProbability(
     return prototypeSupportEmbeddings.getPrototypeSupportEmbeddings.map( //create a shallow copy of the labels
       l => l
     ).sort( //sort in descending probability order
-      (a,b) => sample.app_class[b.label] - sample.app_class[a.label]
+      (a,b) => sample.classProbabilities[b.label] - sample.classProbabilities[a.label]
     )
   }
   return []

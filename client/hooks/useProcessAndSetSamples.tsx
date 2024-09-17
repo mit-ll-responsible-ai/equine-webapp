@@ -36,16 +36,16 @@ export function useProcessAndSetSamples() {
 
       //check that the class confidence values make sense
       let classConfidenceSum = 0
-      Object.entries(s.app_class).map(([label, value]) => {
+      Object.entries(s.classProbabilities).map(([label, value]) => {
         classConfidenceSum += value //sum the class confidence scores
 
         if(value < 0) {
           invalidScores.push({index, label, score: value, type: "negative class confidence"})
-          s.app_class[label] = 0 //force the class score to be 0
+          s.classProbabilities[label] = 0 //force the class score to be 0
         }
         else if(value > 1) {
           invalidScores.push({index, label, score: value, type: "greater than 1 class confidence"})
-          s.app_class[label] = 1 //force the class score to be 1
+          s.classProbabilities[label] = 1 //force the class score to be 1
         }
       })
 

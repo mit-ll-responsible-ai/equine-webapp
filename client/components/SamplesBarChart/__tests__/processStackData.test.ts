@@ -8,7 +8,7 @@ import processStackData from "../processStackData"
 const DEFAULT_SAMPLE = {
   ...sampleData.samples[0],
   ood: 0.5,
-  processed_app_class: sampleData.samples[0].app_class,
+  processedClassProbabilities: sampleData.samples[0].classProbabilities,
 }
 
 test("empty oodThresholds and samples", () => {
@@ -33,7 +33,7 @@ test("4 thresholds, no overlapping samples", () => {
     {
       ...DEFAULT_SAMPLE,
       ood: 0.8,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2: 1,
         C1: 0,
         C3: 1,
@@ -42,7 +42,7 @@ test("4 thresholds, no overlapping samples", () => {
     {
       ...DEFAULT_SAMPLE,
       ood: 0.4,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2: 0,
         C1: 1,
         C3: 1,
@@ -86,7 +86,7 @@ test("4 thresholds, some overlapping samples", () => {
     {
       ...DEFAULT_SAMPLE,
       ood: 0.8,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2: 1,
         C1: 0,
         C3: 1,
@@ -95,7 +95,7 @@ test("4 thresholds, some overlapping samples", () => {
     {
       ...DEFAULT_SAMPLE,
       ood: 0.4,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2: 0,
         C1: 1,
         C3: 1,
@@ -104,7 +104,7 @@ test("4 thresholds, some overlapping samples", () => {
     {
       ...DEFAULT_SAMPLE,
       ood: 0.95,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2: 0,
         C1: 1,
         C3: 1,
@@ -113,7 +113,7 @@ test("4 thresholds, some overlapping samples", () => {
     {
       ...DEFAULT_SAMPLE,
       ood: 0.79,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2: 1,
         C1: 0,
         C3: 1,
@@ -157,7 +157,7 @@ test("1 threshold, some samples", () => {
     {
       ...DEFAULT_SAMPLE,
       ood: 0.8,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2: 1,
         C1: 0,
         C3: 1,
@@ -166,7 +166,7 @@ test("1 threshold, some samples", () => {
     {
       ...DEFAULT_SAMPLE,
       ood: 0.4,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2: 0,
         C1: 1,
         C3: 1,

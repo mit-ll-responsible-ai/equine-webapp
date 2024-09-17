@@ -8,21 +8,21 @@ import getAppClassCounts from "../getAppClassCounts"
 const DEFAULT_SAMPLE = {
   ...sampleData.samples[0],
   ood: 0.5,
-  processed_app_class: sampleData.samples[0].app_class,
+  processedClassProbabilities: sampleData.samples[0].classProbabilities,
 }
 
 test("basic example", () => {
   const samples = [
     {
       ...DEFAULT_SAMPLE,
-      processed_app_class: {
+      processedClassProbabilities: {
         "C2": 1,
         "C1": 0
       }
     },
     {
       ...DEFAULT_SAMPLE,
-      processed_app_class: {
+      processedClassProbabilities: {
         "C2": 1,
         "C3": 1
       }

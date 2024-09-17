@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 import processConfidenceThresholds, { setProcessedAppClass } from "../processConfidenceThresholds"
 const SAMPLE = {
-  "app_class":{
+  "classProbabilities":{
     "C2":0.000003999493003948323,
     "C1":0.00001175577260670263,
     "C3":0.0000034071670881619813,
@@ -17,7 +17,7 @@ describe("processConfidenceThresholds", () => {
     {
       ...SAMPLE, 
       ood: 0.7, 
-      app_class: {
+      classProbabilities: {
         C2:0.25, C1:0.1, C3:0.15,
         C4:0.2, C5:0.15, OTHER: 0.15,
       } 
@@ -25,7 +25,7 @@ describe("processConfidenceThresholds", () => {
     {
       ...SAMPLE, 
       ood: 0.2, 
-      app_class: {
+      classProbabilities: {
         C2:0.01, C1:0.9, C3:0.02,
         C4:0.02, C5:0.03, OTHER: 0.01,
       } 
@@ -40,14 +40,14 @@ describe("processConfidenceThresholds", () => {
     expect(result).toEqual([
       {
         ...SAMPLES[0],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:1, C1:1, C3:1,
           C4:1, C5:1, OTHER: 0,
         } 
       },
       {
         ...SAMPLES[1],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:1, C1:1, C3:1,
           C4:1, C5:1, OTHER: 0,
         } 
@@ -64,14 +64,14 @@ describe("processConfidenceThresholds", () => {
     expect(result).toEqual([
       {
         ...SAMPLES[0],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:1, C1:0, C3:0,
           C4:1, C5:0, OTHER: 0,
         } 
       },
       {
         ...SAMPLES[1],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:0, C1:1, C3:0,
           C4:0, C5:0, OTHER: 0,
         } 
@@ -88,14 +88,14 @@ describe("processConfidenceThresholds", () => {
     expect(result).toEqual([
       {
         ...SAMPLES[0],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:0, C1:0, C3:0,
           C4:0, C5:0, OTHER: 1,
         } 
       },
       {
         ...SAMPLES[1],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:0, C1:1, C3:0,
           C4:0, C5:0, OTHER: 0,
         } 
@@ -112,14 +112,14 @@ describe("processConfidenceThresholds", () => {
     expect(result).toEqual([
       {
         ...SAMPLES[0],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:0, C1:0, C3:0,
           C4:0, C5:0, OTHER: 1,
         } 
       },
       {
         ...SAMPLES[1],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:0, C1:0, C3:0,
           C4:0, C5:0, OTHER: 1,
         } 
@@ -136,14 +136,14 @@ describe("processConfidenceThresholds", () => {
     expect(result).toEqual([
       {
         ...SAMPLES[0],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:0, C1:0, C3:0,
           C4:0, C5:0, OTHER: 1,
         } 
       },
       {
         ...SAMPLES[1],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:1, C1:1, C3:1,
           C4:1, C5:1, OTHER: 0,
         } 
@@ -160,14 +160,14 @@ describe("processConfidenceThresholds", () => {
     expect(result).toEqual([
       {
         ...SAMPLES[0],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:0, C1:0, C3:0,
           C4:0, C5:0, OTHER: 1,
         } 
       },
       {
         ...SAMPLES[1],
-        processed_app_class: {
+        processedClassProbabilities: {
           C2:0, C1:0, C3:0,
           C4:0, C5:0, OTHER: 1,
         } 
@@ -186,7 +186,7 @@ describe("setProcessedAppClass", () => {
 
     expect(sampleCopy).toEqual({
       ...SAMPLE,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2:1, C1:1, C3:1,
         C4:1, C5:1, OTHER: 0,
       }
@@ -199,7 +199,7 @@ describe("setProcessedAppClass", () => {
 
     expect(sampleCopy).toEqual({
       ...SAMPLE,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2:0, C1:0, C3:0,
         C4:1, C5:0, OTHER: 0,
       }
@@ -212,7 +212,7 @@ describe("setProcessedAppClass", () => {
 
     expect(sampleCopy).toEqual({
       ...SAMPLE,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2:0, C1:0, C3:0,
         C4:0, C5:0, OTHER: 1,
       }
@@ -225,7 +225,7 @@ describe("setProcessedAppClass", () => {
 
     expect(sampleCopy).toEqual({
       ...SAMPLE,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2:0, C1:0, C3:0,
         C4:0, C5:0, OTHER: 1,
       }
@@ -238,7 +238,7 @@ describe("setProcessedAppClass", () => {
 
     expect(sampleCopy).toEqual({
       ...SAMPLE,
-      processed_app_class: {
+      processedClassProbabilities: {
         C2:0, C1:0, C3:0,
         C4:0, C5:0, OTHER: 1,
       }

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 
-import { AppClassType, InputDataType, SampleType } from '@/redux/inferenceSettings'
+import { ClassProbabilitiesType, InputDataType, SampleType } from '@/redux/inferenceSettings'
 
 import { GetPrototypeSupportEmbeddingsQuery, RenderInferenceFeatureDataDocument, RenderInferenceFeatureDataQuery, RenderInferenceFeatureDataQueryVariables, RenderSupportFeatureDataDocument, RenderSupportFeatureDataQuery, RenderSupportFeatureDataQueryVariables, fetcher, useDimensionalityReductionQuery } from '@/graphql/generated'
 
@@ -15,7 +15,7 @@ type Props = {
   inputDataType: InputDataType,
   method?: string,
   modelName: string,
-  processedAppClasses?: AppClassType[], //possibly undefined from the model summary page
+  processedClassesProbabilities?: ClassProbabilitiesType[], //possibly undefined from the model summary page
   prototypeSupportEmbeddings: GetPrototypeSupportEmbeddingsQuery,
   runId: number,
   samples?: SampleType[], //possibly undefined from the model summary page
@@ -30,7 +30,7 @@ export default function ScatterUQDataWrapper({
   inputDataType,
   method="pca",
   modelName,
-  processedAppClasses,
+  processedClassesProbabilities,
   prototypeSupportEmbeddings,
   runId,
   samples,
@@ -50,7 +50,7 @@ export default function ScatterUQDataWrapper({
     dimRedQueryData?.dimensionalityReduction?.embeddings as [number,number][] | undefined, 
     prototypeSupportEmbeddings?.getPrototypeSupportEmbeddings,
     samples,
-    processedAppClasses,
+    processedClassesProbabilities,
     inDistributionThreshold,
   )
 
@@ -78,7 +78,7 @@ export default function ScatterUQDataWrapper({
       inDistributionThreshold,
       inputDataType,
       stress: dimRedQueryData.dimensionalityReduction.stress,
-      processedAppClasses,
+      processedClassesProbabilities,
       samples,
       scree: dimRedQueryData.dimensionalityReduction.scree,
       srho: dimRedQueryData.dimensionalityReduction.srho,
@@ -151,13 +151,13 @@ function restructureVectors(
   embeddings2D?: [number, number][],
   prototypeSupportEmbeddings?: GetPrototypeSupportEmbeddingsQuery["getPrototypeSupportEmbeddings"],
   dashboardSamples?: SampleType[],
-  processedAppClasses?: AppClassType[],
+  processedClassesProbabilities?: ClassProbabilitiesType[],
   inDistributionThreshold?: number,
   ):StructuredDimRedOutputType {
   //if we have the proper data
   if(embeddings2D && prototypeSupportEmbeddings) {
     //true if we should weight by confidence, else false we should weight by 1 - OOD score
-    const weightByOOD = shouldWeightByOOD(dashboardSamples, processedAppClasses, inDistributionThreshold)
+    const weightByOOD = shouldWeightByOOD(dashboardSamples, processedClassesProbabilities, inDistributionThreshold)
 
     //we flattened all the vectors to run dimensionality reduction
     //but now we want to re-structure the 2D embedding vectors
@@ -220,21 +220,21 @@ function restructureVectors(
  * If every sample is OOD, we should weight by the 1-OOD score
  * Else if there are no samples or some non-OOD samples, when we should weight by confidence
  * @param dashboardSamples 
- * @param processedAppClasses 
+ * @param processedClassesProbabilities 
  * @param inDistributionThreshold 
  * @returns 
  */
 function shouldWeightByOOD(
   dashboardSamples?: SampleType[],
-  processedAppClasses?: AppClassType[],
+  processedClassesProbabilities?: ClassProbabilitiesType[],
   inDistributionThreshold?: number,
 ):boolean {
   //if we have samples data
-  if(dashboardSamples && processedAppClasses && inDistributionThreshold) {
+  if(dashboardSamples && processedClassesProbabilities && inDistributionThreshold) {
     //return true if every sample is OOD
     return dashboardSamples.every((s,sIdx) => //check if every sample is in the OOD condition
       //check if this sample is in the OOD condition
-      determineSampleCondition(processedAppClasses[sIdx]) === SAMPLE_CONDITIONS.OOD
+      determineSampleCondition(processedClassesProbabilities[sIdx]) === SAMPLE_CONDITIONS.OOD
     )
   }
   return false //we don't have samples data, weight by confidence

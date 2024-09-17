@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { axisBottom, axisLeft, contourDensity, geoPath, ScaleLinear, scaleLinear, select } from 'd3'
 
-import { AppClassType, InputDataType, SampleType } from '@/redux/inferenceSettings'
+import { ClassProbabilitiesType, InputDataType, SampleType } from '@/redux/inferenceSettings'
 
 import useGetColorFromLabel from '@/hooks/useGetColorFromLabel'
 import { Sample, GetPrototypeSupportEmbeddingsQuery } from '@/graphql/generated'
@@ -38,7 +38,7 @@ export default function ScatterUQ({
   inDistributionThreshold,
   inputDataType,
   stress,
-  processedAppClasses,
+  processedClassesProbabilities,
   samples,
   scree,
   srho,
@@ -183,20 +183,20 @@ export default function ScatterUQ({
   useEffect(() => {
     //if the data is now ready or has changed
     if(prototypeSupportEmbeddings && structuredEmbeddings.labels.length>0) {
-      if(inDistributionThreshold && processedAppClasses && samples) { //if there are samples (ex dashboard)
+      if(inDistributionThreshold && processedClassesProbabilities && samples) { //if there are samples (ex dashboard)
         if(samples?.length > 1) { //if there are multiple samples (ex dashboard global plot), pick the first two samples
           setLeftHoverPoint(
             getSampleHoverPointDetails({
               sampleIndex: 0, //use the first sample
               getInferenceSampleImageSrc, getInferenceSampleTabularData, inputDataType,
-              processedAppClasses, samples, scaleX, scaleY, structuredEmbeddings,
+              processedClassesProbabilities, samples, scaleX, scaleY, structuredEmbeddings,
             })
           )
           setRightHoverPoint(
             getSampleHoverPointDetails({
               sampleIndex: 1, //use the second sample
               getInferenceSampleImageSrc, getInferenceSampleTabularData, inputDataType,
-              processedAppClasses, samples, scaleX, scaleY, structuredEmbeddings,
+              processedClassesProbabilities, samples, scaleX, scaleY, structuredEmbeddings,
             })
           )
         }
@@ -244,7 +244,7 @@ export default function ScatterUQ({
             getSampleHoverPointDetails({
               sampleIndex: 0, //use the first sample
               getInferenceSampleImageSrc, getInferenceSampleTabularData, inputDataType,
-              processedAppClasses, samples, scaleX, scaleY, structuredEmbeddings,
+              processedClassesProbabilities, samples, scaleX, scaleY, structuredEmbeddings,
             })
           )
         }
@@ -274,7 +274,7 @@ export default function ScatterUQ({
   }, [
     getInferenceSampleImageSrc, getInferenceSampleTabularData,
     getSupportExampleImageSrc, getSupportExampleTabularData,
-    inDistributionThreshold, inputDataType, processedAppClasses, samples,
+    inDistributionThreshold, inputDataType, processedClassesProbabilities, samples,
     scaleX, scaleY, structuredEmbeddings, prototypeSupportEmbeddings
   ])
 
@@ -386,8 +386,8 @@ export default function ScatterUQ({
             })}
 
             <g>
-              {processedAppClasses && samples && samples.map((s,sIdx) => {
-                const processedAppClass = processedAppClasses[sIdx]
+              {processedClassesProbabilities && samples && samples.map((s,sIdx) => {
+                const processedClassProbabilities = processedClassesProbabilities[sIdx]
                 const dimRedSample = structuredEmbeddings.samples[sIdx]
                 const cx = scaleX(getX(dimRedSample))
                 const cy = scaleY(getY(dimRedSample))
@@ -398,7 +398,7 @@ export default function ScatterUQ({
                     className="point"
                     cx={cx}
                     cy={cy}
-                    fill={getColorFromLabel(getMaxLabel(processedAppClass))}
+                    fill={getColorFromLabel(getMaxLabel(processedClassProbabilities))}
                     onMouseEnter={
                       (e) => onMouseEnterPoint(
                         cx, cy, 
@@ -406,7 +406,7 @@ export default function ScatterUQ({
                           getInferenceSampleImageSrc={getInferenceSampleImageSrc}
                           getInferenceSampleTabularData={getInferenceSampleTabularData}
                           inputDataType={inputDataType}
-                          processedAppClass={processedAppClass}
+                          processedClassProbabilities={processedClassProbabilities}
                           sample={s}
                         />
                       )
@@ -512,13 +512,13 @@ const InferenceExampleMessage = ({
   getInferenceSampleImageSrc,
   getInferenceSampleTabularData,
   inputDataType,
-  processedAppClass,
+  processedClassProbabilities,
   sample,
 }:{
   getInferenceSampleImageSrc: ScatterUQDataProps["getInferenceSampleImageSrc"],
   getInferenceSampleTabularData: ScatterUQDataProps["getInferenceSampleTabularData"],
   inputDataType: InputDataType,
-  processedAppClass: AppClassType,
+  processedClassProbabilities: ClassProbabilitiesType,
   sample:SampleType,
 }) => {
   return (
@@ -532,7 +532,7 @@ const InferenceExampleMessage = ({
       
       <div style={{padding: "0.5em"}}>
         <div>
-          {Object.entries(processedAppClass).filter(
+          {Object.entries(processedClassProbabilities).filter(
             ([label,confidence]) => confidence === 1
           ).map(([label,confidence]) => (
             <p key={label}>This is an inference sample with prediction <LabelAndCircle label={label}/></p>
@@ -542,7 +542,7 @@ const InferenceExampleMessage = ({
         <div style={{height: "3rem", overflowY: "auto"}}>
           <table>
             <tbody>
-              {Object.entries(sample.app_class).sort(
+              {Object.entries(sample.classProbabilities).sort(
                 ([aKey,aValue],[bKey,bValue]) => Math.sign(bValue-aValue)
               ).map(([label,confidence]) => (
                 <tr key={label}>
@@ -601,14 +601,14 @@ function updateDomains(
   domainY[1] = force ? y : Math.max(domainY[1],y)
 }
 
-function getMaxLabel(app_class: AppClassType) {
+function getMaxLabel(classProbabilities: ClassProbabilitiesType) {
   let maxLabel = ""
   let maxValue = 0
 
-  Object.keys(app_class).forEach((label) => {
-    if(app_class[label] > maxValue) {
+  Object.keys(classProbabilities).forEach((label) => {
+    if(classProbabilities[label] > maxValue) {
       maxLabel = label
-      maxValue = app_class[label]
+      maxValue = classProbabilities[label]
     }
   })
 
@@ -626,7 +626,7 @@ function formatConfidence(n:number, toFixedValue:number=2) {
 /**
  * This function is used to get the details necessary for hovering over a sample point and displaying the info 
  * @param sampleIndex 
- * @param processedAppClasses 
+ * @param processedClassesProbabilities 
  * @param samples 
  * @param scaleX 
  * @param scaleY 
@@ -637,7 +637,7 @@ function getSampleHoverPointDetails({
   getInferenceSampleImageSrc,
   getInferenceSampleTabularData,
   inputDataType,
-  processedAppClasses,
+  processedClassesProbabilities,
   sampleIndex,
   samples,
   scaleX,
@@ -648,7 +648,7 @@ function getSampleHoverPointDetails({
   getInferenceSampleImageSrc: ScatterUQDataProps["getInferenceSampleImageSrc"],
   getInferenceSampleTabularData: ScatterUQDataProps["getInferenceSampleTabularData"],
   inputDataType: InputDataType,
-  processedAppClasses: AppClassType[],
+  processedClassesProbabilities: ClassProbabilitiesType[],
   sampleIndex: number,
   samples: SampleType[],
   scaleX: ScaleLinear<number, number, never>,
@@ -659,14 +659,14 @@ function getSampleHoverPointDetails({
   const firstSampleDimRed = structuredEmbeddings.samples[sampleIndex]
   const firstSampleCx = scaleX(getX(firstSampleDimRed))
   const firstSampleCy = scaleY(getY(firstSampleDimRed))
-  const processedAppClass = processedAppClasses[sampleIndex]
+  const processedClassProbabilities = processedClassesProbabilities[sampleIndex]
   return { //set the initial content for the hover point
     x: firstSampleCx, y: firstSampleCy,
     msg: <InferenceExampleMessage
       getInferenceSampleImageSrc={getInferenceSampleImageSrc}
       getInferenceSampleTabularData={getInferenceSampleTabularData}
       inputDataType={inputDataType}
-      processedAppClass={processedAppClass}
+      processedClassProbabilities={processedClassProbabilities}
       sample={samples[sampleIndex]}
     />
   }

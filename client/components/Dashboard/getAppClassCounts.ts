@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import { AppClassType } from "@/redux/inferenceSettings"
+import { ClassProbabilitiesType } from "@/redux/inferenceSettings"
 
 export type LabelCounter = {[label:string]: number}
 
@@ -12,10 +12,10 @@ export type LabelCounter = {[label:string]: number}
  *   labels: ["C1", "C2", ...]
  * }
  */
-export default function getAppClassCounts(processedAppClasses:AppClassType[]) {
+export default function getAppClassCounts(processedClassesProbabilities:ClassProbabilitiesType[]) {
   const appClassCounts:LabelCounter = {} //initialize an empty counter
 
-  processedAppClasses.forEach((tresholds:AppClassType) => { //for each sample
+  processedClassesProbabilities.forEach((tresholds:ClassProbabilitiesType) => { //for each sample
     for(const label in tresholds) { //for each label in this sample
       initLabelInCounter(label, appClassCounts) //initialize the count if necessary
 

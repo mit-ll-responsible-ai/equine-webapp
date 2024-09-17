@@ -8,7 +8,7 @@ import { faDownload, faNewspaper } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks"
-import type { AppClassType, SampleType } from "@/redux/inferenceSettings"
+import type { ClassProbabilitiesType, SampleType } from "@/redux/inferenceSettings"
 import { showModal } from "@/redux/modal"
 
 import { GetPrototypeSupportEmbeddingsQuery, useGetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
@@ -71,12 +71,12 @@ function DashboardContent() {
   const serverUrl = useAppSelector(state => state.uiSettings.serverUrl)
 
   //memoize processing the samples and application class counts
-  const processedAppClasses = useMemo(() => processConfidenceThresholds(
+  const processedClassesProbabilities = useMemo(() => processConfidenceThresholds(
     samples,
     classConfidenceThreshold,
     inDistributionThreshold,
   ),[classConfidenceThreshold,inDistributionThreshold,samples])
-  const { appClassCounts, labels } = useMemo(() => getAppClassCounts(processedAppClasses), [processedAppClasses])
+  const { appClassCounts, labels } = useMemo(() => getAppClassCounts(processedClassesProbabilities), [processedClassesProbabilities])
   
   const { filters, setFilters, toggleFilter } = useFilters(labels)
 
@@ -123,16 +123,16 @@ function DashboardContent() {
     //filter the samples depending on the selections the user made in the filters
     const filteredPlotDataForSamples = samples.map((sample,i) => ({
       sample,
-      processedAppClass: processedAppClasses[i],
+      processedClassProbabilities: processedClassesProbabilities[i],
     })).filter(
-      ({sample, processedAppClass}) => sampleMatchesFilters(filters, processedAppClass)
+      ({sample, processedClassProbabilities}) => sampleMatchesFilters(filters, processedClassProbabilities)
     ).map(
       //we want to run getPlotDataForSample here, once for each sample,
       //because it's used for each local plot and for the global plot
-      ({sample, processedAppClass}) => getPlotDataForSample(sample,processedAppClass,prototypeSupportEmbeddings)
+      ({sample, processedClassProbabilities}) => getPlotDataForSample(sample,processedClassProbabilities,prototypeSupportEmbeddings)
     )
     const filteredSamples = filteredPlotDataForSamples.map(d => d.sample)
-    const filteredProcessedAppClasses = filteredPlotDataForSamples.map(d => d.processedAppClass)
+    const filteredProcessedAppClasses = filteredPlotDataForSamples.map(d => d.processedClassProbabilities)
     
 
     return (
@@ -182,7 +182,7 @@ function DashboardContent() {
           </h3>
           <SamplesBarChart
             labels={labels}
-            processedAppClasses={processedAppClasses}
+            processedClassesProbabilities={processedClassesProbabilities}
             samples={samples}
           />
         </div>
@@ -231,7 +231,7 @@ function DashboardContent() {
                 inputDataType={inputDataType}
                 method="umap"
                 modelName={modelName}
-                processedAppClasses={filteredProcessedAppClasses}
+                processedClassesProbabilities={filteredProcessedAppClasses}
                 prototypeSupportEmbeddings={{
                   getPrototypeSupportEmbeddings: mergedPrototypeSupportEmbeddings
                 }}

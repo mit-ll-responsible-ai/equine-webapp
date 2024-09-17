@@ -83,7 +83,7 @@ export default function EmptyDashboard() {
                 // @ts-ignore
                 if(d.original_app_class) { //if the field original_app_class exists
                   // @ts-ignore
-                  d.app_class = d.original_app_class //rename it to app_class
+                  d.classProbabilities = d.original_app_class //rename it to classProbabilities
                   // @ts-ignore
                   delete d.original_app_class //delete original_app_class
                 }
