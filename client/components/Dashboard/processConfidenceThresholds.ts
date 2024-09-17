@@ -54,23 +54,33 @@ export function setProcessedAppClass(
   else { //this sample is considered in distribution
     //now we need to determine which classes this sample qualifies for
     //or if it belonds in the class confusion use case
-    let isClassConfusion = true //initially assume we are in the class confusion use case
+
+    //loop through all the classes and find the max class probability value
+    let maxClassProbability = 0
+    let maxLabel = ""
     for(const label in app_class) { //loop through the classes
-      //if the value is greater than the confidence, it is effectively 1, else 0
-      const meetsClassConfidenceThreshold = (
-        (app_class[label] >= classConfidenceThreshold/100)
-        && (classConfidenceThreshold < 100) //if the threshold is 100, consider all samples to be CLASS_CONFUSION
-      )
-      if(meetsClassConfidenceThreshold) { //if the probability meeds the threshold
-        processed_app_class[label] = 1
-        isClassConfusion = false //we are not in the class confusion use case
-      }
-      else { //the probability is not high enough
-        processed_app_class[label] = 0
+      processed_app_class[label] = 0 //set all the processed app class to 0 for now
+      
+      //find the max class probability value
+      const classProbabilityValue = app_class[label]
+      if(classProbabilityValue > maxClassProbability) { //if this value is higher
+        maxClassProbability = classProbabilityValue
+        maxLabel = label
       }
     }
-    
-    processed_app_class[SAMPLE_CONDITIONS.CLASS_CONFUSION] = isClassConfusion ? 1 : 0
+
+    //if the max class probability is greater than the confidence, it is effectively 1, else 0
+    const meetsClassConfidenceThreshold = (
+      (maxClassProbability >= classConfidenceThreshold/100)
+      && (classConfidenceThreshold < 100) //if the threshold is 100, consider all samples to be CLASS_CONFUSION
+    )
+    if(meetsClassConfidenceThreshold) { //if the probability meeds the threshold
+      processed_app_class[maxLabel] = 1 //set the processed class value for this label to 1
+    }
+
+    //if we meet the class confidence threshold, we are in the IN_DISTRO_CONFIDENT use case
+    //else we are in the CLASS_CONFUSION use case
+    processed_app_class[SAMPLE_CONDITIONS.CLASS_CONFUSION] = meetsClassConfidenceThreshold ? 0 : 1
   }
   processed_app_class[SAMPLE_CONDITIONS.OOD] = isOOD ? 1 : 0
 
