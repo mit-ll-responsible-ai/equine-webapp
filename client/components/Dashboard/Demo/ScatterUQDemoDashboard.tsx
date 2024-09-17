@@ -25,7 +25,7 @@ import determineSampleCondition, { getSampleConditionText } from "@/utils/determ
 import getLabelsSortedByProbability from "@/utils/getLabelsSortedByProbability"
 import setDocumentTitle from "@/utils/setDocumentTitle"
 
-import getAppClassCounts from "../getAppClassCounts"
+import getClassCounts from "../getClassCounts"
 import processConfidenceThresholds from "../processConfidenceThresholds"
 
 import mnistInferenceSamples from "./mnist-inference-samples.json"
@@ -178,7 +178,7 @@ export default function ScatterUQDemoDashboard() {
   }, [processedClassesProbabilities, scatterUqData])
 
 
-  const { appClassCounts, labels } = useMemo(() => getAppClassCounts(processedClassesProbabilities), [processedClassesProbabilities])
+  const { classCounts, labels } = useMemo(() => getClassCounts(processedClassesProbabilities), [processedClassesProbabilities])
 
   const { filters, setFilters, toggleFilter } = useFilters(labels)
 
@@ -226,7 +226,7 @@ export default function ScatterUQDemoDashboard() {
       </div>
 
       <Filters
-        appClassCounts={appClassCounts}
+        classCounts={classCounts}
         filters={filters}
         labels={labels}
         setFilters={setFilters}

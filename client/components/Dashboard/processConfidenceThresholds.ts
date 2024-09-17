@@ -17,7 +17,7 @@ export default function processConfidenceThresholds(
   inDistributionThreshold: number,
 ):ClassProbabilitiesType[] {
   //calculate the new classProbabilities values given the new confience threshold
-  return samples.map(sample => setProcessedAppClass(
+  return samples.map(sample => getProcessedClassProbabilities(
     sample, 
     classConfidenceThreshold, 
     inDistributionThreshold,
@@ -33,7 +33,7 @@ export default function processConfidenceThresholds(
  * @param classConfidenceThreshold  0 - 100 value set by the user
  * @param inDistributionThreshold   0 - 100 value set by the user
  */
-export function setProcessedAppClass(
+export function getProcessedClassProbabilities(
   sample:SampleType, 
   classConfidenceThreshold:number,
   inDistributionThreshold: number,
@@ -45,6 +45,7 @@ export function setProcessedAppClass(
     (( sample.ood   ) >= inDistributionThreshold/100) //meets threshold
     && (inDistributionThreshold < 100) //if the threshold is 100, consider all samples to be OOD
   )
+  let isClassConfusion = false
 
   if(isOOD) { //if this sample is out of distribution
     for(const label in classProbabilities) { //loop through the classes
@@ -77,11 +78,12 @@ export function setProcessedAppClass(
     if(meetsClassConfidenceThreshold) { //if the probability meeds the threshold
       processedClassProbabilities[maxLabel] = 1 //set the processed class value for this label to 1
     }
-
-    //if we meet the class confidence threshold, we are in the IN_DISTRO_CONFIDENT use case
-    //else we are in the CLASS_CONFUSION use case
-    processedClassProbabilities[SAMPLE_CONDITIONS.CLASS_CONFUSION] = meetsClassConfidenceThreshold ? 0 : 1
+    isClassConfusion = !meetsClassConfidenceThreshold
   }
+  //if we meet the class confidence threshold, we are in the IN_DISTRO_CONFIDENT use case
+  //else we are in the CLASS_CONFUSION use case
+  processedClassProbabilities[SAMPLE_CONDITIONS.CLASS_CONFUSION] = isClassConfusion ? 1 : 0
+
   processedClassProbabilities[SAMPLE_CONDITIONS.OOD] = isOOD ? 1 : 0
 
   return processedClassProbabilities

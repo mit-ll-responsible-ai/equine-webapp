@@ -31,7 +31,7 @@ import setLocalStorageItem from "@/utils/localStorage/setLocalStorageItem"
 
 import packageJson from "@/package.json"
 
-import getAppClassCounts from "./getAppClassCounts"
+import getClassCounts from "./getClassCounts"
 import processConfidenceThresholds from "./processConfidenceThresholds"
 
 import styles from "./Dashboard.module.scss"
@@ -76,7 +76,7 @@ function DashboardContent() {
     classConfidenceThreshold,
     inDistributionThreshold,
   ),[classConfidenceThreshold,inDistributionThreshold,samples])
-  const { appClassCounts, labels } = useMemo(() => getAppClassCounts(processedClassesProbabilities), [processedClassesProbabilities])
+  const { classCounts, labels } = useMemo(() => getClassCounts(processedClassesProbabilities), [processedClassesProbabilities])
   
   const { filters, setFilters, toggleFilter } = useFilters(labels)
 
@@ -188,7 +188,7 @@ function DashboardContent() {
         </div>
 
         <Filters
-          appClassCounts={appClassCounts}
+          classCounts={classCounts}
           filters={filters}
           labels={labels}
           setFilters={setFilters}
