@@ -134,12 +134,16 @@ def get_sample_from_data_index(run_id, data_index, model_name:Optional[str]=None
 def get_model_path(model_name:str):
     model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
     base_path = os.getcwd()
-    model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
-    if not model_path.startswith(base_path):
-        raise Exception("Path not allowed")
+    model_path = sanitize_path(os.path.join(base_path, SERVER_CONFIG.MODEL_FOLDER_PATH, model_file), base_path)
     if not os.path.isfile(model_path):
         raise ValueError(f"Model File '{model_path}' not found")
     return model_path
+
+def sanitize_path(file_path, base_path):
+    fullpath = os.path.normpath(file_path)
+    if not fullpath.startswith(base_path):
+        raise Exception("Path not allowed")
+    return fullpath
 
 def use_label_names(model, num_labels:int):
     label_names = model.get_label_names()
