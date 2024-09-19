@@ -325,16 +325,13 @@ export default function ScatterUQ({
                     const cx = scaleX(getX(dimRedPoint))
                     const cy = scaleY(getY(dimRedPoint))
 
-                    const focusPointArgs = [
-                      cx, cy, 
-                      <TrainingLabelMessage
-                        getSupportExampleImageSrc={getSupportExampleImageSrc}
-                        getSupportExampleTabularData={getSupportExampleTabularData}
-                        inputDataType={inputDataType}
-                        label={label.label}
-                        sample={point}
-                      />
-                    ] as const
+                    const msg = <TrainingLabelMessage
+                      getSupportExampleImageSrc={getSupportExampleImageSrc}
+                      getSupportExampleTabularData={getSupportExampleTabularData}
+                      inputDataType={inputDataType}
+                      label={label.label}
+                      sample={point}
+                    />
 
                     return (
                       <circle
@@ -344,8 +341,8 @@ export default function ScatterUQ({
                         cx={cx}
                         cy={cy}
                         fill={getColorFromLabel(label.label)}
-                        onClick={() => onClickPoint(...focusPointArgs)}
-                        onMouseEnter={() => onMouseEnterPoint(...focusPointArgs)}
+                        onClick={() => onClickPoint(cx, cy, msg)}
+                        onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
                         opacity={samples ? confidence/2 + 0.5 : 1}
                         r={5}
                         stroke="white"
@@ -362,10 +359,7 @@ export default function ScatterUQ({
               const cx = scaleX(getX(dimRedPrototype))
               const cy = scaleY(getY(dimRedPrototype))
 
-              const focusPointArgs = [
-                cx, cy,
-                <PrototypeMessage label={label.label}/>
-              ] as const
+              const msg = <PrototypeMessage label={label.label}/>
 
               return (
                 <g key={labelIdx}>
@@ -374,8 +368,8 @@ export default function ScatterUQ({
                     cx={cx}
                     cy={cy}
                     fill="black"
-                    onClick={() => onClickPoint(...focusPointArgs)}
-                    onMouseEnter={() => onMouseEnterPoint(...focusPointArgs)}
+                    onClick={() => onClickPoint(cx, cy, msg)}
+                    onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
                     r={5}
                     stroke="white"
                     strokeWidth="2"
@@ -391,16 +385,13 @@ export default function ScatterUQ({
                 const cx = scaleX(getX(dimRedSample))
                 const cy = scaleY(getY(dimRedSample))
 
-                const focusPointArgs = [
-                  cx, cy, 
-                  <InferenceExampleMessage
-                    getInferenceSampleImageSrc={getInferenceSampleImageSrc}
-                    getInferenceSampleTabularData={getInferenceSampleTabularData}
-                    inputDataType={inputDataType}
-                    processedClassProbabilities={processedClassProbabilities}
-                    sample={s}
-                  />
-                ] as const
+                const msg = <InferenceExampleMessage
+                  getInferenceSampleImageSrc={getInferenceSampleImageSrc}
+                  getInferenceSampleTabularData={getInferenceSampleTabularData}
+                  inputDataType={inputDataType}
+                  processedClassProbabilities={processedClassProbabilities}
+                  sample={s}
+                />
 
                 return (
                   <circle
@@ -410,8 +401,8 @@ export default function ScatterUQ({
                     cx={cx}
                     cy={cy}
                     fill={getColorFromLabel(getMaxLabel(processedClassProbabilities))}
-                    onClick={() => onClickPoint(...focusPointArgs)}
-                    onMouseEnter={() => onMouseEnterPoint(...focusPointArgs)}
+                    onClick={() => onClickPoint(cx, cy, msg)}
+                    onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
                     r={7}
                     stroke="black"
                     strokeWidth="2"

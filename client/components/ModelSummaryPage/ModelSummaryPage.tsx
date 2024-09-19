@@ -52,7 +52,7 @@ const ModelSummaryPage = () => {
     if(queryInputDataType && queryInputDataType!==inputDataType && isIn(INPUT_DATA_TYPES,queryInputDataType)) {
       dispatch(setInputDataType(queryInputDataType))
     }
-  }, [queryInputDataType, inputDataType])
+  }, [dispatch, queryInputDataType, inputDataType])
 
   useEffect(() => setDocumentTitle(`Model Summary - ${modelName}`), [modelName])
 
