@@ -5,7 +5,7 @@ import os
 import json
 
 import torch
-import equine
+import equine as eq
 import pandas as pd
 from pathlib import Path
 from typing import Optional
@@ -34,18 +34,6 @@ class SampleDataset:
         self.dataset = tensor_dataset
         self.filenames = filenames
         self.column_headers = column_headers
-
-def load_equine_model(model_path):
-    model_type = torch.load(model_path)["train_summary"]["modelType"]
-
-    if model_type == "EquineProtonet":
-        model = equine.EquineProtonet.load(model_path)
-    elif model_type == "EquineGP":
-        model = equine.EquineGP.load(model_path)
-    else:
-        raise ValueError(f"Unknown model type '{model_type}'")
-    
-    return model
 
 
 def combine_data_files(filename_list, is_train=False):
@@ -102,7 +90,7 @@ def get_support_example_from_data_index(model_name, data_index):
     assert data_index >= 0
     
     model_path = get_model_path(model_name)
-    model = load_equine_model(model_path)
+    model = eq.load_equine_model(model_path)
     support = model.get_support()
     feature_names = model.get_feature_names()
 
@@ -122,7 +110,7 @@ def get_sample_from_data_index(run_id, data_index, model_name:Optional[str]=None
     feature_names = None
     if model_name is not None:
         model_path = get_model_path(model_name)
-        model = load_equine_model(model_path)
+        model = eq.load_equine_model(model_path)
         feature_names = model.get_feature_names()
 
     run_id = int(run_id)
@@ -147,7 +135,7 @@ def sanitize_path(file_path, base_path):
 
 def use_label_names(model, num_labels:int):
     label_names = model.get_label_names()
-    if len(label_names) != num_labels:
+    if label_names is not None and len(label_names) != num_labels:
         print(f"The number of label names ({len(label_names)}) does not match the number of classes ({num_labels}) in the predictions. The server will ignore the label names.")
         return None
     return label_names

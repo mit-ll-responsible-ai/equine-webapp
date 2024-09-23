@@ -37,7 +37,7 @@ export function getSampleConditionText(
     case SAMPLE_CONDITIONS.CLASS_CONFUSION:
       const secondClass = sortedLabels[1].label
 
-      return `Based on your selected thresholds, the model is confident that this sample is in distribution but not confident about it's class. This is because the sample lands in between the ${closestClass} and ${secondClass} prototypes and training examples. As an ML Consumer, you should be careful using the class prediction and make the final determination. As an ML Engineer, you may need additional training data or refactor your labels.`
+      return `Based on your selected thresholds, the model is confident that this sample is in distribution but not confident about its class. This is because the sample lands in between the ${closestClass} and ${secondClass} prototypes and training examples. As an ML Consumer, you should be careful using the class prediction and make the final determination. As an ML Engineer, you may need additional training data or refactor your labels.`
     default: //SAMPLE_CONDITIONS.OOD
       return `Based on your selected thresholds, the model thinks this sample is out of distribution because the sample lands far away from the other training examples in the high dimensional latent space. It lands closest to the ${closestClass} prototype. As an ML Consumer, you should be careful using the class prediction and make the final determination. As an ML Engineer, you may be able to recognize the introduction of a new class label.`
   }

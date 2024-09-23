@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT
 from zadu import zadu
 
-import os
 
 # dimensionality reduction
 import numpy as np
@@ -11,10 +10,12 @@ from sklearn.decomposition import PCA
 import umap
 
 
+import equine as eq
 import torch
+import os
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, load_equine_model, get_support_example_from_data_index, get_sample_from_data_index, get_model_path, use_label_names
+from server.utils import SERVER_CONFIG, get_support_example_from_data_index, get_sample_from_data_index, get_model_path, use_label_names
 
 @convert_kwargs_to_snake_case
 def resolve_available_models(_, info, extension):
@@ -37,13 +38,12 @@ def resolve_model_summary(_, info, model_name):
     model_save = torch.load(model_path)
     summary = model_save["train_summary"]
     summary["lastModified"] = os.path.getmtime(model_path)
-    print("summary",summary)
     return summary
 
 @convert_kwargs_to_snake_case
 def resolve_get_protonet_support_embeddings(_, info, model_name):
     model_path = get_model_path(model_name)
-    model = load_equine_model(model_path)
+    model = eq.load_equine_model(model_path)
     support_examples = model.get_support()
     prototypes = model.get_prototypes()
     

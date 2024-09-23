@@ -2,13 +2,12 @@
 # SPDX-License-Identifier: MIT
 import os
 
-import json
 import time
 import torch
-import equine
+import equine as eq
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, load_equine_model, combine_data_files, get_model_path, use_label_names
+from server.utils import SERVER_CONFIG, combine_data_files, get_model_path, use_label_names
 
 @convert_kwargs_to_snake_case
 def resolve_upload_model(_, info, model_file):
@@ -36,7 +35,7 @@ def resolve_run_inference(_, info, model_name, sample_filenames):
     
     # load the model
     model_path = get_model_path(model_name)
-    model = load_equine_model(model_path)
+    model = eq.load_equine_model(model_path)
     input_dtype = next(model.embedding_model.parameters()).dtype
     
     # run inference on the samples
@@ -71,7 +70,7 @@ def resolve_run_inference(_, info, model_name, sample_filenames):
 
     return {
         "samples": samples_json,
-        "version": equine.__version__,
+        "version": eq.__version__,
         "runId" : run_id
     }
 
@@ -93,10 +92,10 @@ def resolve_train_model(_, info, episodes, sample_filenames, embed_model_name, n
     if emb_out_dim == 0: emb_out_dim = num_classes
 
     if train_model_type == "EquineProtonet":
-        model = equine.EquineProtonet(embed_model, emb_out_dim)
+        model = eq.EquineProtonet(embed_model, emb_out_dim)
         model.train_model(dataset, num_episodes=episodes)
     elif train_model_type == "EquineGP":
-        model = equine.EquineGP(embed_model, emb_out_dim, num_classes)
+        model = eq.EquineGP(embed_model, emb_out_dim, num_classes)
 
         loss_fn = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.SGD(
