@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import { GetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
-import { AppClassType } from "@/redux/inferenceSettings"
+import { ClassProbabilitiesType } from "@/redux/inferenceSettings"
 
 export enum SAMPLE_CONDITIONS { //the model thinks that this sample is
   IN_DISTRO_CONFIDENT="IN_DISTRO_CONFIDENT", //in distribution and part of the class(es)
@@ -11,14 +11,14 @@ export enum SAMPLE_CONDITIONS { //the model thinks that this sample is
 
 /**
  * This function determines which condition the sample is in, ie which of SAMPLE_CONDITIONS
- * @param processedAppClass       process app class from the sample 
+ * @param processedClassProbabilities       processed class probabilities from the sample 
  * @returns                       one of SAMPLE_CONDITIONS
  */
-export default function determineSampleCondition(processedAppClass: AppClassType):SAMPLE_CONDITIONS {
-  if(processedAppClass[SAMPLE_CONDITIONS.OOD] === 1) {
+export default function determineSampleCondition(processedClassProbabilities: ClassProbabilitiesType):SAMPLE_CONDITIONS {
+  if(processedClassProbabilities[SAMPLE_CONDITIONS.OOD] === 1) {
     return SAMPLE_CONDITIONS.OOD
   }
-  else if(processedAppClass[SAMPLE_CONDITIONS.CLASS_CONFUSION] === 1) {
+  else if(processedClassProbabilities[SAMPLE_CONDITIONS.CLASS_CONFUSION] === 1) {
     return SAMPLE_CONDITIONS.CLASS_CONFUSION
   }
   return SAMPLE_CONDITIONS.IN_DISTRO_CONFIDENT
@@ -37,7 +37,7 @@ export function getSampleConditionText(
     case SAMPLE_CONDITIONS.CLASS_CONFUSION:
       const secondClass = sortedLabels[1].label
 
-      return `Based on your selected thresholds, the model is confident that this sample is in distribution but not confident about it's class. This is because the sample lands in between the ${closestClass} and ${secondClass} prototypes and training examples. As an ML Consumer, you should be careful using the class prediction and make the final determination. As an ML Engineer, you may need additional training data or refactor your labels.`
+      return `Based on your selected thresholds, the model is confident that this sample is in distribution but not confident about its class. This is because the sample lands in between the ${closestClass} and ${secondClass} prototypes and training examples. As an ML Consumer, you should be careful using the class prediction and make the final determination. As an ML Engineer, you may need additional training data or refactor your labels.`
     default: //SAMPLE_CONDITIONS.OOD
       return `Based on your selected thresholds, the model thinks this sample is out of distribution because the sample lands far away from the other training examples in the high dimensional latent space. It lands closest to the ${closestClass} prototype. As an ML Consumer, you should be careful using the class prediction and make the final determination. As an ML Engineer, you may be able to recognize the introduction of a new class label.`
   }

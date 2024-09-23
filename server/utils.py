@@ -5,11 +5,10 @@ import os
 import json
 
 import torch
-import equine
+import equine as eq
 import pandas as pd
-from scipy.stats import spearmanr
-import numpy as np
 from pathlib import Path
+from typing import Optional
 
 class Config:
     def __init__(self):
@@ -35,18 +34,6 @@ class SampleDataset:
         self.dataset = tensor_dataset
         self.filenames = filenames
         self.column_headers = column_headers
-
-def load_equine_model(model_path):
-    model_type = torch.load(model_path)["train_summary"]["modelType"]
-
-    if model_type == "EquineProtonet":
-        model = equine.EquineProtonet.load(model_path)
-    elif model_type == "EquineGP":
-        model = equine.EquineGP.load(model_path)
-    else:
-        raise ValueError(f"Unknown model type '{model_type}'")
-    
-    return model
 
 
 def combine_data_files(filename_list, is_train=False):
@@ -102,9 +89,10 @@ def get_support_example_from_data_index(model_name, data_index):
     data_index = int(data_index)
     assert data_index >= 0
     
-    model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_name)
-    model = load_equine_model(model_path)
+    model_path = get_model_path(model_name)
+    model = eq.load_equine_model(model_path)
     support = model.get_support()
+    feature_names = model.get_feature_names()
 
     num_classes = len(support)
     num_support_per_class = support[0].shape[0]
@@ -113,14 +101,41 @@ def get_support_example_from_data_index(model_name, data_index):
     support_idx = data_index % num_support_per_class
     class_idx = int(data_index / num_support_per_class)
 
-    return support[class_idx][support_idx], support
+    return support[class_idx][support_idx], support, feature_names
 
-def get_sample_from_data_index(run_id, data_index):
+def get_sample_from_data_index(run_id, data_index, model_name:Optional[str]=None):
     data_index = int(data_index)
     assert data_index >= 0
+
+    feature_names = None
+    if model_name is not None:
+        model_path = get_model_path(model_name)
+        model = eq.load_equine_model(model_path)
+        feature_names = model.get_feature_names()
 
     run_id = int(run_id)
     sample_dataset = torch.load(os.path.join(SERVER_CONFIG.UPLOAD_FOLDER_PATH, f"{run_id}_run_data.pt"))
     assert len(sample_dataset.dataset) > data_index
     
-    return sample_dataset.dataset[data_index][0], sample_dataset
+    return sample_dataset.dataset[data_index][0], sample_dataset, feature_names
+
+def get_model_path(model_name:str):
+    model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
+    base_path = os.getcwd()
+    model_path = sanitize_path(os.path.join(base_path, SERVER_CONFIG.MODEL_FOLDER_PATH, model_file), base_path)
+    if not os.path.isfile(model_path):
+        raise ValueError(f"Model File '{model_path}' not found")
+    return model_path
+
+def sanitize_path(file_path, base_path):
+    fullpath = os.path.normpath(file_path)
+    if not fullpath.startswith(base_path):
+        raise Exception("Path not allowed")
+    return fullpath
+
+def use_label_names(model, num_labels:int):
+    label_names = model.get_label_names()
+    if label_names is not None and len(label_names) != num_labels:
+        print(f"The number of label names ({len(label_names)}) does not match the number of classes ({num_labels}) in the predictions. The server will ignore the label names.")
+        return None
+    return label_names

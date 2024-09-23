@@ -2,13 +2,12 @@
 # SPDX-License-Identifier: MIT
 import os
 
-import json
 import time
 import torch
-import equine
+import equine as eq
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, load_equine_model, combine_data_files
+from server.utils import SERVER_CONFIG, combine_data_files, get_model_path, use_label_names
 
 @convert_kwargs_to_snake_case
 def resolve_upload_model(_, info, model_file):
@@ -34,29 +33,34 @@ def resolve_upload_file(_, info, file): #TODO Deduplicate code from upload model
 def resolve_run_inference(_, info, model_name, sample_filenames):
     run_id = int(time.time()) #TODO Better way to generate ID?
     
-    model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
-    model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)
-    if not os.path.isfile(model_path):
-        raise ValueError(f"Model File '{model_path}' not found")
-    
-    model = load_equine_model(model_path)
+    # load the model
+    model_path = get_model_path(model_name)
+    model = eq.load_equine_model(model_path)
     input_dtype = next(model.embedding_model.parameters()).dtype
+    
+    # run inference on the samples
     sample_dataset = combine_data_files(sample_filenames)
     predictions = model.predict(sample_dataset.dataset.tensors[0].to(input_dtype))
+
+    # get the string names of the labels that the model was trained on
+    label_names = use_label_names(model, predictions.classes.shape[-1])
+    
+    # this list will hold all the samples data to send back to the client
     samples_json = []
 
-    for i in range(len(sample_dataset.dataset)):
+    # loop through all the samples
+    for sample_idx in range(len(sample_dataset.dataset)):
         json_data = {
-            "coordinates": predictions.embeddings[i],
+            "coordinates": predictions.embeddings[sample_idx],
             "inputData": {
-                "file": sample_dataset.filenames[i],
-                "dataIndex" : i
+                "file": sample_dataset.filenames[sample_idx],
+                "dataIndex" : sample_idx
             },
             "labels": [{
-                "label": str(idx),
+                "label": label_names[label_idx] if label_names is not None else str(label_idx),
                 "confidence": d,
-            } for idx,d in enumerate(predictions.classes[i])],
-            "ood": predictions.ood_scores[i]
+            } for label_idx,d in enumerate(predictions.classes[sample_idx])],
+            "ood": predictions.ood_scores[sample_idx]
         }
 
         samples_json.append(json_data)
@@ -66,7 +70,7 @@ def resolve_run_inference(_, info, model_name, sample_filenames):
 
     return {
         "samples": samples_json,
-        "version": equine.__version__,
+        "version": eq.__version__,
         "runId" : run_id
     }
 
@@ -88,10 +92,10 @@ def resolve_train_model(_, info, episodes, sample_filenames, embed_model_name, n
     if emb_out_dim == 0: emb_out_dim = num_classes
 
     if train_model_type == "EquineProtonet":
-        model = equine.EquineProtonet(embed_model, emb_out_dim)
+        model = eq.EquineProtonet(embed_model, emb_out_dim)
         model.train_model(dataset, num_episodes=episodes)
     elif train_model_type == "EquineGP":
-        model = equine.EquineGP(embed_model, emb_out_dim, num_classes)
+        model = eq.EquineGP(embed_model, emb_out_dim, num_classes)
 
         loss_fn = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.SGD(

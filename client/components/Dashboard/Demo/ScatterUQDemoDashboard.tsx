@@ -7,7 +7,7 @@ import Button from "react-bootstrap/Button"
 import DataTable from "react-data-table-component"
 
 import { useAppSelector } from "@/redux/reduxHooks"
-import type { AppClassType, InputDataType, SampleType } from "@/redux/inferenceSettings"
+import type { ClassProbabilitiesType, InputDataType, SampleType } from "@/redux/inferenceSettings"
 
 import { GetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
 
@@ -25,7 +25,7 @@ import determineSampleCondition, { getSampleConditionText } from "@/utils/determ
 import getLabelsSortedByProbability from "@/utils/getLabelsSortedByProbability"
 import setDocumentTitle from "@/utils/setDocumentTitle"
 
-import getAppClassCounts from "../getAppClassCounts"
+import getClassCounts from "../getClassCounts"
 import processConfidenceThresholds from "../processConfidenceThresholds"
 
 import mnistInferenceSamples from "./mnist-inference-samples.json"
@@ -52,7 +52,7 @@ type UnpopulatedRowDataType = {
   continuity: number,
   inDistributionThreshold: number,
   stress: number,
-  processedAppClasses: AppClassType[],
+  processedClassesProbabilities: ClassProbabilitiesType[],
   prototypeSupportEmbeddings: { getPrototypeSupportEmbeddings: string[] }, //we will replace the label strings with the actual prototypeSupportEmbedding
   samples: number[], //we will replace the dataIndex numbers with the actual inference sample
   srho: number,
@@ -77,7 +77,7 @@ function populateGlobalUmap(
 ) {
   return {
     ...unpopulatedGlobalUmap,
-    processedAppClasses: processConfidenceThresholds(unpopulatedGlobalUmap.samples.map(n =>  inferenceSamples[n]), CLASS_CONFIDENCE_THRESHOLD, IN_DISTRO_THRESHOLD),
+    processedClassesProbabilities: processConfidenceThresholds(unpopulatedGlobalUmap.samples.map(n =>  inferenceSamples[n]), CLASS_CONFIDENCE_THRESHOLD, IN_DISTRO_THRESHOLD),
     samples: unpopulatedGlobalUmap.samples.map(n =>  inferenceSamples[n]),
     prototypeSupportEmbeddings: {
       getPrototypeSupportEmbeddings: unpopulatedGlobalUmap.prototypeSupportEmbeddings.getPrototypeSupportEmbeddings.map(label => {
@@ -162,28 +162,28 @@ export default function ScatterUQDemoDashboard() {
 
 
   //memoize processing the samples and application class counts
-  const processedAppClasses = useMemo(() => processConfidenceThresholds(
+  const processedClassesProbabilities = useMemo(() => processConfidenceThresholds(
     globalUmapData.samples,
     CLASS_CONFIDENCE_THRESHOLD,
     IN_DISTRO_THRESHOLD,
   ),[globalUmapData.samples])
 
-  //memoize saving the processed app classes to the respective inference samples
+  //memoize saving the processed classes probabilities to the respective inference samples
   useMemo(() => {
     scatterUqData.forEach((s,i) => {
-      //s.processedAppClasses is initially an empty array
-      //add the processedAppClass for this sample we just calculated above
-      s.processedAppClasses = [ processedAppClasses[i] ]
+      //s.processedClassesProbabilities is initially an empty array
+      //add the processedClassProbabilities for this sample we just calculated above
+      s.processedClassesProbabilities = [ processedClassesProbabilities[i] ]
     })
-  }, [processedAppClasses, scatterUqData])
+  }, [processedClassesProbabilities, scatterUqData])
 
 
-  const { appClassCounts, labels } = useMemo(() => getAppClassCounts(processedAppClasses), [processedAppClasses])
+  const { classCounts, labels } = useMemo(() => getClassCounts(processedClassesProbabilities), [processedClassesProbabilities])
 
   const { filters, setFilters, toggleFilter } = useFilters(labels)
 
   
-  const filteredTableData = scatterUqData.filter(({processedAppClasses},i) => sampleMatchesFilters(filters, processedAppClasses[0]))
+  const filteredTableData = scatterUqData.filter(({processedClassesProbabilities},i) => sampleMatchesFilters(filters, processedClassesProbabilities[0]))
 
 
   return (
@@ -220,13 +220,13 @@ export default function ScatterUQDemoDashboard() {
         </h3>
         <SamplesBarChart
           labels={labels}
-          processedAppClasses={processedAppClasses}
+          processedClassesProbabilities={processedClassesProbabilities}
           samples={globalUmapData.samples}
         />
       </div>
 
       <Filters
-        appClassCounts={appClassCounts}
+        classCounts={classCounts}
         filters={filters}
         labels={labels}
         setFilters={setFilters}
@@ -289,7 +289,7 @@ const FilteredTable = ({
     continuity: number,
     inDistributionThreshold: number,
     stress: number,
-    processedAppClasses: AppClassType[],
+    processedClassesProbabilities: ClassProbabilitiesType[],
     prototypeSupportEmbeddings: GetPrototypeSupportEmbeddingsQuery,
     samples: SampleType[],
     scree?: number[] | null,
@@ -308,14 +308,14 @@ const FilteredTable = ({
   const tableData:TableRowType[] = data.map((d, sampleIndex: number) => {
     const labelsSortedByProbability = getLabelsSortedByProbability(d.samples[0], d.prototypeSupportEmbeddings)
   
-    const sampleCondition = determineSampleCondition(d.processedAppClasses[0])
+    const sampleCondition = determineSampleCondition(d.processedClassesProbabilities[0])
     const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
 
     return {
       id: sampleIndex,
-      labels: d.processedAppClasses.filter(
+      labels: d.processedClassesProbabilities.filter(
         //@ts-ignore
-        (label:string) => d.processedAppClasses[label]===1
+        (label:string) => d.processedClassesProbabilities[label]===1
       ).join(", "),
       dim_red: (
         <div>

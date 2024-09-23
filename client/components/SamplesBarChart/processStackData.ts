@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 
-import type { AppClassType, SampleType } from "@/redux/inferenceSettings"
+import type { ClassProbabilitiesType, SampleType } from "@/redux/inferenceSettings"
 
 type StackDataType = {
   name: string,
@@ -10,7 +10,7 @@ type StackDataType = {
 
 const processStackData = (
   oodThresholds: number[],
-  processedAppClasses: AppClassType[],
+  processedClassesProbabilities: ClassProbabilitiesType[],
   samples: SampleType[],
 ):StackDataType => {
   if(
@@ -18,6 +18,10 @@ const processStackData = (
     && samples.length > 0
   ) {
     throw new Error("OodThresholds must have some elements if there are samples")
+  }
+
+  if(processedClassesProbabilities.length !== samples.length) {
+    throw new Error(`The lengths of processedClassesProbabilities (${processedClassesProbabilities.length}) and samples (${samples.length}) should match.`)
   }
 
   //temporarily use a data structure where the field "data" is a key object pair
@@ -49,8 +53,8 @@ const processStackData = (
     let oodIndex = oodThresholds.findIndex( threshold => threshold > s.ood )
     oodIndex = (oodIndex === -1 ) ? oodThresholds.length-1 : oodIndex - 1
 
-    const processedAppClass = processedAppClasses[sIdx]
-    Object.entries(processedAppClass).forEach(([label, value]) => { //for processed app class
+    const processedClassProbabilities = processedClassesProbabilities[sIdx]
+    Object.entries(processedClassProbabilities).forEach(([label, value]) => { //for processed class probabilities
       if(tmpStackData[oodIndex].data[label] === undefined) { //if we have not seen this oodIndex and label pair
         tmpStackData[oodIndex].data[label] = 0 //initialize it to zero
       }

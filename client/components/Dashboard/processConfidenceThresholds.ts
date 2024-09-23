@@ -1,23 +1,23 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import type { AppClassType, SampleType } from "@/redux/inferenceSettings"
+import type { ClassProbabilitiesType, SampleType } from "@/redux/inferenceSettings"
 import { SAMPLE_CONDITIONS } from "@/utils/determineSampleCondition"
 
 /**
  * given an array of samples]
- * then process the app_class based on the tresholds
+ * then process the classProbabilities based on the tresholds
  * @param samples                   array of samples from the redux
  * @param classConfidenceThreshold  0 - 100 value set by the user
  * @param inDistributionThreshold   0 - 100 value set by the user
- * @returns                         processedAppClasses values
+ * @returns                         processedClassesProbabilities values
  */
 export default function processConfidenceThresholds(
   samples: SampleType[], 
   classConfidenceThreshold: number,
   inDistributionThreshold: number,
-):AppClassType[] {
-  //calculate the new app_class values given the new confience threshold
-  return samples.map(sample => setProcessedAppClass(
+):ClassProbabilitiesType[] {
+  //calculate the new classProbabilities values given the new confience threshold
+  return samples.map(sample => getProcessedClassProbabilities(
     sample, 
     classConfidenceThreshold, 
     inDistributionThreshold,
@@ -25,54 +25,66 @@ export default function processConfidenceThresholds(
 }
 
 /**
- * Given the original app class and confidence threshold, set a new procesed app class.
+ * Given the original class probabilities and confidence threshold, set a new procesed class probabilities.
  * If a sample does not meet the OOD threshold, set all its values to 0 and set SAMPLE_CONDITIONS.OOD to 1.
  * Set a samples class labels to 1 or 0 depending on the class confidence threshold.
  * If all the labels become 0, set SAMPLE_CONDITIONS.CLASS_CONFUSION to 1.
- * @param app_class                 app class of the unprocessed sample
+ * @param classProbabilities        class probabilities for the unprocessed sample
  * @param classConfidenceThreshold  0 - 100 value set by the user
  * @param inDistributionThreshold   0 - 100 value set by the user
  */
-export function setProcessedAppClass(
+export function getProcessedClassProbabilities(
   sample:SampleType, 
   classConfidenceThreshold:number,
   inDistributionThreshold: number,
 ) {
-  const app_class = sample.app_class
-  const processed_app_class:AppClassType = {}
+  const classProbabilities = sample.classProbabilities
+  const processedClassProbabilities:ClassProbabilitiesType = {}
 
   const isOOD = (
     (( sample.ood   ) >= inDistributionThreshold/100) //meets threshold
     && (inDistributionThreshold < 100) //if the threshold is 100, consider all samples to be OOD
   )
+  let isClassConfusion = false
 
   if(isOOD) { //if this sample is out of distribution
-    for(const label in app_class) { //loop through the classes
-      processed_app_class[label] = 0 //set the value to 0
+    for(const label in classProbabilities) { //loop through the classes
+      processedClassProbabilities[label] = 0 //set the value to 0
     }
   }
   else { //this sample is considered in distribution
     //now we need to determine which classes this sample qualifies for
     //or if it belonds in the class confusion use case
-    let isClassConfusion = true //initially assume we are in the class confusion use case
-    for(const label in app_class) { //loop through the classes
-      //if the value is greater than the confidence, it is effectively 1, else 0
-      const meetsClassConfidenceThreshold = (
-        (app_class[label] >= classConfidenceThreshold/100)
-        && (classConfidenceThreshold < 100) //if the threshold is 100, consider all samples to be CLASS_CONFUSION
-      )
-      if(meetsClassConfidenceThreshold) { //if the probability meeds the threshold
-        processed_app_class[label] = 1
-        isClassConfusion = false //we are not in the class confusion use case
-      }
-      else { //the probability is not high enough
-        processed_app_class[label] = 0
+
+    //loop through all the classes and find the max class probability value
+    let maxClassProbability = 0
+    let maxLabel = ""
+    for(const label in classProbabilities) { //loop through the classes
+      processedClassProbabilities[label] = 0 //set all the processed class probabilities to 0 for now
+      
+      //find the max class probability value
+      const classProbabilityValue = classProbabilities[label]
+      if(classProbabilityValue > maxClassProbability) { //if this value is higher
+        maxClassProbability = classProbabilityValue
+        maxLabel = label
       }
     }
-    
-    processed_app_class[SAMPLE_CONDITIONS.CLASS_CONFUSION] = isClassConfusion ? 1 : 0
-  }
-  processed_app_class[SAMPLE_CONDITIONS.OOD] = isOOD ? 1 : 0
 
-  return processed_app_class
+    //if the max class probability is greater than the confidence, it is effectively 1, else 0
+    const meetsClassConfidenceThreshold = (
+      (maxClassProbability >= classConfidenceThreshold/100)
+      && (classConfidenceThreshold < 100) //if the threshold is 100, consider all samples to be CLASS_CONFUSION
+    )
+    if(meetsClassConfidenceThreshold) { //if the probability meeds the threshold
+      processedClassProbabilities[maxLabel] = 1 //set the processed class value for this label to 1
+    }
+    isClassConfusion = !meetsClassConfidenceThreshold
+  }
+  //if we meet the class confidence threshold, we are in the IN_DISTRO_CONFIDENT use case
+  //else we are in the CLASS_CONFUSION use case
+  processedClassProbabilities[SAMPLE_CONDITIONS.CLASS_CONFUSION] = isClassConfusion ? 1 : 0
+
+  processedClassProbabilities[SAMPLE_CONDITIONS.OOD] = isOOD ? 1 : 0
+
+  return processedClassProbabilities
 }

@@ -5,7 +5,7 @@ import React from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUpload, faTimes } from '@fortawesome/free-solid-svg-icons'
 
-import copyArrayDelete from "@/utils/copyArrayDelete"
+import copyArrayThenDelete from "@/utils/copyArrayThenDelete"
 
 import { showModal } from "@/redux/modal"
 import { useAppDispatch } from "@/redux/reduxHooks"
@@ -64,7 +64,7 @@ export default function UploadSampleFiles({
 
   const deleteSampleFile = (fileIndex: number) => {
     if(sampleFiles[fileIndex]) {
-      setSampleFiles(copyArrayDelete(sampleFiles, fileIndex))
+      setSampleFiles(copyArrayThenDelete(sampleFiles, fileIndex))
     }
   }
 

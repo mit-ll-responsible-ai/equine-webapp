@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react"
-import { AppClassType } from "@/redux/inferenceSettings"
+import { ClassProbabilitiesType } from "@/redux/inferenceSettings"
 
 export default function useFilters(labels: string[]) {
   const [filters, setFilters] = useState<string[]>([])
@@ -25,10 +25,10 @@ export default function useFilters(labels: string[]) {
   return { filters, setFilters, toggleFilter }
 }
 
-export const sampleMatchesFilters = (filters:string[],processedAppClass:AppClassType) => {
+export const sampleMatchesFilters = (filters:string[],processedClassProbabilities:ClassProbabilitiesType) => {
   //check if this sample has any matching labels
   for(const label of filters) { //for all the labels in the filter
-    if(processedAppClass[label] === 1) { //if this sample has a matching label
+    if(processedClassProbabilities[label] === 1) { //if this sample has a matching label
       return true
     }
   }

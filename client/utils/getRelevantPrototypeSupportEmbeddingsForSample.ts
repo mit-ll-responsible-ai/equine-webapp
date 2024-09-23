@@ -1,5 +1,5 @@
 import { GetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
-import { AppClassType } from "@/redux/inferenceSettings"
+import { ClassProbabilitiesType } from "@/redux/inferenceSettings"
 import { SAMPLE_CONDITIONS } from "./determineSampleCondition"
 
 /**
@@ -8,14 +8,14 @@ import { SAMPLE_CONDITIONS } from "./determineSampleCondition"
  * Ex, if the sample is confident or OOD, only show the closest class
  * If the sample is class confusion, show the two closest classes
  * @param labelsSortedByDistance      the labels sorted by closest to farthest from the sample
- * @param processedAppClass           ex {C1: 0, C2:1, ..., CLASS_CONFUSION: 0, OOD: 0}
+ * @param processedClassProbabilities           ex {C1: 0, C2:1, ..., CLASS_CONFUSION: 0, OOD: 0}
  * @param sampleCondition             the use case of the sample (confident, class confusion, OOD)
  * @param prototypeSupportEmbeddings  all the prototype support embeddings
  * @returns                           the prototype support embeddings relevant to the sample given the sample condition
  */
 export function getRelevantPrototypeSupportEmbeddingsForSample(
   labelsSortedByDistance: GetPrototypeSupportEmbeddingsQuery["getPrototypeSupportEmbeddings"],
-  processedAppClass: AppClassType,
+  processedClassProbabilities: ClassProbabilitiesType,
   sampleCondition: SAMPLE_CONDITIONS,
   prototypeSupportEmbeddings?: GetPrototypeSupportEmbeddingsQuery,
 ):GetPrototypeSupportEmbeddingsQuery | undefined {
@@ -25,8 +25,8 @@ export function getRelevantPrototypeSupportEmbeddingsForSample(
       case SAMPLE_CONDITIONS.IN_DISTRO_CONFIDENT: {
         return {
           ...prototypeSupportEmbeddings,
-          //filter by the prototypeSupportEmbeddings with a processedAppClass of 1
-          getPrototypeSupportEmbeddings: prototypeSupportEmbeddings.getPrototypeSupportEmbeddings.filter(label => processedAppClass[label.label] === 1)
+          //filter by the prototypeSupportEmbeddings with a processedClassProbabilities of 1
+          getPrototypeSupportEmbeddings: prototypeSupportEmbeddings.getPrototypeSupportEmbeddings.filter(label => processedClassProbabilities[label.label] === 1)
         }
       }
       //if this sample is indsitribution but class confusion

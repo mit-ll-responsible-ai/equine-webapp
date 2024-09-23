@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: MIT
 import React from "react"
 
-import type { LabelCounter } from "@/components/Dashboard/getAppClassCounts"
+import type { LabelCounter } from "@/components/Dashboard/getClassCounts"
 
 import styles from "./Filters.module.scss"
 import { Col, Row } from "react-bootstrap"
 import { SAMPLE_CONDITIONS } from "@/utils/determineSampleCondition"
 
 type Props = {
-  appClassCounts: LabelCounter,
+  classCounts: LabelCounter,
   filters: string[],
   labels: string[],
   toggleFilter: (label:string) => void,
@@ -18,7 +18,7 @@ type Props = {
 
 
 const Filters = ({
-  appClassCounts,
+  classCounts,
   filters,
   labels,
   setFilters,
@@ -43,7 +43,7 @@ const Filters = ({
     return (
       <div key={label}>
         <input id={id} type="checkbox" checked={filters.includes(label)} onChange={e => toggleFilter(label)}/>
-        {" "}<label htmlFor={id}>{label} ({appClassCounts[label]})</label>
+        {" "}<label htmlFor={id}>{label} ({classCounts[label]})</label>
       </div>
     )
   }

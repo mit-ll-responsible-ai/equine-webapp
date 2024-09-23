@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { axisBottom, axisLeft, contourDensity, geoPath, ScaleLinear, scaleLinear, select } from 'd3'
 
-import { AppClassType, InputDataType, SampleType } from '@/redux/inferenceSettings'
+import { ClassProbabilitiesType, InputDataType, SampleType } from '@/redux/inferenceSettings'
 
 import useGetColorFromLabel from '@/hooks/useGetColorFromLabel'
 import { Sample, GetPrototypeSupportEmbeddingsQuery } from '@/graphql/generated'
@@ -21,7 +21,7 @@ type Props = ScatterUQDataProps & {
 
 const PADDING = {t:10,l:40,b:30,r:10}
 
-type HoverPointType = { msg:React.ReactNode, x: number, y: number }
+type FocusPointType = { msg:React.ReactNode, x: number, y: number }
 
 const contourToPath = geoPath()
 const getX = (d:Coordinate2DType | WeightedCoordinate2DType) => d.x
@@ -38,7 +38,7 @@ export default function ScatterUQ({
   inDistributionThreshold,
   inputDataType,
   stress,
-  processedAppClasses,
+  processedClassesProbabilities,
   samples,
   scree,
   srho,
@@ -161,46 +161,45 @@ export default function ScatterUQ({
 
 
 
-  /* Hover Interactions */
-  const lastHoverPoint = useRef<boolean>(false) //this is used to alternate which sidebar to update on hover in a global view
-  const [leftHoverPoint, setLeftHoverPoint] = useState<HoverPointType | null>(null)
-  const [rightHoverPoint, setRightHoverPoint] = useState<HoverPointType | null>(null)
+  /* Focus Interactions */
+  const [leftFocusPoint, setLeftFocusPoint] = useState<FocusPointType | null>(null)
+  const [rightFocusPoint, setRightFocusPoint] = useState<FocusPointType | null>(null)
   const onMouseEnterPoint = useCallback((x: number, y: number, msg: React.ReactNode) => {
+    setRightFocusPoint({ msg, x, y }) //only update the right focus point
+  }, [samples])
+  const onClickPoint = useCallback((x: number, y: number, msg: React.ReactNode) => {
     if(!samples || samples.length > 1) { //if there are mulitple samples (ex dashboard global view) or no samples (ex model summary page)
-      //we want to alternate which hover point to update
-      const setPoint = lastHoverPoint.current ? setRightHoverPoint : setLeftHoverPoint
-      setPoint({ msg, x, y })
-      lastHoverPoint.current = !lastHoverPoint.current
+      setLeftFocusPoint({ msg, x, y }) //update the left hover point
     }
-    else { //else there is only one sample
-      setRightHoverPoint({ msg, x, y }) //only update the right hover point
-    }
+    //else there is only one sample, don't do anything
   }, [samples])
 
 
 
-  /* Set the initial content for the hover points when the data loads or changes */
+  /* Set the initial content for the focus points when the data loads or changes */
   useEffect(() => {
     //if the data is now ready or has changed
     if(prototypeSupportEmbeddings && structuredEmbeddings.labels.length>0) {
-      if(inDistributionThreshold && processedAppClasses && samples) { //if there are samples (ex dashboard)
-        if(samples?.length > 1) { //if there are multiple samples (ex dashboard global plot), pick the first two samples
-          setLeftHoverPoint(
-            getSampleHoverPointDetails({
-              sampleIndex: 0, //use the first sample
-              getInferenceSampleImageSrc, getInferenceSampleTabularData, inputDataType,
-              processedAppClasses, samples, scaleX, scaleY, structuredEmbeddings,
-            })
-          )
-          setRightHoverPoint(
-            getSampleHoverPointDetails({
+      if(inDistributionThreshold && processedClassesProbabilities && samples) { //if there are samples (ex dashboard)
+        //the left focus point will always be the first sample
+        setLeftFocusPoint(
+          getSampleFocusPointDetails({
+            sampleIndex: 0, //use the first sample
+            getInferenceSampleImageSrc, getInferenceSampleTabularData, inputDataType,
+            processedClassesProbabilities, samples, scaleX, scaleY, structuredEmbeddings,
+          })
+        )
+
+        if(samples?.length > 1) { //if there are multiple samples (ex dashboard global plot), pick the next sample to highlight
+          setRightFocusPoint(
+            getSampleFocusPointDetails({
               sampleIndex: 1, //use the second sample
               getInferenceSampleImageSrc, getInferenceSampleTabularData, inputDataType,
-              processedAppClasses, samples, scaleX, scaleY, structuredEmbeddings,
+              processedClassesProbabilities, samples, scaleX, scaleY, structuredEmbeddings,
             })
           )
         }
-        else { //else there is only one sample (ex local sample plot), set the left hover point to the sample and the right hover point to the closest training example
+        else { //else there is only one sample (ex local sample plot), set the right focus point to the closest training example
           const firstSample = samples[0]
   
           const { //find the closest training example in the high dimensional space
@@ -225,8 +224,8 @@ export default function ScatterUQ({
           }, {closestLabelIdx: null, closestPointIdx: null, closestDistance: null} as {closestLabelIdx: number|null, closestPointIdx: number|null, closestDistance: number|null})
           
           if(closestLabelIdx!==null && closestPointIdx!==null) { //if we found a training example
-            setRightHoverPoint(
-              getTrainingSampleHoverPointDetails({
+            setRightFocusPoint(
+              getTrainingSampleFocusPointDetails({
                 getSupportExampleImageSrc,
                 getSupportExampleTabularData,
                 inputDataType,
@@ -239,14 +238,6 @@ export default function ScatterUQ({
               })
             )
           }
-  
-          setLeftHoverPoint(
-            getSampleHoverPointDetails({
-              sampleIndex: 0, //use the first sample
-              getInferenceSampleImageSrc, getInferenceSampleTabularData, inputDataType,
-              processedAppClasses, samples, scaleX, scaleY, structuredEmbeddings,
-            })
-          )
         }
       }
       else { //else there are no samples, ex model summary page
@@ -255,15 +246,15 @@ export default function ScatterUQ({
           getSupportExampleImageSrc, getSupportExampleTabularData, inputDataType,
           scaleX, scaleY, structuredEmbeddings, prototypeSupportEmbeddings
         } as const
-        setLeftHoverPoint(
-          getTrainingSampleHoverPointDetails({
+        setLeftFocusPoint(
+          getTrainingSampleFocusPointDetails({
             labelIdx: 0, //use the first label
             pointIdx: 0, //use the first training example for this label
             ...args,
           })
         )
-        setRightHoverPoint(
-          getTrainingSampleHoverPointDetails({
+        setRightFocusPoint(
+          getTrainingSampleFocusPointDetails({
             labelIdx: 1, //use the second label
             pointIdx: 0, //use the first training example for this label
             ...args,
@@ -274,7 +265,7 @@ export default function ScatterUQ({
   }, [
     getInferenceSampleImageSrc, getInferenceSampleTabularData,
     getSupportExampleImageSrc, getSupportExampleTabularData,
-    inDistributionThreshold, inputDataType, processedAppClasses, samples,
+    inDistributionThreshold, inputDataType, processedClassesProbabilities, samples,
     scaleX, scaleY, structuredEmbeddings, prototypeSupportEmbeddings
   ])
 
@@ -283,7 +274,7 @@ export default function ScatterUQ({
   return (
     <div className={styles["uq-viz-container"]}>
       <div className={styles["uq-viz-sidebar"]} style={{marginRight: "1rem"}}>
-        {leftHoverPoint && leftHoverPoint.msg}
+        {leftFocusPoint && leftFocusPoint.msg}
       </div>
 
       <div>
@@ -333,6 +324,15 @@ export default function ScatterUQ({
 
                     const cx = scaleX(getX(dimRedPoint))
                     const cy = scaleY(getY(dimRedPoint))
+
+                    const msg = <TrainingLabelMessage
+                      getSupportExampleImageSrc={getSupportExampleImageSrc}
+                      getSupportExampleTabularData={getSupportExampleTabularData}
+                      inputDataType={inputDataType}
+                      label={label.label}
+                      sample={point}
+                    />
+
                     return (
                       <circle
                         key={pointIdx}
@@ -341,16 +341,8 @@ export default function ScatterUQ({
                         cx={cx}
                         cy={cy}
                         fill={getColorFromLabel(label.label)}
-                        onMouseEnter={(e) => onMouseEnterPoint(
-                          cx, cy, 
-                          <TrainingLabelMessage
-                            getSupportExampleImageSrc={getSupportExampleImageSrc}
-                            getSupportExampleTabularData={getSupportExampleTabularData}
-                            inputDataType={inputDataType}
-                            label={label.label}
-                            sample={point}
-                          />
-                        )}
+                        onClick={() => onClickPoint(cx, cy, msg)}
+                        onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
                         opacity={samples ? confidence/2 + 0.5 : 1}
                         r={5}
                         stroke="white"
@@ -366,6 +358,9 @@ export default function ScatterUQ({
               const dimRedPrototype = structuredEmbeddings.labels[labelIdx].prototype
               const cx = scaleX(getX(dimRedPrototype))
               const cy = scaleY(getY(dimRedPrototype))
+
+              const msg = <PrototypeMessage label={label.label}/>
+
               return (
                 <g key={labelIdx}>
                   <circle
@@ -373,10 +368,8 @@ export default function ScatterUQ({
                     cx={cx}
                     cy={cy}
                     fill="black"
-                    onMouseEnter={(e) => onMouseEnterPoint(
-                      cx, cy,
-                      <PrototypeMessage label={label.label}/>
-                    )}
+                    onClick={() => onClickPoint(cx, cy, msg)}
+                    onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
                     r={5}
                     stroke="white"
                     strokeWidth="2"
@@ -386,11 +379,20 @@ export default function ScatterUQ({
             })}
 
             <g>
-              {processedAppClasses && samples && samples.map((s,sIdx) => {
-                const processedAppClass = processedAppClasses[sIdx]
+              {processedClassesProbabilities && samples && samples.map((s,sIdx) => {
+                const processedClassProbabilities = processedClassesProbabilities[sIdx]
                 const dimRedSample = structuredEmbeddings.samples[sIdx]
                 const cx = scaleX(getX(dimRedSample))
                 const cy = scaleY(getY(dimRedSample))
+
+                const msg = <InferenceExampleMessage
+                  getInferenceSampleImageSrc={getInferenceSampleImageSrc}
+                  getInferenceSampleTabularData={getInferenceSampleTabularData}
+                  inputDataType={inputDataType}
+                  processedClassProbabilities={processedClassProbabilities}
+                  sample={s}
+                />
+
                 return (
                   <circle
                     key={sIdx}
@@ -398,19 +400,9 @@ export default function ScatterUQ({
                     className="point"
                     cx={cx}
                     cy={cy}
-                    fill={getColorFromLabel(getMaxLabel(processedAppClass))}
-                    onMouseEnter={
-                      (e) => onMouseEnterPoint(
-                        cx, cy, 
-                        <InferenceExampleMessage
-                          getInferenceSampleImageSrc={getInferenceSampleImageSrc}
-                          getInferenceSampleTabularData={getInferenceSampleTabularData}
-                          inputDataType={inputDataType}
-                          processedAppClass={processedAppClass}
-                          sample={s}
-                        />
-                      )
-                    }
+                    fill={getColorFromLabel(getMaxLabel(processedClassProbabilities))}
+                    onClick={() => onClickPoint(cx, cy, msg)}
+                    onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
                     r={7}
                     stroke="black"
                     strokeWidth="2"
@@ -420,19 +412,19 @@ export default function ScatterUQ({
             </g>
           </svg>
 
-          {rightHoverPoint && <div style={{
+          {rightFocusPoint && <div style={{
             position: "absolute",
-            top: rightHoverPoint.y - 2,
-            left: rightHoverPoint.x + 7,
+            top: rightFocusPoint.y - 2,
+            left: rightFocusPoint.x + 7,
             right: "-1rem",
             border: "2px dashed gray",
           }}/>}
 
-          {leftHoverPoint && <div style={{
+          {leftFocusPoint && <div style={{
             position: "absolute",
-            top: leftHoverPoint.y - 2,
+            top: leftFocusPoint.y - 2,
             left: "-1rem",
-            right: width - leftHoverPoint.x + 7,
+            right: width - leftFocusPoint.x + 7,
             border: "2px dashed gray",
           }}/>}
           
@@ -455,7 +447,7 @@ export default function ScatterUQ({
       </div>
 
       <div className={styles["uq-viz-sidebar"]} style={{marginLeft: "1rem"}}>
-        {rightHoverPoint && rightHoverPoint.msg}
+        {rightFocusPoint && rightFocusPoint.msg}
       </div>
     </div>
   )
@@ -512,13 +504,13 @@ const InferenceExampleMessage = ({
   getInferenceSampleImageSrc,
   getInferenceSampleTabularData,
   inputDataType,
-  processedAppClass,
+  processedClassProbabilities,
   sample,
 }:{
   getInferenceSampleImageSrc: ScatterUQDataProps["getInferenceSampleImageSrc"],
   getInferenceSampleTabularData: ScatterUQDataProps["getInferenceSampleTabularData"],
   inputDataType: InputDataType,
-  processedAppClass: AppClassType,
+  processedClassProbabilities: ClassProbabilitiesType,
   sample:SampleType,
 }) => {
   return (
@@ -532,7 +524,7 @@ const InferenceExampleMessage = ({
       
       <div style={{padding: "0.5em"}}>
         <div>
-          {Object.entries(processedAppClass).filter(
+          {Object.entries(processedClassProbabilities).filter(
             ([label,confidence]) => confidence === 1
           ).map(([label,confidence]) => (
             <p key={label}>This is an inference sample with prediction <LabelAndCircle label={label}/></p>
@@ -542,7 +534,7 @@ const InferenceExampleMessage = ({
         <div style={{height: "3rem", overflowY: "auto"}}>
           <table>
             <tbody>
-              {Object.entries(sample.app_class).sort(
+              {Object.entries(sample.classProbabilities).sort(
                 ([aKey,aValue],[bKey,bValue]) => Math.sign(bValue-aValue)
               ).map(([label,confidence]) => (
                 <tr key={label}>
@@ -601,14 +593,14 @@ function updateDomains(
   domainY[1] = force ? y : Math.max(domainY[1],y)
 }
 
-function getMaxLabel(app_class: AppClassType) {
+function getMaxLabel(classProbabilities: ClassProbabilitiesType) {
   let maxLabel = ""
   let maxValue = 0
 
-  Object.keys(app_class).forEach((label) => {
-    if(app_class[label] > maxValue) {
+  Object.keys(classProbabilities).forEach((label) => {
+    if(classProbabilities[label] > maxValue) {
       maxLabel = label
-      maxValue = app_class[label]
+      maxValue = classProbabilities[label]
     }
   })
 
@@ -624,20 +616,20 @@ function formatConfidence(n:number, toFixedValue:number=2) {
 }
 
 /**
- * This function is used to get the details necessary for hovering over a sample point and displaying the info 
+ * This function is used to get the details necessary for focusing on a sample point and displaying the info 
  * @param sampleIndex 
- * @param processedAppClasses 
+ * @param processedClassesProbabilities 
  * @param samples 
  * @param scaleX 
  * @param scaleY 
  * @param structuredEmbeddings 
  * @returns 
  */
-function getSampleHoverPointDetails({
+function getSampleFocusPointDetails({
   getInferenceSampleImageSrc,
   getInferenceSampleTabularData,
   inputDataType,
-  processedAppClasses,
+  processedClassesProbabilities,
   sampleIndex,
   samples,
   scaleX,
@@ -648,7 +640,7 @@ function getSampleHoverPointDetails({
   getInferenceSampleImageSrc: ScatterUQDataProps["getInferenceSampleImageSrc"],
   getInferenceSampleTabularData: ScatterUQDataProps["getInferenceSampleTabularData"],
   inputDataType: InputDataType,
-  processedAppClasses: AppClassType[],
+  processedClassesProbabilities: ClassProbabilitiesType[],
   sampleIndex: number,
   samples: SampleType[],
   scaleX: ScaleLinear<number, number, never>,
@@ -659,20 +651,20 @@ function getSampleHoverPointDetails({
   const firstSampleDimRed = structuredEmbeddings.samples[sampleIndex]
   const firstSampleCx = scaleX(getX(firstSampleDimRed))
   const firstSampleCy = scaleY(getY(firstSampleDimRed))
-  const processedAppClass = processedAppClasses[sampleIndex]
-  return { //set the initial content for the hover point
+  const processedClassProbabilities = processedClassesProbabilities[sampleIndex]
+  return { //set the initial content for the focus point
     x: firstSampleCx, y: firstSampleCy,
     msg: <InferenceExampleMessage
       getInferenceSampleImageSrc={getInferenceSampleImageSrc}
       getInferenceSampleTabularData={getInferenceSampleTabularData}
       inputDataType={inputDataType}
-      processedAppClass={processedAppClass}
+      processedClassProbabilities={processedClassProbabilities}
       sample={samples[sampleIndex]}
     />
   }
 }
 
-function getTrainingSampleHoverPointDetails({
+function getTrainingSampleFocusPointDetails({
   getSupportExampleImageSrc,
   getSupportExampleTabularData,
   inputDataType,
@@ -699,7 +691,7 @@ function getTrainingSampleHoverPointDetails({
   const cy = scaleY(getY(dimRedPoint))
   const label = prototypeSupportEmbeddings.getPrototypeSupportEmbeddings[labelIdx]
 
-  return { //set the initial content for the hover point
+  return { //set the initial content for the focus point
     x: cx, y: cy,
     msg: <TrainingLabelMessage
       getSupportExampleImageSrc={getSupportExampleImageSrc}

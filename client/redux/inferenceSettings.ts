@@ -25,12 +25,12 @@ const INITIAL_STATE: ReduxInferenceSettingsState = {
 
 
 
-export type AppClassType = {
+export type ClassProbabilitiesType = {
   [label:string]: number
 }
 
 export type SampleType = {
-  app_class: AppClassType,
+  classProbabilities: ClassProbabilitiesType,
   coordinates: number[],
   inputData: InputData,
   ood: number, //out of distribution
@@ -40,7 +40,7 @@ export const rawSampleSchema = { //TODO
   $id: "/rawSampleSchema",
   type: "object",
   properties: {
-    app_class: {
+    classProbabilities: {
       type: "object",
       additionalProperties: {
         type: "number", minimum: 0, maximum: 1
@@ -49,7 +49,7 @@ export const rawSampleSchema = { //TODO
     ood: { type: "number", minimum: 0, maximum: 1 },
   },
   required: [
-    "app_class", "ood"
+    "classProbabilities", "ood"
   ]
 }
 

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "graphql-codegen": "env-cmd -f .env.local graphql-codegen"
+    "graphql-codegen": "env-cmd -f .env.local graphql-codegen",
+    "test": "vitest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
@@ -45,6 +46,10 @@
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@graphql-codegen/typescript-react-query": "^4.1.0",
-    "env-cmd": "^10.1.0"
+    "@vitejs/plugin-react": "^4.3.1",
+    "env-cmd": "^10.1.0",
+    "jsdom": "^25.0.0",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.1.1"
   }
 }

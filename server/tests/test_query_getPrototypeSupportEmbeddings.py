@@ -1,16 +1,16 @@
 # Copyright (c) 2023 Massachusetts Institute of Technology
 # SPDX-License-Identifier: MIT
+import equine as eq
 import numpy as np
 import os
-import pytest
 
 from server.tests.train_model_for_testing import TEST_MODEL_CONFIG
 from server.tests.utils import assert_confidence_labels_are_valid
-from server.utils import load_equine_model, SERVER_CONFIG
+from server.utils import SERVER_CONFIG
 
 def test_query_models(client):
     model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, "protonet_test_model.eq")
-    model = load_equine_model(model_path)
+    model = eq.load_equine_model(model_path)
     model_support = model.model.support
 
 

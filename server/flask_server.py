@@ -66,14 +66,14 @@ def graphql_server():
 
 @app.route("/render-image/inference/<run_id>/<data_index>", methods=["GET"])
 def handle_render_inference_image(run_id, data_index):
-    sample, _ = get_sample_from_data_index(run_id, data_index)
+    sample, _, _ = get_sample_from_data_index(run_id, data_index)
     return send_img_tensor_as_file(sample, f"{run_id}_{data_index}")
 
     
 
 @app.route("/render-image/support/<model_name>/<data_index>", methods=["GET"])
 def handle_render_support_image(model_name, data_index):
-    support_example, _ = get_support_example_from_data_index(model_name, data_index)
+    support_example, _, _ = get_support_example_from_data_index(model_name, data_index)
     return send_img_tensor_as_file(support_example, f"{model_name}_{data_index}")
 
 def send_img_tensor_as_file(img_tensor, filename):

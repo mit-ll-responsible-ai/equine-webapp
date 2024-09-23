@@ -168,6 +168,7 @@ export type QueryModelsArgs = {
 
 export type QueryRenderInferenceFeatureDataArgs = {
   dataIndex: Scalars['Int']['input'];
+  modelName: Scalars['String']['input'];
   runId: Scalars['Int']['input'];
 };
 
@@ -272,7 +273,7 @@ export type ModelSummaryQueryVariables = Exact<{
 }>;
 
 
-export type ModelSummaryQuery = { __typename?: 'Query', modelSummary?: { __typename?: 'ModelSummaryType', dateTrained: string, lastModified: number, modelType: string } | null };
+export type ModelSummaryQuery = { __typename?: 'Query', modelSummary?: { __typename?: 'ModelSummaryType', dateTrained: string, lastModified: number, modelType: string, numTrainExamples: Array<{ __typename?: 'LabelExamplesType', label: string, numExamples: number }> } | null };
 
 export type ModelsQueryVariables = Exact<{
   extension: Scalars['String']['input'];
@@ -283,6 +284,7 @@ export type ModelsQuery = { __typename?: 'Query', models: Array<{ __typename?: '
 
 export type RenderInferenceFeatureDataQueryVariables = Exact<{
   runId: Scalars['Int']['input'];
+  modelName: Scalars['String']['input'];
   dataIndex: Scalars['Int']['input'];
 }>;
 
@@ -444,6 +446,10 @@ export const ModelSummaryDocument = `
     dateTrained
     lastModified
     modelType
+    numTrainExamples {
+      label
+      numExamples
+    }
   }
 }
     `;
@@ -480,8 +486,12 @@ export const useModelsQuery = <
       options
     );
 export const RenderInferenceFeatureDataDocument = `
-    query RenderInferenceFeatureData($runId: Int!, $dataIndex: Int!) {
-  renderInferenceFeatureData(runId: $runId, dataIndex: $dataIndex) {
+    query RenderInferenceFeatureData($runId: Int!, $modelName: String!, $dataIndex: Int!) {
+  renderInferenceFeatureData(
+    runId: $runId
+    modelName: $modelName
+    dataIndex: $dataIndex
+  ) {
     featureData
     columnHeaders
   }

@@ -5,5 +5,9 @@ query ModelSummary($modelName: String!) {
     dateTrained
     lastModified
     modelType
+    numTrainExamples {
+      label
+      numExamples
+    }
   }
 }

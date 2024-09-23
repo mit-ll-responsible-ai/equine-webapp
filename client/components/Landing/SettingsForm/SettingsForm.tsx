@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col'
 
 import { useMutation } from "@tanstack/react-query"
 
-import { AppClassType, setModelName, setRunId } from "@/redux/inferenceSettings"
+import { ClassProbabilitiesType, setModelName, setRunId } from "@/redux/inferenceSettings"
 import { showModal } from "@/redux/modal"
 import { useAppDispatch, useAppSelector } from "@/redux/reduxHooks"
 
@@ -61,10 +61,10 @@ export default function SettingsForm() {
       /* Save data and go to dashboard */
       processAndSetSamples(
         data.runInference.samples.map(s => ({
-          app_class: s.labels.reduce((acc, l) => {
+          classProbabilities: s.labels.reduce((acc, l) => {
             acc[l.label] = l.confidence
             return acc
-          }, {} as AppClassType),
+          }, {} as ClassProbabilitiesType),
           coordinates: s.coordinates,
           inputData: s.inputData,
           ood: s.ood,

@@ -3,7 +3,7 @@
 import React, { useMemo } from "react"
 import { ColumnChart } from 'react-chartkick';
 
-import type { AppClassType, SampleType } from "@/redux/inferenceSettings"
+import type { ClassProbabilitiesType, SampleType } from "@/redux/inferenceSettings"
 import { useAppSelector } from "@/redux/reduxHooks";
 
 import { darkModeLibraryOptions } from "@/utils/chartkick"
@@ -16,14 +16,14 @@ import styles from "./SamplesBarChart.module.scss"
 
 type Props = {
   labels: string[],
-  processedAppClasses: AppClassType[],
+  processedClassesProbabilities: ClassProbabilitiesType[],
   samples: SampleType[],
 }
 
 
 const SamplesBarChart = ({
   labels,
-  processedAppClasses,
+  processedClassesProbabilities,
   samples,
 }:Props) => {
   const darkMode = useAppSelector(state => state.uiSettings.darkMode)
@@ -37,8 +37,8 @@ const SamplesBarChart = ({
   )
 
   const stackData = useMemo(
-    () => processStackData(oodThresholds, processedAppClasses, samples),
-    [oodThresholds, processedAppClasses, samples]
+    () => processStackData(oodThresholds, processedClassesProbabilities, samples),
+    [oodThresholds, processedClassesProbabilities, samples]
   )
 
 

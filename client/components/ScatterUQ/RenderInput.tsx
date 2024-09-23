@@ -4,7 +4,6 @@ import React from "react"
 import { InputDataType } from "@/redux/inferenceSettings";
 import { ScatterUQDataProps } from "./types";
 import { useQuery } from "@tanstack/react-query";
-import { FeatureData } from "@/graphql/generated";
 
 type RenderInputProps = {
   dataIndex: number,
