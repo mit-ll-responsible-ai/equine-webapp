@@ -15,7 +15,7 @@ const nextConfig = {
    *
    * @see https://nextjs.org/docs/app/api-reference/next-config-js/basePath
    */
-  basePath: process.env.NODE_ENV==="production" ? "/equine-webapp" : "",
+  basePath: process.env.GITHUB_PAGES==="true" ? "/equine-webapp" : "",
 
   /**
    * Disable server-based image optimization. Next.js does not support
@@ -26,6 +26,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  distDir: "../server/client"
 }
 
 module.exports = nextConfig

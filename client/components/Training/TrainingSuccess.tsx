@@ -37,7 +37,7 @@ const TrainingSuccess = ({
 
   const downloadModel = () => {
     downloadUrlAsFile(
-      `${serverUrl}/models/${modelNameWithExtension}`,
+      `${serverUrl}${ROUTES.API_DOWNLOAD_MODEL}/${modelNameWithExtension}`,
       `${modelNameWithExtension}`,
     ).catch(err => {
       dispatch(

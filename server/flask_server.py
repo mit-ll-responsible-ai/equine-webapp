@@ -3,10 +3,9 @@
 
 import os
 import io
-from pathlib import Path
 import json
 
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 from ariadne.explorer import ExplorerGraphiQL
 from ariadne import combine_multipart_data, graphql_sync
@@ -18,7 +17,11 @@ from .utils import SERVER_CONFIG, get_support_example_from_data_index, get_sampl
 from .graphql.graphql_config import schema
 
 # Flask App Setup ################################
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path="/equine-webapp",
+    static_folder="./client",
+)
 # app.config["CORS_HEADERS"] = "Content-Type"
 CORS(app)
 
@@ -30,15 +33,8 @@ explorer_html = ExplorerGraphiQL().html(None)
 def StartServer():
     app.run(port=5252, debug=True) #TODO remove debug
 
-def clear_folder(folder_path):
-    for filename in os.listdir(folder_path):
-        os.remove(os.path.join(folder_path, filename))
-
 
 # App Routes #####################################
-@app.route('/')
-def hello():
-    return 'Hello world!'
 
 @app.route("/graphql", methods=["GET"])
 def graphql_explorer():
@@ -64,14 +60,14 @@ def graphql_server():
     status_code = 200 if success else 400
     return jsonify(result), status_code
 
-@app.route("/render-image/inference/<run_id>/<data_index>", methods=["GET"])
+@app.route("/api/render-image/inference/<run_id>/<data_index>", methods=["GET"])
 def handle_render_inference_image(run_id, data_index):
     sample, _, _ = get_sample_from_data_index(run_id, data_index)
     return send_img_tensor_as_file(sample, f"{run_id}_{data_index}")
 
     
 
-@app.route("/render-image/support/<model_name>/<data_index>", methods=["GET"])
+@app.route("/api/render-image/support/<model_name>/<data_index>", methods=["GET"])
 def handle_render_support_image(model_name, data_index):
     support_example, _, _ = get_support_example_from_data_index(model_name, data_index)
     return send_img_tensor_as_file(support_example, f"{model_name}_{data_index}")
@@ -84,6 +80,20 @@ def send_img_tensor_as_file(img_tensor, filename):
 
     return send_file(img_buf, download_name=f"{filename}.png")
 
-@app.route("/models/<model_name>", methods=["GET"])
+@app.route("/api/models/<model_name>", methods=["GET"])
 def handle_send_model(model_name):
     return send_file(os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_name), download_name=model_name)
+
+
+
+# Serve static index.html when accessing / with no path
+@app.route('/')
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+# Serve other static files from /<path:filename>
+@app.route('/<path:filename>')
+def serve_static(filename):
+    if os.path.isfile(os.path.join(app.static_folder,filename+".html")):
+        return send_from_directory(app.static_folder, filename+".html")
+    return send_from_directory(app.static_folder, filename)
