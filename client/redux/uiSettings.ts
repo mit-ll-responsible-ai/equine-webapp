@@ -25,7 +25,7 @@ export function setupInitialState() {
     oodColorIntervals: DEFAULT_OOD_COLOR_INTERVALS,
     oodColorMode: DEFAULT_OOD_COLOR_MODE,
     confidenceFloor: DEFAULT_CONFIDENCE_FLOOR,
-    serverUrl: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5252",
+    serverUrl: process.env.NEXT_PUBLIC_SERVER_URL || "http://127.0.0.1:5252",
   }
 }
 
