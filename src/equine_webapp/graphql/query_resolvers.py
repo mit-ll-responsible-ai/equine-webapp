@@ -108,7 +108,7 @@ def resolve_dimensionality_reduction(_, info, method, data, n_neighbors, random_
     embeddings = technique.fit_transform(data)
 
     scree = None
-    if method == "pca":  
+    if isinstance(technique, PCA):
         scree = technique.explained_variance_ratio_.tolist()
         embeddings = embeddings[:,0:2] # slice off dimensions 3+ that we don't need
 
@@ -135,7 +135,8 @@ def resolve_dimensionality_reduction(_, info, method, data, n_neighbors, random_
 
 @convert_kwargs_to_snake_case
 def resolve_render_inference_feature_data(_, info, run_id, model_name, data_index):
-    featureData, _, columnHeaders = get_sample_from_data_index(run_id, data_index, model_name=model_name)
+    featureData, _, feature_names = get_sample_from_data_index(run_id, data_index, model_name=model_name)
+    columnHeaders = feature_names if feature_names is not None else list(range(len(featureData)))
     assert len(featureData) == len(columnHeaders)
     
     return {"featureData": featureData, "columnHeaders": columnHeaders}

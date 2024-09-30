@@ -27,7 +27,7 @@ https://mit-ll-responsible-ai.github.io/equine-webapp/demo
 
 [![ScatterUQ Out of Distribution Example](client/public/ood.png)](https://mit-ll-responsible-ai.github.io/equine-webapp/demo)
 
-### Development Server Setup
+### Development Frontend Server Setup
 1. Install node packages
 ```
 cd client
@@ -42,7 +42,7 @@ npm run dev
 
 ## Python Flask Server
 
-### Development Server Setup
+### Development Flask Server Setup
 1. Create a new Anaconda environment
 ```
 conda create --name equine-webapp python=3.10
@@ -72,7 +72,7 @@ pip install pytest
 
 2. Run pytest
 ```
-pytest
+python -m pytest
 ```
 
 ## Bibliography

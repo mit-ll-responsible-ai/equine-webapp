@@ -35,7 +35,7 @@ def test_query_models(client):
               }
             }
         """,
-        "variables": {"modelName": "protonet_test_model.eq"},
+        "variables": {"modelName": TEST_MODEL_CONFIG["model_name"]},
     })
 
     embeddings = response.json["data"]["getPrototypeSupportEmbeddings"]
@@ -71,14 +71,15 @@ def test_query_models(client):
                       }
                     }
                 """,
-                "variables": {"dataIndex": data_index, "modelName": "protonet_test_model.eq"},
+                "variables": {"dataIndex": data_index, "modelName": TEST_MODEL_CONFIG["model_name"]},
             })
+            render_support_result = render_support_response.json["data"]["renderSupportFeatureData"]
             assert np.allclose(
-                np.array(render_support_response.json["data"]["renderSupportFeatureData"]["featureData"]),
+                np.array(render_support_result["featureData"]),
                 np.array(model_support[label_idx][support_idx]),
                 atol=1e-6
             )
-            assert render_support_response.json["data"]["renderSupportFeatureData"]["columnHeaders"] == ["0", "1"]
+            assert render_support_result["columnHeaders"] == ["0", "1"]
 
             # labels
             assert_confidence_labels_are_valid(support["labels"])
