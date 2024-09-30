@@ -7,8 +7,8 @@ import shutil
 os.environ["TESTING"] = "True"
 
 from equine_webapp.flask_server import app as my_app
-from equine_webapp.tests.train_model_for_testing import train_model_for_testing
 from equine_webapp.utils import SERVER_CONFIG
+from equine_webapp.tests.train_model_for_testing import train_model_for_testing, TEST_MODEL_CONFIG
 
 @pytest.fixture()
 def app():
@@ -29,7 +29,7 @@ def runner(app):
 
 
 def pytest_configure():
-    train_model_for_testing(os.path.join(SERVER_CONFIG.MODEL_FOLDER_PATH, "protonet_test_model.eq"))
+    train_model_for_testing(os.path.join(SERVER_CONFIG.MODEL_FOLDER_PATH, TEST_MODEL_CONFIG["model_name"]))
 
 
 def pytest_sessionfinish(session, exitstatus):

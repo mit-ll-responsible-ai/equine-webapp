@@ -10,6 +10,7 @@ import equine as eq
 from equine_webapp.utils import SERVER_CONFIG
 
 TEST_MODEL_CONFIG = {
+    "model_name": "protonet_test_model.eq",
     "emb_out_dim": 16,
     "examples_per_class": 500,
     "num_classes": 4,

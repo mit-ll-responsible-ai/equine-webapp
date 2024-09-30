@@ -15,7 +15,7 @@ maintainers = [
     { name = "Steven Jorgensen"},
     { name = "Harry Li" },
 ]
-description = "EQUINE^2: Establishing Quantified Uncertainty for Neural Networks"
+description = "Companion web application for EQUINE^2: Establishing Quantified Uncertainty for Neural Networks"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
@@ -43,8 +43,6 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 
-# The following would provide a command line executable called `sample`
-# which executes the function `main` from this package when invoked.
 [project.scripts]
 equine_webapp = "equine_webapp:main"
 

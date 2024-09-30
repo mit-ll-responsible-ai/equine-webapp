@@ -23,9 +23,9 @@ def test_query_models(client):
             dimensionalityReduction(method: $method, data:$data, nNeighbors:$nNeighbors) {
               continuity
               embeddings
-              normalizedStress
+              stress
               scree
-              shepard
+              srho
               trustworthiness
             }
           }
@@ -42,10 +42,10 @@ def test_query_models(client):
     assert response_data["continuity"] >= 0.0
     assert response_data["continuity"] <= 1.0
 
-    assert response_data["normalizedStress"] >= 0.0
+    assert response_data["stress"] >= 0.0
 
-    assert response_data["shepard"] >= 0.0
-    assert response_data["shepard"] <= 1.0
+    assert response_data["srho"] >= 0.0
+    assert response_data["srho"] <= 1.0
 
     assert response_data["trustworthiness"] >= 0.0
     assert response_data["trustworthiness"] <= 1.0
