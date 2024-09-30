@@ -60,7 +60,7 @@ pip install -r requirements.txt
 
 4. Start the Flask server
 ```
-python start_server.py
+python start_dev_server.py
 ```
 
 ### Flask Testing

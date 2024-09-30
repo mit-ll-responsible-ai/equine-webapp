@@ -29,6 +29,7 @@ dependencies = [
     "torch",
     "torchvision",
     "umap-learn",
+    "waitress",
     "zadu==0.1.1"
 ] 
 license = { text = "MIT" }

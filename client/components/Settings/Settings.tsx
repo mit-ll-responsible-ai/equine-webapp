@@ -32,7 +32,7 @@ export default function Settings() {
             <Form.Label>Server URL <FontAwesomeIcon icon={faLink}/></Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter server url, ex: http://localhost:5252"
+              placeholder="Enter server url, ex: http://localhost:8080"
               onChange={(e) => dispatch(setServerUrl(e.target.value))}
               value={serverUrl}
             />
