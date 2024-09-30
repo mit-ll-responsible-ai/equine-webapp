@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 import math
 
-from server.tests.train_model_for_testing import TEST_MODEL_CONFIG
+from equine_webapp.tests.train_model_for_testing import TEST_MODEL_CONFIG
 
 def assert_confidence_labels_are_valid(labels):
     assert len(labels) == TEST_MODEL_CONFIG["num_classes"] # correct number of classes

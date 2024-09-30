@@ -1,5 +1,0 @@
-{
-  "MODEL_EXT": ".eq",
-  "OUTPUT_FOLDER": "./server/tests/temp",
-  "SCHEMA_PATH": "server/graphql/types"
-}

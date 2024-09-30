@@ -2,7 +2,7 @@
 # You have to provide the model_files and test_sample_files
 # This script does DR in the same way as ScatterUQ, evaluates the DR metrics,
 # and prints the average metrics and standard deviations
-# from server.utils import load_equine_model
+# from equine import load_equine_model
 
 # there's a weird bug when we need to import torch first before importing zadu (which imports faiss). if you don't import torch first, the faiss import in zadu will cause a seg fault 11 when you try to call torch.linalg.qr
 import torch
@@ -10,8 +10,8 @@ import torch
 import heapq
 import numpy as np
 
-from server.graphql.query_resolvers import resolve_get_protonet_support_embeddings, resolve_dimensionality_reduction
-from server.graphql.mutation_resolvers import resolve_run_inference
+from src.equine_webapp.graphql.query_resolvers import resolve_get_protonet_support_embeddings, resolve_dimensionality_reduction
+from src.equine_webapp.graphql.mutation_resolvers import resolve_run_inference
 
 # limit the number of samples we get per condition to avoid skewing our metrics too much
 NUM_SAMPLES_PER_CONDITION=10

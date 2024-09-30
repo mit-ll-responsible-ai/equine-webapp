@@ -4,9 +4,9 @@ import equine as eq
 import numpy as np
 import os
 
-from server.tests.train_model_for_testing import TEST_MODEL_CONFIG
-from server.tests.utils import assert_confidence_labels_are_valid
-from server.utils import SERVER_CONFIG
+from equine_webapp.tests.train_model_for_testing import TEST_MODEL_CONFIG
+from equine_webapp.tests.utils import assert_confidence_labels_are_valid
+from equine_webapp.utils import SERVER_CONFIG
 
 def test_query_models(client):
     model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, "protonet_test_model.eq")

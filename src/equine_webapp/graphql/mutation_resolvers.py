@@ -7,7 +7,7 @@ import torch
 import equine as eq
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, combine_data_files, get_model_path, use_label_names
+from equine_webapp.utils import SERVER_CONFIG, combine_data_files, get_model_path, use_label_names
 
 @convert_kwargs_to_snake_case
 def resolve_upload_model(_, info, model_file):

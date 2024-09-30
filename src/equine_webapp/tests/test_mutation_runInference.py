@@ -7,9 +7,9 @@ import pandas as pd
 import pytest
 import time
 
-from server.utils import SERVER_CONFIG
-from server.tests.utils import assert_confidence_labels_are_valid
-from server.tests.train_model_for_testing import TEST_MODEL_CONFIG
+from equine_webapp.utils import SERVER_CONFIG
+from equine_webapp.tests.utils import assert_confidence_labels_are_valid
+from equine_webapp.tests.train_model_for_testing import TEST_MODEL_CONFIG
 
 def test_mutation_runInference(client):
     response = client.post("/graphql", json={

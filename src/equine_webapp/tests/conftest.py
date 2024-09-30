@@ -6,9 +6,9 @@ import shutil
 
 os.environ["TESTING"] = "True"
 
-from server.flask_server import app as my_app
-from server.tests.train_model_for_testing import train_model_for_testing
-from server.utils import SERVER_CONFIG
+from equine_webapp.flask_server import app as my_app
+from equine_webapp.tests.train_model_for_testing import train_model_for_testing
+from equine_webapp.utils import SERVER_CONFIG
 
 @pytest.fixture()
 def app():
