@@ -1,6 +1,6 @@
 # Copyright (c) 2023 Massachusetts Institute of Technology
 # SPDX-License-Identifier: MIT
-import pytest
+
 import random
 from equine_webapp.tests.train_model_for_testing import TEST_MODEL_CONFIG
 from equine_webapp.tests.utils import assert_confidence_labels_are_valid

@@ -1,11 +1,11 @@
 # Copyright (c) 2023 Massachusetts Institute of Technology
 # SPDX-License-Identifier: MIT
+
 import json
 import numpy as np
 import os
 import pandas as pd
 from pathlib import Path
-import pytest
 
 from equine_webapp.utils import SERVER_CONFIG
 

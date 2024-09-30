@@ -1,6 +1,6 @@
 # Copyright (c) 2023 Massachusetts Institute of Technology
 # SPDX-License-Identifier: MIT
-import pytest
+
 import time
 
 from equine_webapp.tests.train_model_for_testing import TEST_MODEL_CONFIG
