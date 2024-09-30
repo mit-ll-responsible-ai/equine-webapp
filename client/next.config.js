@@ -26,7 +26,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  distDir: process.env.STATIC_BUILD_FOR_SERVER==="true" ? "../server/client" : undefined
+  distDir: process.env.STATIC_BUILD_FOR_SERVER==="true" ? "../src/equine_webapp/client" : undefined
 }
 
 module.exports = nextConfig

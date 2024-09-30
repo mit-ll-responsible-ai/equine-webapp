@@ -27,12 +27,8 @@ explorer_html = ExplorerGraphiQL().html(None)
 
 
 # Helper Functions ###############################
-def StartServer():
-    app.run(port=5252, debug=True) #TODO remove debug
-
-def clear_folder(folder_path):
-    for filename in os.listdir(folder_path):
-        os.remove(os.path.join(folder_path, filename))
+def start_dev_server():
+    app.run(port=8080, debug=True) #TODO remove debug
 
 
 # App Routes #####################################
