@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MIT
 import pytest
 import random
-from server.tests.train_model_for_testing import TEST_MODEL_CONFIG
-from server.tests.utils import assert_confidence_labels_are_valid
+from equine_webapp.tests.train_model_for_testing import TEST_MODEL_CONFIG
+from equine_webapp.tests.utils import assert_confidence_labels_are_valid
 
 def test_query_models(client):
     # create a NUM_VECTORS x VECTOR_SIZE matrix of random floats

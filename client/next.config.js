@@ -26,7 +26,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  distDir: "../server/client"
+  distDir: process.env.STATIC_BUILD_FOR_SERVER==="true" ? "../server/client" : undefined
 }
 
 module.exports = nextConfig

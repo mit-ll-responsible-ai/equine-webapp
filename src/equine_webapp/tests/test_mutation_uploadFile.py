@@ -7,7 +7,7 @@ import pandas as pd
 from pathlib import Path
 import pytest
 
-from server.utils import SERVER_CONFIG
+from equine_webapp.utils import SERVER_CONFIG
 
 
 def test_mutation_uploadFile(client):

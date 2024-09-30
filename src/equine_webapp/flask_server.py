@@ -3,6 +3,7 @@
 
 import os
 import io
+from pathlib import Path
 import json
 
 from flask import Flask, request, jsonify, send_file, send_from_directory
@@ -13,15 +14,11 @@ from ariadne import combine_multipart_data, graphql_sync
 import torch
 from torchvision.transforms import ToPILImage
 
-from .utils import SERVER_CONFIG, get_support_example_from_data_index, get_sample_from_data_index
-from .graphql.graphql_config import schema
+from equine_webapp.utils import SERVER_CONFIG, get_support_example_from_data_index, get_sample_from_data_index, sanitize_path
+from equine_webapp.graphql.graphql_config import schema
 
 # Flask App Setup ################################
-app = Flask(
-    __name__,
-    static_url_path="/equine-webapp",
-    static_folder="./client",
-)
+app = Flask(__name__)
 # app.config["CORS_HEADERS"] = "Content-Type"
 CORS(app)
 
@@ -33,9 +30,12 @@ explorer_html = ExplorerGraphiQL().html(None)
 def StartServer():
     app.run(port=5252, debug=True) #TODO remove debug
 
+def clear_folder(folder_path):
+    for filename in os.listdir(folder_path):
+        os.remove(os.path.join(folder_path, filename))
+
 
 # App Routes #####################################
-
 @app.route("/graphql", methods=["GET"])
 def graphql_explorer():
     # On GET request serve the GraphQL explorer.
@@ -85,15 +85,15 @@ def handle_send_model(model_name):
     return send_file(os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_name), download_name=model_name)
 
 
-
-# Serve static index.html when accessing / with no path
+# HTML / static routing #####################################
 @app.route('/')
-def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
+def index():
+    return send_from_directory('client', 'index.html')
 
-# Serve other static files from /<path:filename>
-@app.route('/<path:filename>')
-def serve_static(filename):
-    if os.path.isfile(os.path.join(app.static_folder,filename+".html")):
-        return send_from_directory(app.static_folder, filename+".html")
-    return send_from_directory(app.static_folder, filename)
+@app.route('/<path:path>')
+def testing123(path):
+    path = sanitize_path(path, "")
+    root, ext = os.path.splitext(path)
+    if not ext:
+        path += ".html"
+    return send_from_directory('client', path)

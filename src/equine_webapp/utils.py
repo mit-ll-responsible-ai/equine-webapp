@@ -11,10 +11,14 @@ from pathlib import Path
 from typing import Optional
 
 class Config:
+    MODEL_EXT: str
+    OUTPUT_FOLDER: str
+    SCHEMA_PATH: str
+
     def __init__(self):
-        conf_path = "./server/server_config.json"
+        conf_path = "./src/equine_webapp/server_config.json"
         if os.environ.get('TESTING') == "True":
-            conf_path = "./server/server_config.test.json"
+            conf_path = "./src/equine_webapp/server_config.test.json"
 
         with open(conf_path) as json_file:
             data = json.load(json_file)

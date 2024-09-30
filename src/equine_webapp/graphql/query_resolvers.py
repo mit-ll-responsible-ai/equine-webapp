@@ -15,7 +15,7 @@ import torch
 import os
 from ariadne import convert_kwargs_to_snake_case
 
-from server.utils import SERVER_CONFIG, get_support_example_from_data_index, get_sample_from_data_index, get_model_path, use_label_names
+from equine_webapp.utils import SERVER_CONFIG, get_support_example_from_data_index, get_sample_from_data_index, get_model_path, use_label_names
 
 @convert_kwargs_to_snake_case
 def resolve_available_models(_, info, extension):

@@ -7,7 +7,7 @@ from sklearn.datasets import make_blobs
 import torch
 
 import equine as eq
-from server.utils import SERVER_CONFIG
+from equine_webapp.utils import SERVER_CONFIG
 
 TEST_MODEL_CONFIG = {
     "emb_out_dim": 16,
