@@ -10,10 +10,12 @@ import equine as eq
 from equine_webapp.utils import SERVER_CONFIG
 
 TEST_MODEL_CONFIG = {
-    "model_name": "protonet_test_model.eq",
     "emb_out_dim": 16,
+    "epochs": 50,
     "examples_per_class": 500,
+    "model_name": "protonet_test_model.eq",
     "num_classes": 4,
+    "protonet_num_episodes": 100,
     "support_size": 20,
     "tensor_dim": 2,
     "train_ratio": 0.8,
@@ -46,7 +48,7 @@ def train_model_for_testing(save_path):
     trainloader = torch.utils.data.DataLoader(trainset,batch_size=50,shuffle=True)
 
     vanilla_nn.train()
-    for epoch in range(100):
+    for epoch in range(TEST_MODEL_CONFIG["epochs"]):
         epoch_loss = 0.0
         for i, (xs, labels) in enumerate(trainloader):
             optimizer.zero_grad()
@@ -74,7 +76,7 @@ def train_model_for_testing(save_path):
     model.train_model(torch.utils.data.TensorDataset(train_x,train_y),
                     way=4,             # Number of classes to train each episode
                     support_size=TEST_MODEL_CONFIG["support_size"],           # Number of support examples per class each episode
-                    num_episodes=1000, # Number of episodes (like epochs)
+                    num_episodes=TEST_MODEL_CONFIG["protonet_num_episodes"], # Number of episodes (like epochs)
                     episode_size=100)  # Number training points selected per episode (like batches)
     model.save(save_path)
 

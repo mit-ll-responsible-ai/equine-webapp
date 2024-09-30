@@ -1,10 +1,9 @@
 # Copyright (c) 2023 Massachusetts Institute of Technology
 # SPDX-License-Identifier: MIT
-import math
+
 import numpy as np
 import os
 import pandas as pd
-import pytest
 import time
 
 from equine_webapp.utils import SERVER_CONFIG
