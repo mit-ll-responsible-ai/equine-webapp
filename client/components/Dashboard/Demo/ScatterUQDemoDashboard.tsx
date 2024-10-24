@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 import React, { useEffect, useMemo, useState } from "react"
 
+import Alert from "react-bootstrap/Alert"
 import Button from "react-bootstrap/Button"
 
 import DataTable from "react-data-table-component"
@@ -39,6 +40,8 @@ import vnatTableDataUnpopulated from "./vnat-table-data.json"
 import vnatInferenceSamplesInput from "./vnat-inference-samples-input.json"
 import vnatSupportExamplesInput from "./vnat-support-examples-input.json"
 import vnatGlobalUmapUnpopulated from "./vnat-global-umap.json"
+
+import styles from "./ScatterUQDemoDashboard.module.scss"
 
 
 //these values are hard coded since having them be truly dynamic would require a live server to recalculate DR and metrics
@@ -190,9 +193,8 @@ export default function ScatterUQDemoDashboard() {
     <div id="isData">
       <div className="box">
         <h2>ScatterUQ Demo</h2>
-        <p>This page is a demo for the paper <i>ScatterUQ: Interactive Uncertainty Visualizations for Multiclass Deep Learning Problems</i>.</p> 
+        <p>This page is a demo for the paper <a href="https://www.computer.org/csdl/proceedings-article/vis/2023/255700a246/1T3cOAGFXbi" target="_blank"><i>ScatterUQ: Interactive Uncertainty Visualizations for Multiclass Deep Learning Problems</i></a>.</p> 
 
-        <br/>
         {["MNIST Example", "VNAT Example"].map((text, i) => 
           <span key={i}>
             <Button variant={index===i?"primary":"outline-primary"} onClick={() => setIndex(i)}>{text}</Button>
@@ -202,8 +204,8 @@ export default function ScatterUQDemoDashboard() {
       </div>
 
       <div className="box">
-        <p>Normally the user can use the sliders below to adjust the outlier tolerance and class confidence threshold. When the sliders are changed, the use case that each inference sample falls under may change. However, since this is a static demo, these values are fixed in place.</p>
-        <div style={{pointerEvents: "none"}}>
+        <Alert variant="warning">Normally the user can use the sliders below to adjust the outlier tolerance and class confidence threshold. When the sliders are changed, the use case that each inference sample falls under may change. However, since this is a static demo without a model and running server, these values are fixed in place.</Alert>
+        <div className={styles.demoSlidersContainer}>
           <ControlBar
             classConfidenceThreshold={CLASS_CONFIDENCE_THRESHOLD}
             inDistributionThreshold={IN_DISTRO_THRESHOLD}
@@ -344,7 +346,7 @@ const FilteredTable = ({
   return (
     <div className="row">
       <div className="col">
-        <div id="filteredTable" className="box">
+        <div id={styles.filteredTable} className="box">
           <div>
             <h3>Scatter UQ Inference Samples</h3>
           </div>
