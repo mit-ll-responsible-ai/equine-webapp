@@ -4,7 +4,7 @@
   <img width="500" src="client/public/EQUI(NE)^2_Full_Logo.svg">
 </p>
 
-![TypeScript](https://badgen.net/badge/-/TypeScript/blue?icon=typescript&label)
+![TypeScript](https://badgen.net/badge/-/TypeScript/blue?icon=typescript&label) <!--TODO: add web link for TypeScript. -->
 <p align="center">
   This is a web application utilizing EQUINE for neural network uncertainty quantification through a visual user interface. The webapp allows you to upload your own model and data, and let the server retrain the model with EQUINE. The visualization dashboard also allows you to analyze your samples and view uncertainty quantification visualizations to explain model uncertainty.
 </p>
@@ -14,12 +14,12 @@
 </p>
 
 ## ScatterUQ at IEEE VIS 2023
-We presented ScatterUQ at IEEE VIS 2023: https://ieeexplore.ieee.org/document/10360884
+We presented ScatterUQ at IEEE VIS 2023: https://ieeexplore.ieee.org/document/10360884<!--TODO: add a brief description of the paper and conference for context. -->
 
 Our data and analysis script can be found in this release: https://github.com/mit-ll-responsible-ai/equine-webapp/releases/tag/ScatterUQ-VIS-2023-Data
 
 ## React Frontend
-
+<!--TODO: if this is turned into a webpage, create greater visual distinction between sections and headings. -->
 ### ScatterUQ Static Demo
 We deployed the frontend application to GitHub pages. You can view a static demo of ScatterUQ here:
 
@@ -41,7 +41,7 @@ npm run dev
 
 
 ## Python Flask Server
-
+<!--TODO: if this is turned into a webpage, create greater visual distinction between sections and headings. -->
 ### Development Server Setup
 1. Create a new Anaconda environment
 ```
