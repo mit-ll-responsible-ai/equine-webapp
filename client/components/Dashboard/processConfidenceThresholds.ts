@@ -5,7 +5,7 @@ import { SAMPLE_CONDITIONS } from "@/utils/determineSampleCondition"
 
 /**
  * given an array of samples]
- * then process the classProbabilities based on the tresholds
+ * then process the classProbabilities based on the thresholds
  * @param samples                   array of samples from the redux
  * @param classConfidenceThreshold  0 - 100 value set by the user
  * @param inDistributionThreshold   0 - 100 value set by the user
@@ -25,7 +25,7 @@ export default function processConfidenceThresholds(
 }
 
 /**
- * Given the original class probabilities and confidence threshold, set a new procesed class probabilities.
+ * Given the original class probabilities and confidence threshold, set a new processed class probabilities.
  * If a sample does not meet the OOD threshold, set all its values to 0 and set SAMPLE_CONDITIONS.OOD to 1.
  * Set a samples class labels to 1 or 0 depending on the class confidence threshold.
  * If all the labels become 0, set SAMPLE_CONDITIONS.CLASS_CONFUSION to 1.
@@ -75,7 +75,7 @@ export function getProcessedClassProbabilities(
       (maxClassProbability >= classConfidenceThreshold/100)
       && (classConfidenceThreshold < 100) //if the threshold is 100, consider all samples to be CLASS_CONFUSION
     )
-    if(meetsClassConfidenceThreshold) { //if the probability meeds the threshold
+    if(meetsClassConfidenceThreshold) { //if the probability needs the threshold
       processedClassProbabilities[maxLabel] = 1 //set the processed class value for this label to 1
     }
     isClassConfusion = !meetsClassConfidenceThreshold

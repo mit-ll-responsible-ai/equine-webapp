@@ -132,7 +132,7 @@ reportUnnecessaryTypeIgnoreComment = true
 reportUnnecessaryIsInstance = false
 
 [tool.codespell]
-skip = 'docs/*'
+skip = ['docs/*', './client/node_modules', '*package-lock.json', '*package.json','./src/equine_webapp/client/_next/*']
 
 [tool.tox]
 legacy_tox_ini = """
@@ -150,7 +150,7 @@ python =
 
 
 [testenv]
-description = Runs test suite parallelized in the specified python enviornment and 
+description = Runs test suite parallelized in the specified python environment and 
               against number of available processes (up to 4). 
               Run `tox -e py39 -- -n 0` to run tests in a python 3.9 with 
               parallelization disabled.
@@ -186,7 +186,7 @@ commands = pyright src/ --level=error
            pyright --ignoreexternal --verifytypes --level=warning equine_webapp
 
 [testenv:format]
-description = Applies auto-flake (e.g. remove unsused imports), black, and isort 
+description = Applies auto-flake (e.g. remove unused imports), black, and isort 
               in-place on source files and test suite. Running this can help fix a 
               failing `enforce-format` run.
 skip_install=true

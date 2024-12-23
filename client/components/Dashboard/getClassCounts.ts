@@ -15,12 +15,12 @@ export type LabelCounter = {[label:string]: number}
 export default function getClassCounts(processedClassesProbabilities:ClassProbabilitiesType[]) {
   const classCounts:LabelCounter = {} //initialize an empty counter
 
-  processedClassesProbabilities.forEach((tresholds:ClassProbabilitiesType) => { //for each sample
-    for(const label in tresholds) { //for each label in this sample
+  processedClassesProbabilities.forEach((thresholds:ClassProbabilitiesType) => { //for each sample
+    for(const label in thresholds) { //for each label in this sample
       initLabelInCounter(label, classCounts) //initialize the count if necessary
 
       //if we are confident about this label
-      if(tresholds[label] === 1) {
+      if(thresholds[label] === 1) {
         classCounts[label]++ //increment this label count
       }
     }

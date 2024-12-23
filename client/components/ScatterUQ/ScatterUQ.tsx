@@ -97,7 +97,7 @@ export default function ScatterUQ({
     const availableWidth = width - PADDING.r - PADDING.l //width minus padding
 
     //get the desired width based off the height and aspect ratio, and restrict to the available width
-    //then calcuate the used height from the used width
+    //then calculate the used height from the used width
     const usedWidth = Math.min(availableWidth, availableHeight*aspectRatio) //the pixel width we will actually use
     const usedHeight = usedWidth / aspectRatio //the pixel height we will actually use
 
@@ -168,7 +168,7 @@ export default function ScatterUQ({
     setRightFocusPoint({ msg, x, y }) //only update the right focus point
   }, [samples])
   const onClickPoint = useCallback((x: number, y: number, msg: React.ReactNode) => {
-    if(!samples || samples.length > 1) { //if there are mulitple samples (ex dashboard global view) or no samples (ex model summary page)
+    if(!samples || samples.length > 1) { //if there are multiple samples (ex dashboard global view) or no samples (ex model summary page)
       setLeftFocusPoint({ msg, x, y }) //update the left hover point
     }
     //else there is only one sample, don't do anything

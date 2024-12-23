@@ -183,7 +183,7 @@ function restructureVectors(
           const predictiveLabel = trainingExample.labels.find(
             predictiveLabel => predictiveLabel.label === l.label
           )
-          if(!predictiveLabel) throw new Error(`Training example for label ${l.label} did not have a prediciton value for this label`)
+          if(!predictiveLabel) throw new Error(`Training example for label ${l.label} did not have a prediction value for this label`)
           return {
             //weight this example by 1 - the OOD score or by how confident the model is 
             weight: weightByOOD ? 1 - trainingExample.ood : predictiveLabel.confidence,
@@ -201,7 +201,7 @@ function restructureVectors(
     if(dashboardSamples) { //if we have samples data
       //the remaining number of embedding vectors should match the number of samples
       if(embeddings2D.length - startIdx !== dashboardSamples.length) {
-        throw new Error("Something went wrong when restructing the 2D embeddings. Not enough remaining vectors for the samples.")
+        throw new Error("Something went wrong when restructuring the 2D embeddings. Not enough remaining vectors for the samples.")
       }
 
       const samples:Coordinate2DType[] = embeddings2D.slice(startIdx, embeddings2D.length).map(
