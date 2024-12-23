@@ -37,7 +37,7 @@ export default function graphqlMultipartFormFetcher<TData, TVariables>(
  * and files are not JSON compatible, besides base64 encoding which is not efficient. The way to get
  * around this is to:
  * 1) Create a FormData instance
- * 2) Create a "map" variable that maps files to their locations in "varables" using object-key dot 
+ * 2) Create a "map" variable that maps files to their locations in "variables" using object-key dot 
  * notation, ex "modelFile" or "sampleFiles.0"
  * 3) Replace all the files in "variables" with null placeholders
  * 4) Append the operations ("query" and "variables"), map, and files to the FormData
@@ -101,7 +101,7 @@ export function createMultipartFormData<TVariables>(
 }
 
 /**
- * 2) Create a "map" variable that maps files to their locations in "varables" using object-key dot 
+ * 2) Create a "map" variable that maps files to their locations in "variables" using object-key dot 
  * notation
  * @param formData  FormData instance
  * @param map       file to location map object
