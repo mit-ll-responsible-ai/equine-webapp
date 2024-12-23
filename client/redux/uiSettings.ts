@@ -9,6 +9,7 @@ import {
   DEFAULT_OOD_COLOR_MODE,
 } from "@/utils/labelColors"
 import LOCAL_STORAGE_KEYS from '@/utils/localStorage/localStorageKeys'
+import getLocalStorageItem from '@/utils/localStorage/getLocalStorageItem'
 
 export interface ReduxUiSettingsState {
   colorBlindMode: boolean,
@@ -25,11 +26,12 @@ export function setupInitialState() {
     oodColorIntervals: DEFAULT_OOD_COLOR_INTERVALS,
     oodColorMode: DEFAULT_OOD_COLOR_MODE,
     confidenceFloor: DEFAULT_CONFIDENCE_FLOOR,
-    serverUrl: process.env.NEXT_PUBLIC_SERVER_URL || "http://127.0.0.1:8080",
+    serverUrl: getLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, process.env.NEXT_PUBLIC_SERVER_URL || "http://127.0.0.1:8080"),
   }
 }
 
 export const INITIAL_STATE: ReduxUiSettingsState = setupInitialState()
+setLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, INITIAL_STATE.serverUrl)
 
 const uiSettingsSlice = createSlice({
   name: 'uiSettings',

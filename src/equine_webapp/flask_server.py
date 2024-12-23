@@ -28,7 +28,7 @@ explorer_html = ExplorerGraphiQL().html(None)
 
 # Helper Functions ###############################
 def start_dev_server():
-    app.run(port=8080, debug=True) #TODO remove debug
+    app.run(port=8080, debug=True)
 
 
 # App Routes #####################################
@@ -87,7 +87,7 @@ def index():
     return send_from_directory('client', 'index.html')
 
 @app.route('/<path:path>')
-def testing123(path):
+def route_client(path):
     path = sanitize_path(path, "")
     root, ext = os.path.splitext(path)
     if not ext:
