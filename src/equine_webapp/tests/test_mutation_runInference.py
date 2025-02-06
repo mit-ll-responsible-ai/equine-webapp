@@ -3,7 +3,6 @@
 
 import numpy as np
 import os
-import pandas as pd
 import time
 
 from equine_webapp.utils import SERVER_CONFIG

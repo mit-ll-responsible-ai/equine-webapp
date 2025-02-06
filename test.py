@@ -1,6 +1,5 @@
 import os
 from equine import load_equine_model
-import pandas as pd
 import matplotlib.pyplot as plt
 
 model_path = "webapp-output/models/vnat_protonet.eq"

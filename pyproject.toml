@@ -24,7 +24,6 @@ dependencies = [
     "flask",
     "flask-cors",
     "numpy",
-    "pandas",
     "scikit-learn",
     "torch",
     "torchvision",
@@ -71,6 +70,7 @@ docs = [
 
 [tool.setuptools_scm]
 write_to = "src/equine_webapp/_version.py"
+local_scheme = "no-local-version"
 #version_scheme = "no-guess-dev"
 
 [tool.setuptools.package-data]

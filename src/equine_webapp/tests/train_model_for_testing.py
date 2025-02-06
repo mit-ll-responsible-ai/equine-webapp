@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT
 import numpy as np
 import os
-import pandas as pd
 from sklearn.datasets import make_blobs
 import torch
 
