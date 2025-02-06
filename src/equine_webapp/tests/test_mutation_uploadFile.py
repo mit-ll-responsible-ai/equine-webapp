@@ -4,7 +4,6 @@
 import json
 import numpy as np
 import os
-import pandas as pd
 from pathlib import Path
 
 from equine_webapp.utils import SERVER_CONFIG
