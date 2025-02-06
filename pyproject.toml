@@ -74,7 +74,7 @@ local_scheme = "no-local-version"
 #version_scheme = "no-guess-dev"
 
 [tool.setuptools.package-data]
-equine_webapp = ["py.typed"]
+equine_webapp = ["py.typed","client/**/*"]
 
 [tool.black]
 line-length = 88
