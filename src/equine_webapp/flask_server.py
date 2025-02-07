@@ -28,7 +28,8 @@ explorer_html = ExplorerGraphiQL().html(None)
 
 # Helper Functions ###############################
 def start_dev_server():
-    app.run(port=8080, debug=True)
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() in ['true', '1', 't']
+    app.run(port=8080, debug=debug_mode)
 
 
 # App Routes #####################################
