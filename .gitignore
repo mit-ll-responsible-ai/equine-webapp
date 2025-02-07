@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 
 webapp-output/
+
+# setuptools_scm
+src/equine_webapp/_version.py
