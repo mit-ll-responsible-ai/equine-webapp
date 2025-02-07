@@ -15,11 +15,9 @@ jobs:
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
-    - name: Switch to client
-      id: switch-to-client
-      run: cd client
     - name: Detect package manager
       id: detect-package-manager
+      working-directory: client
       run: |
         if [ -f "${{ github.workspace }}/client/yarn.lock" ]; then
           echo "manager=yarn" >> $GITHUB_OUTPUT
@@ -52,16 +50,17 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
     - name: Install dependencies
+      working-directory: client
       run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
     - name: Set env
+      working-directory: client
       shell: bash
       run: |
         echo "STATIC_BUILD_FOR_SERVER=true" >> $GITHUB_ENV
     - name: Build with Next.js
+      working-directory: client
       run: ${{ steps.detect-package-manager.outputs.runner }} next build
-    - name: Return to root
-      id: return-to-root
-      run: cd ../
+
     - uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v5
