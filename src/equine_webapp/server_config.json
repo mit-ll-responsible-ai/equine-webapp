@@ -1,5 +1,0 @@
-{
-  "MODEL_EXT": ".eq",
-  "OUTPUT_FOLDER": "./webapp-output",
-  "SCHEMA_PATH": "src/equine_webapp/graphql/types"
-}

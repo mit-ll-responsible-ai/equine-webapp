@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 import os
-import json
 
 import torch
 import equine as eq
@@ -10,20 +9,17 @@ from pathlib import Path
 from typing import Optional
 
 class Config:
-    MODEL_EXT: str
+    MODEL_EXT: str = ".eq"
     OUTPUT_FOLDER: str
     SCHEMA_PATH: str
 
     def __init__(self):
-        conf_path = "./src/equine_webapp/server_config.json"
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.SCHEMA_PATH = os.path.join(dir_path, "graphql/types")
         if os.environ.get('TESTING') == "True":
-            conf_path = "./src/equine_webapp/server_config.test.json"
-
-        with open(conf_path) as json_file:
-            data = json.load(json_file)
-
-        for k,v in data.items():
-            setattr(self, k, v)
+            self.OUTPUT_FOLDER = os.path.join(dir_path, "tests/temp")
+        else:
+            self.OUTPUT_FOLDER = os.path.join(dir_path, "webapp-output")
             
         self.MODEL_FOLDER_PATH = os.path.join(self.OUTPUT_FOLDER, "models/") #pylint: disable=no-member
         self.UPLOAD_FOLDER_PATH = os.path.join(self.OUTPUT_FOLDER, "uploads/") #pylint: disable=no-member
