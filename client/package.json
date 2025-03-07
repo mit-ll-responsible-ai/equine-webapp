@@ -29,7 +29,7 @@
     "d3": "^7.8.5",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
-    "next": "14.2.15",
+    "next": "^14.2.24",
     "react": "18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-bootstrap-typeahead": "^6.2.3",
@@ -50,6 +50,6 @@
     "env-cmd": "^10.1.0",
     "jsdom": "^25.0.0",
     "vite-tsconfig-paths": "^5.0.1",
-    "vitest": "^2.1.1"
+    "vitest": "^3.0.8"
   }
 }
