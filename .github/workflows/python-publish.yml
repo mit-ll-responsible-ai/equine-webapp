@@ -16,6 +16,7 @@ jobs:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
     - uses: actions/checkout@v4
+
     - name: Detect package manager
       id: detect-package-manager
       working-directory: client
@@ -34,12 +35,14 @@ jobs:
           echo "Unable to determine package manager"
           exit 1
         fi
+
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
         node-version: "lts/*"
         cache: ${{ steps.detect-package-manager.outputs.manager }}
         cache-dependency-path: '**/package-lock.json'
+
     - name: Restore cache
       uses: actions/cache@v3
       with:
@@ -50,27 +53,33 @@ jobs:
         # If source files changed but packages didn't, rebuild from a prior cache.
         restore-keys: |
           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+
     - name: Install dependencies
       working-directory: client
       run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+
     - name: Set env
       working-directory: client
       shell: bash
       run: |
         echo "STATIC_BUILD_FOR_SERVER=true" >> $GITHUB_ENV
+
     - name: Build with Next.js
       working-directory: client
       run: ${{ steps.detect-package-manager.outputs.runner }} next build
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.x'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install .
         pip install build
+
     - name: Build package
       run: python -m build
+
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@897895f1e160c830e369f9779632ebc134688e1b
