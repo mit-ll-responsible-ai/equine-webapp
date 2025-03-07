@@ -15,6 +15,7 @@ jobs:
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
+    - uses: actions/checkout@v4
     - name: Detect package manager
       id: detect-package-manager
       working-directory: client
@@ -60,8 +61,6 @@ jobs:
     - name: Build with Next.js
       working-directory: client
       run: ${{ steps.detect-package-manager.outputs.runner }} next build
-
-    - uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
