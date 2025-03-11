@@ -38,14 +38,6 @@
     }
   }
 
-  .prototype {
-    transition: 0.5s;
-
-    &:hover {
-      r: 7;
-    }
-  }
-
   pre {
     color: white;
     text-align: left;
@@ -55,5 +47,39 @@
   .uq-viz-sidebar {
     width: 200px;
     border: 1px solid gray;
+  }
+
+
+
+  /* SCATTERPLOT POINT STYLING */
+  .prototype-point, .training-example-point, .inference-sample-point {
+    transition: 0.25s;
+  }
+
+  .prototype-point, .training-example-point{
+    r: 5;
+
+    &:hover {
+      r: 7;
+    }
+  }
+
+  .inference-sample-point {
+    r: 7;
+
+    &:hover {
+      r: 10;
+    }
+  }
+
+  /* Increase the point sizes on mobile devices */
+  @media only screen and (max-width: 1000px) {
+    .prototype-point, .training-example-point{
+      r: 7;
+    }
+  
+    .inference-sample-point {
+      r: 10;
+    }
   }
 }

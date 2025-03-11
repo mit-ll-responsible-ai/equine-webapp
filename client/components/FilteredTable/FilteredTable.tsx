@@ -90,15 +90,17 @@ const FilteredTable = ({
             <h3>Scatter UQ Inference Samples</h3>
           </div>
 
-          <DataTable
-            //@ts-ignore
-            columns={COLUMNS}
-            data={tableData}
-            noDataComponent={<div className={styles.filteredTableNoData}><NoDataMessage/></div>}
-            noHeader
-            pagination
-            theme={darkMode ? "dark" : ""}
-          />
+          <div style={{marginLeft:"-1rem",marginRight:"-1rem"}}>
+            <DataTable
+              //@ts-ignore
+              columns={COLUMNS}
+              data={tableData}
+              noDataComponent={<div className={styles.filteredTableNoData}><NoDataMessage/></div>}
+              noHeader
+              pagination
+              theme={darkMode ? "dark" : ""}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -133,11 +135,12 @@ function LocalPlot({
   const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
 
   return (
-    <div>
+    //this styling is necessary for responsiveness in the table
+    <div style={{maxWidth:"calc(100vw - 5rem)"}}>
       <br/>
       {(
         <div>
-          <p style={{width: "calc(900px + 2em)"}}>{confidenceMsg}</p>
+          <p style={{maxWidth: "calc(900px + 2em)"}}>{confidenceMsg}</p>
           {getPrototypeSupportEmbeddings ? (
             <ScatterUQDataWrapper
               inDistributionThreshold={inDistributionThreshold}

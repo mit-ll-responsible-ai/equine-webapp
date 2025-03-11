@@ -244,7 +244,7 @@ export default function ScatterUQDemoDashboard() {
         inputDataType={inputDataType}
       />
 
-      <div className="box">
+      {/* <div className="box">
         <h4>Global Scatterplot with UMAP</h4>
         
         <ScatterUQ
@@ -254,11 +254,11 @@ export default function ScatterUQDemoDashboard() {
           getInferenceSampleTabularData={getInferenceSampleTabularData}
           getSupportExampleImageSrc={getSupportExampleImageSrc}
           getSupportExampleTabularData={getSupportExampleTabularData}
-          startingHeight={400}
-          startingWidth={500}
+          startingHeight={600}
+          maxWidth={800}
           thresholds={10}
         />
-      </div>
+      </div> */}
       
     </div>
   )
@@ -320,10 +320,11 @@ const FilteredTable = ({
         (label:string) => d.processedClassesProbabilities[label]===1
       ).join(", "),
       dim_red: (
-        <div>
+        //this styling is necessary for responsiveness in the table
+        <div style={{maxWidth:"calc(100vw - 5rem)"}}>
           <br/>
           <br/>
-          <p style={{width: "calc(900px + 2em)"}}>{confidenceMsg}</p>
+          <p style={{maxWidth: "calc(900px + 2em)"}}>{confidenceMsg}</p>
           <ScatterUQ
             {...d}
             inputDataType={inputDataType}
@@ -331,8 +332,8 @@ const FilteredTable = ({
             getInferenceSampleTabularData={getInferenceSampleTabularData}
             getSupportExampleImageSrc={getSupportExampleImageSrc}
             getSupportExampleTabularData={getSupportExampleTabularData}
-            startingHeight={400}
-            startingWidth={500}
+            height={400}
+            maxWidth={500}
             thresholds={10}
           />
           <br/>
@@ -347,19 +348,20 @@ const FilteredTable = ({
     <div className="row">
       <div className="col">
         <div id={styles.filteredTable} className="box">
-          <div>
-            <h3>Scatter UQ Inference Samples</h3>
-          </div>
+          <h3>Scatter UQ Inference Samples</h3>
 
-          <DataTable
-            //@ts-ignore
-            columns={COLUMNS}
-            data={tableData}
-            noDataComponent={<div className="filteredTableNoData"><NoDataMessage/></div>}
-            noHeader
-            pagination
-            theme={darkMode ? "dark" : ""}
-          />
+          <div style={{marginLeft:"-1rem",marginRight:"-1rem"}}>
+            <DataTable
+              //@ts-ignore
+              columns={COLUMNS}
+              data={tableData}
+              noDataComponent={<div className="filteredTableNoData"><NoDataMessage/></div>}
+              noHeader
+              pagination
+              theme={darkMode ? "dark" : ""}
+              responsive={true}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -14,8 +14,8 @@ import { Coordinate2DType, ScatterUQDataProps, StructuredDimRedOutputType, Weigh
 import styles from "./ScatterUQ.module.scss"
 
 type Props = ScatterUQDataProps & {
-  startingHeight?: number,
-  startingWidth?: number,
+  height?: number,
+  maxWidth?: number,
   thresholds?: number,
 }
 
@@ -28,6 +28,8 @@ const getX = (d:Coordinate2DType | WeightedCoordinate2DType) => d.x
 const getY = (d:Coordinate2DType | WeightedCoordinate2DType) => d.y
 const getWeight = (d:WeightedCoordinate2DType) => d.weight //used for weighing points in the contours
 
+const SIDEBAR_WIDTH = 200
+
 export default function ScatterUQ({
   // classConfidenceThreshold,
   continuity,
@@ -35,40 +37,40 @@ export default function ScatterUQ({
   getInferenceSampleTabularData,
   getSupportExampleImageSrc,
   getSupportExampleTabularData,
+  height=400,
   inDistributionThreshold,
   inputDataType,
+  maxWidth=500,
   stress,
   processedClassesProbabilities,
   samples,
   scree,
   srho,
-  startingHeight=400,
-  startingWidth=500,
   structuredEmbeddings,
   thresholds=10,
   trustworthiness,
   prototypeSupportEmbeddings,
 }:Props) {
-  const height = startingHeight
-  const [width, setWidth] = useState<number>(startingWidth)
+  const [width, setWidth] = useState<number>(maxWidth)
   const resizeObserver = useRef<ResizeObserver | null>(null)
-  const ref = useRef<HTMLDivElement | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     resizeObserver.current = new ResizeObserver(entries => {
       window.requestAnimationFrame(() => { //https://stackoverflow.com/a/58701523
         if (!Array.isArray(entries) || !entries.length) {
           return;
         }
-        setWidth(entries[0].contentRect.width)
+        //make the scatterplot responsive to the width
+        setWidth(Math.min(maxWidth, entries[0].contentRect.width - 2*SIDEBAR_WIDTH))
       });
     })
   },[])
   useEffect(() => {
-    if(resizeObserver.current && ref.current) {
-      resizeObserver.current.observe(ref.current)
+    if(resizeObserver.current && containerRef.current) {
+      resizeObserver.current.observe(containerRef.current)
     }
     return () => resizeObserver.current?.disconnect()
-  }, [resizeObserver, ref])
+  }, [resizeObserver.current, containerRef.current])
 
   //calculate the domain of the data, ie the min and max values for the data of the x and y axes
   const { domainX, domainY } = useMemo(() => {
@@ -272,13 +274,13 @@ export default function ScatterUQ({
 
 
   return (
-    <div className={styles["uq-viz-container"]}>
+    <div className={styles["uq-viz-container"]} ref={containerRef}>
       <div className={styles["uq-viz-sidebar"]} style={{marginRight: "1rem"}}>
         {leftFocusPoint && leftFocusPoint.msg}
       </div>
 
       <div>
-        <div ref={ref} style={{position: "relative"}}>
+        <div style={{position: "relative"}}>
           <svg
             style={{ width, height }}
             // onClick={onClickInvertSvgPixelSpace}
@@ -337,14 +339,14 @@ export default function ScatterUQ({
                       <circle
                         key={pointIdx}
     
-                        className="point"
+                        className={`point ${styles["training-example-point"]}`}
                         cx={cx}
                         cy={cy}
                         fill={getColorFromLabel(label.label)}
                         onClick={() => onClickPoint(cx, cy, msg)}
                         onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
                         opacity={samples ? confidence/2 + 0.5 : 1}
-                        r={5}
+                        // r={5}
                         stroke="white"
                         strokeWidth="2"
                       />
@@ -364,13 +366,13 @@ export default function ScatterUQ({
               return (
                 <g key={labelIdx}>
                   <circle
-                    className="prototype point"
+                    className={`point ${styles["prototype-point"]}`}
                     cx={cx}
                     cy={cy}
                     fill="black"
                     onClick={() => onClickPoint(cx, cy, msg)}
                     onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
-                    r={5}
+                    // r={5}
                     stroke="white"
                     strokeWidth="2"
                   />
@@ -397,13 +399,13 @@ export default function ScatterUQ({
                   <circle
                     key={sIdx}
   
-                    className="point"
+                    className={`point ${styles["inference-sample-point"]}`}
                     cx={cx}
                     cy={cy}
                     fill={getColorFromLabel(getMaxLabel(processedClassProbabilities))}
                     onClick={() => onClickPoint(cx, cy, msg)}
                     onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
-                    r={7}
+                    // r={7}
                     stroke="black"
                     strokeWidth="2"
                   />

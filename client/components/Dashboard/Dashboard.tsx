@@ -241,8 +241,8 @@ function DashboardContent() {
                 {props => (
                   <ScatterUQ
                     {...props}
-                    startingHeight={600}
-                    startingWidth={800}
+                    height={600}
+                    maxWidth={800}
                     thresholds={5}
                   />
                 )}
