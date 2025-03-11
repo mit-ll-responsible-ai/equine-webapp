@@ -18,7 +18,7 @@ You can view a static demo of ScatterUQ here:
 
 https://mit-ll-responsible-ai.github.io/equine-webapp/demo
 
-[![ScatterUQ Out of Distribution Example](https://raw.githubusercontent.com/mit-ll-responsible-ai/equine-webapp/main/client/public/client/public/ood.png)](https://mit-ll-responsible-ai.github.io/equine-webapp/demo)
+[![ScatterUQ Out of Distribution Example](https://github.com/mit-ll-responsible-ai/equine-webapp/blob/main/client/public/ood.png?raw=true)](https://mit-ll-responsible-ai.github.io/equine-webapp/demo)
 
 ## ScatterUQ at IEEE VIS 2023
 We presented ScatterUQ at IEEE VIS 2023: https://ieeexplore.ieee.org/document/10360884
