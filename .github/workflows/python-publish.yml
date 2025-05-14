@@ -87,4 +87,4 @@ jobs:
         unzip -p "$WHEEL_FILE" '*/METADATA' | grep -E '^(Name|Version|Metadata-Version)'
 
     - name: Publish package
-      uses: pypa/gh-action-pypi-publish@897895f1e160c830e369f9779632ebc134688e1b
+      uses: pypa/gh-action-pypi-publish@v1.12.4
