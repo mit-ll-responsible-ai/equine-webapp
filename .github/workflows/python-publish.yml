@@ -86,11 +86,5 @@ jobs:
         WHEEL_FILE=$(ls dist/*.whl | head -n 1)
         unzip -p "$WHEEL_FILE" '*/METADATA' | grep -E '^(Name|Version|Metadata-Version)'
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist-files
-        path: dist/
-
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@897895f1e160c830e369f9779632ebc134688e1b
