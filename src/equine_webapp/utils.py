@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import os
+import sys
 
 import torch
 import equine as eq
@@ -120,17 +121,19 @@ def get_sample_from_data_index(run_id, data_index, model_name:Optional[str]=None
 
 def get_model_path(model_name:str):
     model_file = model_name if SERVER_CONFIG.MODEL_EXT in model_name else model_name + SERVER_CONFIG.MODEL_EXT
-    base_path = os.getcwd()
-    model_path = sanitize_path(os.path.join(base_path, SERVER_CONFIG.MODEL_FOLDER_PATH, model_file), base_path)
+    # we want to allow files from where the user is running equine-webapp (i.e. os.getcwd())
+    # and where equine-webapp is stored as a package (i.e. sys.prefix)
+    model_path = sanitize_path(os.path.join(SERVER_CONFIG.MODEL_FOLDER_PATH, model_file), [os.getcwd(), sys.prefix])
     if not os.path.isfile(model_path):
         raise ValueError(f"Model File '{model_path}' not found")
     return model_path
 
-def sanitize_path(file_path, base_path):
+def sanitize_path(file_path, allowed_bases):
     fullpath = os.path.normpath(file_path)
-    if not fullpath.startswith(base_path):
-        raise Exception("Path not allowed")
-    return fullpath
+    for base_path in allowed_bases:
+        if fullpath.startswith(base_path):
+            return fullpath
+    raise Exception("Path not allowed")
 
 def use_label_names(model, num_labels:int):
     label_names = model.get_label_names()
