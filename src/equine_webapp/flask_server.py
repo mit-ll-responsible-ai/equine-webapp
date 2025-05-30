@@ -90,7 +90,7 @@ def index():
 @app.route('/<path:path>')
 def route_client(path):
     # sanitize_path isn't strictly necessary because send_from_directory securely loads the file
-    path = sanitize_path(path, "")
+    path = sanitize_path(path, [""])
     root, ext = os.path.splitext(path)
     if not ext:
         path += ".html"
