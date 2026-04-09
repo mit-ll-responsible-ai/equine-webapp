@@ -5,8 +5,6 @@ import React, { useEffect, useMemo, useState } from "react"
 import Alert from "react-bootstrap/Alert"
 import Button from "react-bootstrap/Button"
 
-import DataTable from "react-data-table-component"
-
 import { useAppSelector } from "@/redux/reduxHooks"
 import type { ClassProbabilitiesType, InputDataType, SampleType } from "@/redux/inferenceSettings"
 
@@ -44,6 +42,8 @@ import vnatGlobalUmapUnpopulated from "./vnat-global-umap.json"
 import styles from "./ScatterUQDemoDashboard.module.scss"
 import { Container } from "react-bootstrap"
 import { SampleConditionText } from "@/components/ScatterUQ/SampleConditionText"
+import { PaginationControls } from "@/components/PaginationControls/PaginationControls"
+import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 
 
 //these values are hard coded since having them be truly dynamic would require a live server to recalculate DR and metrics
@@ -306,41 +306,53 @@ const FilteredTable = ({
   getSupportExampleTabularData: ScatterUQDataProps["getSupportExampleTabularData"],
   inputDataType: InputDataType,
 }) => {
-  const darkMode = useAppSelector(state => state.uiSettings.darkMode)
+  // Define columns with custom renderers
+  const columns = useMemo<ColumnDef<typeof data[number]>[]>(
+    () => [
+      {
+        accessorKey: 'id',
+        cell: (info) => {
+          const d = info.row.original
+          const labelsSortedByProbability = getLabelsSortedByProbability(d.samples[0], d.prototypeSupportEmbeddings)
+          const sampleCondition = determineSampleCondition(d.processedClassesProbabilities[0])
 
-  const tableData:TableRowType[] = data.map((d, sampleIndex: number) => {
-    const labelsSortedByProbability = getLabelsSortedByProbability(d.samples[0], d.prototypeSupportEmbeddings)
-  
-    const sampleCondition = determineSampleCondition(d.processedClassesProbabilities[0])
+          return (
+            <div className="test">
+              <br/>
+              <br/>
+              <SampleConditionText condition={sampleCondition} sortedLabels={labelsSortedByProbability}/>
+              <ScatterUQ
+                {...d}
+                inputDataType={inputDataType}
+                getInferenceSampleImageSrc={getInferenceSampleImageSrc}
+                getInferenceSampleTabularData={getInferenceSampleTabularData}
+                getSupportExampleImageSrc={getSupportExampleImageSrc}
+                getSupportExampleTabularData={getSupportExampleTabularData}
+                height={400}
+                thresholds={10}
+              />
+              <br/>
+              <br/>
+            </div>
+          )
+        },
+      },
+    ],
+    []
+  );
 
-    return {
-      id: sampleIndex,
-      labels: d.processedClassesProbabilities.filter(
-        //@ts-ignore
-        (label:string) => d.processedClassesProbabilities[label]===1
-      ).join(", "),
-      dim_red: (
-        //this styling is necessary for responsiveness in the table
-        <div className="test">
-          <br/>
-          <br/>
-          <SampleConditionText condition={sampleCondition} sortedLabels={labelsSortedByProbability}/>
-          <ScatterUQ
-            {...d}
-            inputDataType={inputDataType}
-            getInferenceSampleImageSrc={getInferenceSampleImageSrc}
-            getInferenceSampleTabularData={getInferenceSampleTabularData}
-            getSupportExampleImageSrc={getSupportExampleImageSrc}
-            getSupportExampleTabularData={getSupportExampleTabularData}
-            height={400}
-            thresholds={10}
-          />
-          <br/>
-          <br/>
-        </div>
-      ),
-    }
-  })
+  // Initialize table
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 10,
+      },
+    },
+  });
 
 
   return (
@@ -351,17 +363,26 @@ const FilteredTable = ({
 
           <p>Local Dimensionality Reduction Plots using PCA</p>
 
-          <div style={{marginLeft:"-1rem",marginRight:"-1rem"}}>
-            <DataTable
-              //@ts-ignore
-              columns={COLUMNS}
-              data={tableData}
-              noDataComponent={<div className="filteredTableNoData"><NoDataMessage/></div>}
-              noTableHead
-              pagination
-              theme={darkMode ? "dark" : ""}
-              responsive={true}
-            />
+          <div>
+            <div style={{marginLeft:"-1rem",marginRight:"-1rem",marginBottom:"1rem"}}>
+              {table.getRowModel().rows.map((row) => (
+                <div key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <div
+                      key={cell.id}
+                      style={{
+                        border: '1px solid #ddd',
+                        padding: '1rem',
+                      }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <PaginationControls numRows={data.length} table={table}/>
           </div>
         </div>
       </div>

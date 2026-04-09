@@ -1,0 +1,24 @@
+#pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10;
+  flex-wrap: wrap;
+
+  #pagination-buttons {
+    button {
+      margin-right: 0.5rem;
+    }
+  }
+
+  input {
+    display: inline-block;
+    width: 60px;
+    margin-left: 0.5rem;
+  }
+
+  select {
+    display: inline-block;
+    width: 120px;
+  }
+}

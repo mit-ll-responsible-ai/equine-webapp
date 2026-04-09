@@ -1,36 +1,11 @@
 // Copyright (c) 2023 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-@import "~/utils/_variables";
+@use "../../utils/_variables" as *;
 
 #filteredTable {
   .filteredTableNoData {
     width: 100%;
     text-align: center;
-  }
-
-  #pagination-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10;
-    flex-wrap: wrap;
-
-    #pagination-buttons {
-      button {
-        margin-right: 0.5rem;
-      }
-    }
-
-    input {
-      display: inline-block;
-      width: 60px;
-      margin-left: 0.5rem;
-    }
-
-    select {
-      display: inline-block;
-      width: 120px;
-    }
   }
 }
 
