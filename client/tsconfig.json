@@ -26,8 +26,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "vitest.config.mts"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"
