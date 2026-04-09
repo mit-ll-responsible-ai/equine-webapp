@@ -46,9 +46,16 @@
   }
 
   .uq-viz-sidebar {
-    width: 200px;
     border: 1px solid gray;
     flex-shrink: 0;
+
+    .uq-sidebar-table-container {
+      height: 5rem;
+      overflow-y: auto;
+      table {
+        width: 100%;
+      }
+    }
   }
 
 

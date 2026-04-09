@@ -27,8 +27,6 @@ const getX = (d:Coordinate2DType | WeightedCoordinate2DType) => d.x
 const getY = (d:Coordinate2DType | WeightedCoordinate2DType) => d.y
 const getWeight = (d:WeightedCoordinate2DType) => d.weight //used for weighing points in the contours
 
-const SIDEBAR_WIDTH = 200
-
 export default function ScatterUQ({
   // classConfidenceThreshold,
   continuity,
@@ -50,7 +48,10 @@ export default function ScatterUQ({
   prototypeSupportEmbeddings,
 }:Props) {
   const [containerWidth, setContainerWidth] = useState<number>(500)
-  const svgWidth = containerWidth - 2*SIDEBAR_WIDTH
+
+  const sidebarWidth = containerWidth > 1000 ? 300 : 200
+
+  const svgWidth = containerWidth - 2*sidebarWidth
   const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (!containerRef.current) return;
@@ -273,7 +274,7 @@ export default function ScatterUQ({
 
   return (
     <div className={styles["uq-viz-container"]} ref={containerRef}>
-      <div className={styles["uq-viz-sidebar"]}>
+      <div className={styles["uq-viz-sidebar"]} style={{width: sidebarWidth}}>
         {leftFocusPoint && leftFocusPoint.msg}
       </div>
 
@@ -446,7 +447,7 @@ export default function ScatterUQ({
         
       </div>
 
-      <div className={styles["uq-viz-sidebar"]}>
+      <div className={styles["uq-viz-sidebar"]} style={{width: sidebarWidth}}>
         {rightFocusPoint && rightFocusPoint.msg}
       </div>
     </div>
@@ -480,7 +481,7 @@ const TrainingLabelMessage = ({
       <div style={{padding: "0.5em"}}>
         <p>This is an example from training with a true label of <LabelAndCircle label={label}/></p>
         <p><b>Class Confidence Scores</b></p>
-        <div style={{height: "3rem", overflowY: "auto"}}>
+        <div className={styles["uq-sidebar-table-container"]}>
           <table>
             <tbody>
               {pedictiveLabels.map(({label,confidence}) => (
@@ -531,7 +532,7 @@ const InferenceExampleMessage = ({
           ))}
         </div>
         <p><b>Class Confidence Scores</b></p>
-        <div style={{height: "3rem", overflowY: "auto"}}>
+        <div className={styles["uq-sidebar-table-container"]}>
           <table>
             <tbody>
               {Object.entries(sample.classProbabilities).sort(

@@ -241,7 +241,7 @@ function DashboardContent() {
                 {props => (
                   <ScatterUQ
                     {...props}
-                    height={600}
+                    height={800}
                     thresholds={5}
                   />
                 )}

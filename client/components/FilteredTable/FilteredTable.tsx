@@ -162,7 +162,7 @@ function LocalPlot({
               samples={[sample]}
               serverUrl={serverUrl}
             >
-              {props => <ScatterUQ height={600} {...props}/>}
+              {props => <ScatterUQ height={800} {...props}/>}
             </ScatterUQDataWrapper>
           ) : <p>There was an error getting the prototype support embeddings for this sample.</p>}
         </div>

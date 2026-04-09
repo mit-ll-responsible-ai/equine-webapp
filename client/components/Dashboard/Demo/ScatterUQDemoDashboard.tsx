@@ -328,7 +328,7 @@ const FilteredTable = ({
                 getInferenceSampleTabularData={getInferenceSampleTabularData}
                 getSupportExampleImageSrc={getSupportExampleImageSrc}
                 getSupportExampleTabularData={getSupportExampleTabularData}
-                height={400}
+                height={800}
                 thresholds={10}
               />
               <br/>
