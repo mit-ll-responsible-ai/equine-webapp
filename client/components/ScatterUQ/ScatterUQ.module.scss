@@ -4,7 +4,8 @@
 .uq-viz-container {
   width: 100%;
   display: flex;
-
+  align-items: flex-start; // or stretch, depending on your needs
+  
   img {
     width: 100%;
   }
@@ -47,6 +48,7 @@
   .uq-viz-sidebar {
     width: 200px;
     border: 1px solid gray;
+    flex-shrink: 0;
   }
 
 

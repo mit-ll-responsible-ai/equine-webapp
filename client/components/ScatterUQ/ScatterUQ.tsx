@@ -15,7 +15,6 @@ import styles from "./ScatterUQ.module.scss"
 
 type Props = ScatterUQDataProps & {
   height?: number,
-  maxWidth?: number,
   thresholds?: number,
 }
 
@@ -40,7 +39,6 @@ export default function ScatterUQ({
   height=400,
   inDistributionThreshold,
   inputDataType,
-  maxWidth=500,
   stress,
   processedClassesProbabilities,
   samples,
@@ -51,26 +49,26 @@ export default function ScatterUQ({
   trustworthiness,
   prototypeSupportEmbeddings,
 }:Props) {
-  const [width, setWidth] = useState<number>(maxWidth)
-  const resizeObserver = useRef<ResizeObserver | null>(null)
+  const [containerWidth, setContainerWidth] = useState<number>(500)
+  const svgWidth = containerWidth - 2*SIDEBAR_WIDTH
   const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    resizeObserver.current = new ResizeObserver(entries => {
-      window.requestAnimationFrame(() => { //https://stackoverflow.com/a/58701523
-        if (!Array.isArray(entries) || !entries.length) {
-          return;
-        }
-        //make the scatterplot responsive to the width
-        setWidth(Math.min(maxWidth, entries[0].contentRect.width - 2*SIDEBAR_WIDTH))
-      });
-    })
-  },[])
-  useEffect(() => {
-    if(resizeObserver.current && containerRef.current) {
-      resizeObserver.current.observe(containerRef.current)
-    }
-    return () => resizeObserver.current?.disconnect()
-  }, [resizeObserver.current, containerRef.current])
+    if (!containerRef.current) return;
+
+    const element = containerRef.current;
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      setContainerWidth(entry.contentRect.width);
+    });
+
+    observer.observe(element);
+
+    return () => {
+      observer.unobserve(element);
+      observer.disconnect();
+    };
+  }, []);
 
   //calculate the domain of the data, ie the min and max values for the data of the x and y axes
   const { domainX, domainY } = useMemo(() => {
@@ -96,7 +94,7 @@ export default function ScatterUQ({
   const { rangeX, rangeY, usedWidth } = useMemo(() => {
     const aspectRatio = (domainX[1]-domainX[0]) / (domainY[1]-domainY[0]) //width/height of the data
     const availableHeight = height - PADDING.b - PADDING.t //height minus padding
-    const availableWidth = width - PADDING.r - PADDING.l //width minus padding
+    const availableWidth = svgWidth - PADDING.r - PADDING.l //width minus padding
 
     //get the desired width based off the height and aspect ratio, and restrict to the available width
     //then calculate the used height from the used width
@@ -109,7 +107,7 @@ export default function ScatterUQ({
       usedHeight,
       usedWidth,
     }
-  }, [domainX, domainY, height, width])
+  }, [domainX, domainY, height, svgWidth])
 
 
   /* Scales, Axes, Contours */
@@ -142,7 +140,7 @@ export default function ScatterUQ({
       [l.prototype].concat(l.trainingExamples)
     )).map((labelPoints,i) => { //for each label
       //initialize a contour function for this label
-      const contourFunction = contourDensity<WeightedCoordinate2DType>().size([width, height])
+      const contourFunction = contourDensity<WeightedCoordinate2DType>().size([svgWidth, height])
       .cellSize(4).thresholds(thresholds).bandwidth(40).weight(getWeight).x(getX).y(getY)
       
       return contourFunction( //calculate the contours for all the points for this label
@@ -155,7 +153,7 @@ export default function ScatterUQ({
         }))
       )
     })
-  }, [height, scaleX, scaleY, structuredEmbeddings, thresholds, width])
+  }, [height, scaleX, scaleY, structuredEmbeddings, thresholds, svgWidth])
   
   const opacityScales = contours.map((c,i) => (
     scaleLinear().domain([0, c.length]).range([0.08, 0.5])
@@ -275,14 +273,14 @@ export default function ScatterUQ({
 
   return (
     <div className={styles["uq-viz-container"]} ref={containerRef}>
-      <div className={styles["uq-viz-sidebar"]} style={{marginRight: "1rem"}}>
+      <div className={styles["uq-viz-sidebar"]}>
         {leftFocusPoint && leftFocusPoint.msg}
       </div>
 
       <div>
         <div style={{position: "relative"}}>
           <svg
-            style={{ width, height }}
+            style={{ width: svgWidth, height }}
             // onClick={onClickInvertSvgPixelSpace}
           >
             <g className="xAxis" ref={xAxisRef} transform={`translate(0,${height - 20})`}/>
@@ -418,19 +416,19 @@ export default function ScatterUQ({
             position: "absolute",
             top: rightFocusPoint.y - 2,
             left: rightFocusPoint.x + 7,
-            right: "-1rem",
+            right: 0,
             border: "2px dashed gray",
           }}/>}
 
           {leftFocusPoint && <div style={{
             position: "absolute",
             top: leftFocusPoint.y - 2,
-            left: "-1rem",
-            right: width - leftFocusPoint.x + 7,
+            left: 0,
+            right: svgWidth - leftFocusPoint.x + 7,
             border: "2px dashed gray",
           }}/>}
           
-          <div style={{position: "absolute", top: 0, right: 0}}>
+          <div style={{position: "absolute", top: 0, right: "0.5rem"}}>
             <InfoTooltip placement='left' tooltipContent={(
               <div style={{textAlign: "left"}}>
                 <p><b>Dimensionality Reduction Metrics</b></p>
@@ -448,7 +446,7 @@ export default function ScatterUQ({
         
       </div>
 
-      <div className={styles["uq-viz-sidebar"]} style={{marginLeft: "1rem"}}>
+      <div className={styles["uq-viz-sidebar"]}>
         {rightFocusPoint && rightFocusPoint.msg}
       </div>
     </div>

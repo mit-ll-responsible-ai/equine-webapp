@@ -22,7 +22,7 @@ import SamplesBarChart from "@/components/SamplesBarChart/SamplesBarChart"
 import ScatterUQ from "@/components/ScatterUQ/ScatterUQ"
 import { ScatterUQDataProps, StructuredDimRedOutputType } from "@/components/ScatterUQ/types"
 
-import determineSampleCondition, { getSampleConditionText } from "@/utils/determineSampleCondition"
+import determineSampleCondition from "@/utils/determineSampleCondition"
 import getLabelsSortedByProbability from "@/utils/getLabelsSortedByProbability"
 import setDocumentTitle from "@/utils/setDocumentTitle"
 
@@ -42,6 +42,8 @@ import vnatSupportExamplesInput from "./vnat-support-examples-input.json"
 import vnatGlobalUmapUnpopulated from "./vnat-global-umap.json"
 
 import styles from "./ScatterUQDemoDashboard.module.scss"
+import { Container } from "react-bootstrap"
+import { SampleConditionText } from "@/components/ScatterUQ/SampleConditionText"
 
 
 //these values are hard coded since having them be truly dynamic would require a live server to recalculate DR and metrics
@@ -255,7 +257,6 @@ export default function ScatterUQDemoDashboard() {
           getSupportExampleImageSrc={getSupportExampleImageSrc}
           getSupportExampleTabularData={getSupportExampleTabularData}
           startingHeight={600}
-          maxWidth={800}
           thresholds={10}
         />
       </div> */}
@@ -273,7 +274,7 @@ type TableRowType = {
 
 const COLUMNS = [
   {
-    name: 'Local Dimensionality Reduction Plots using PCA',
+    name: '',
     selector: (row:TableRowType) => row.dim_red,
     sortable: false,
   },
@@ -311,7 +312,6 @@ const FilteredTable = ({
     const labelsSortedByProbability = getLabelsSortedByProbability(d.samples[0], d.prototypeSupportEmbeddings)
   
     const sampleCondition = determineSampleCondition(d.processedClassesProbabilities[0])
-    const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
 
     return {
       id: sampleIndex,
@@ -321,10 +321,10 @@ const FilteredTable = ({
       ).join(", "),
       dim_red: (
         //this styling is necessary for responsiveness in the table
-        <div style={{maxWidth:"calc(100vw - 5rem)"}}>
+        <div className="test">
           <br/>
           <br/>
-          <p style={{maxWidth: "calc(900px + 2em)"}}>{confidenceMsg}</p>
+          <SampleConditionText condition={sampleCondition} sortedLabels={labelsSortedByProbability}/>
           <ScatterUQ
             {...d}
             inputDataType={inputDataType}
@@ -333,7 +333,6 @@ const FilteredTable = ({
             getSupportExampleImageSrc={getSupportExampleImageSrc}
             getSupportExampleTabularData={getSupportExampleTabularData}
             height={400}
-            maxWidth={500}
             thresholds={10}
           />
           <br/>
@@ -350,13 +349,15 @@ const FilteredTable = ({
         <div id={styles.filteredTable} className="box">
           <h3>Scatter UQ Inference Samples</h3>
 
+          <p>Local Dimensionality Reduction Plots using PCA</p>
+
           <div style={{marginLeft:"-1rem",marginRight:"-1rem"}}>
             <DataTable
               //@ts-ignore
               columns={COLUMNS}
               data={tableData}
               noDataComponent={<div className="filteredTableNoData"><NoDataMessage/></div>}
-              noHeader
+              noTableHead
               pagination
               theme={darkMode ? "dark" : ""}
               responsive={true}

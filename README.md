@@ -36,6 +36,9 @@ pip install equine-webapp
 equine-webapp
 ```
 
+## Reproducing demo site
+
+You can reproduce the demo site by running the example EQUINE notebook https://github.com/mit-ll-responsible-ai/equine/blob/main/docs/example_notebooks/MNIST_OOD_detection.ipynb
 
 ## Local Development
 
