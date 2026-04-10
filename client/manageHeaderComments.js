@@ -1,10 +1,10 @@
-// Copyright (c) 2023 Massachusetts Institute of Technology
+// Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 const fs = require("fs")
 const path = require("path")
 
 const config = {
-  headerComments: `// Copyright (c) 2023 Massachusetts Institute of Technology
+  headerComments: `// Copyright (c) 2026 Massachusetts Institute of Technology
   // SPDX-License-Identifier: MIT
   `,
   searchDirectories: ['src'],

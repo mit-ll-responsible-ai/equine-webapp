@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+
 import threading
 from typing import Dict, Callable, Any
 from pathlib import Path
