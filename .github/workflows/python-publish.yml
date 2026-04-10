@@ -58,12 +58,6 @@ jobs:
       working-directory: client
       run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
 
-    - name: Set env
-      working-directory: client
-      shell: bash
-      run: |
-        echo "STATIC_BUILD_FOR_SERVER=true" >> $GITHUB_ENV
-
     - name: Build with Next.js
       working-directory: client
       run: ${{ steps.detect-package-manager.outputs.runner }} next build

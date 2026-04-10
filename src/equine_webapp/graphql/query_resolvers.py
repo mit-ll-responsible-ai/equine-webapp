@@ -13,11 +13,9 @@ import umap
 import equine as eq
 import torch
 import os
-from ariadne import convert_kwargs_to_snake_case
 
 from equine_webapp.utils import SERVER_CONFIG, get_support_example_from_data_index, get_sample_from_data_index, get_model_path, use_label_names
 
-@convert_kwargs_to_snake_case
 def resolve_available_models(_, info, extension):
     model_folder = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH)
 
@@ -28,11 +26,10 @@ def resolve_available_models(_, info, extension):
     for file_name in model_files:
         model_path = os.path.join(model_folder, file_name)
         last_mod_time = os.path.getmtime(model_path)
-        request_data.append({"name": file_name, "lastModified" : last_mod_time})
-
+        request_data.append({"name": file_name, "last_modified" : last_mod_time})
+    print("request_data",request_data)
     return request_data
 
-@convert_kwargs_to_snake_case
 def resolve_model_summary(_, info, model_name):
     model_path = get_model_path(model_name)
     model_save = torch.load(model_path)
@@ -40,7 +37,6 @@ def resolve_model_summary(_, info, model_name):
     summary["lastModified"] = os.path.getmtime(model_path)
     return summary
 
-@convert_kwargs_to_snake_case
 def resolve_get_protonet_support_embeddings(_, info, model_name):
     model_path = get_model_path(model_name)
     model = eq.load_equine_model(model_path)
@@ -62,7 +58,7 @@ def resolve_get_protonet_support_embeddings(_, info, model_name):
         prototype_and_support_data = {
             "label": label_names[label_idx] if label_names is not None else str(label_idx), # get the label name
             "prototype": prototypes[label_idx], # get the prototype
-            "trainingExamples": [] # initialize a list for the support examples
+            "training_examples": [] # initialize a list for the support examples
         }
 
         # run inference on all the support examples to get the embedding data
@@ -71,10 +67,10 @@ def resolve_get_protonet_support_embeddings(_, info, model_name):
         # loop over all the support examples
         for support_idx in range(len(support_example_predictions.embeddings)):
             # append this support example embedding data to the trainingExamples list
-            prototype_and_support_data["trainingExamples"].append({
+            prototype_and_support_data["training_examples"].append({
                 # get the embedding coordinates for this support example
                 "coordinates": support_example_predictions.embeddings[support_idx],
-                "inputData": { "dataIndex": dataIndex, },
+                "input_data": { "data_index": dataIndex, },
                 # get all the class confidence predictions for this support example
                 "labels": [{
                     "label": label_names[nested_label_idx] if label_names is not None else str(nested_label_idx),
@@ -89,7 +85,6 @@ def resolve_get_protonet_support_embeddings(_, info, model_name):
 
     return embedding_data
 
-@convert_kwargs_to_snake_case
 def resolve_dimensionality_reduction(_, info, method, data, n_neighbors, random_state=42):
     high_dimensions = len(data[0])
     num_samples = len(data)
@@ -133,7 +128,6 @@ def resolve_dimensionality_reduction(_, info, method, data, n_neighbors, random_
         "trustworthiness": trustworthiness,
     }
 
-@convert_kwargs_to_snake_case
 def resolve_render_inference_feature_data(_, info, run_id, model_name, data_index):
     featureData, _, feature_names = get_sample_from_data_index(run_id, data_index, model_name=model_name)
     columnHeaders = feature_names if feature_names is not None else list(range(len(featureData)))
@@ -141,18 +135,16 @@ def resolve_render_inference_feature_data(_, info, run_id, model_name, data_inde
     
     return {"featureData": featureData, "columnHeaders": columnHeaders}
 
-@convert_kwargs_to_snake_case
 def resolve_render_support_feature_data(_, info, model_name, data_index):
     support_example, _, feature_names = get_support_example_from_data_index(model_name, data_index)
-    featureData = support_example.tolist()
-    columnHeaders = feature_names if feature_names is not None else list(range(len(featureData)))
-    assert len(featureData) == len(columnHeaders)
+    feature_data = support_example.tolist()
+    column_headers = feature_names if feature_names is not None else list(range(len(feature_data)))
+    assert len(feature_data) == len(column_headers)
     
-    return {"featureData": featureData, "columnHeaders": columnHeaders}
+    return {"feature_data": feature_data, "column_headers": column_headers}
 
 def resolve_training_progress(_, info):
     pass
 
-@convert_kwargs_to_snake_case
 def resolve_download_model(_, info, model_name):
     pass

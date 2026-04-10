@@ -5,11 +5,10 @@ import os
 import time
 import torch
 import equine as eq
-from ariadne import convert_kwargs_to_snake_case
 
 from equine_webapp.utils import SERVER_CONFIG, combine_data_files, get_model_path, use_label_names
+from equine_webapp.model_manager import model_manager
 
-@convert_kwargs_to_snake_case
 def resolve_upload_model(_, info, model_file):
     model_save_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file.filename)
     model_file.save(model_save_path)
@@ -19,7 +18,6 @@ def resolve_upload_model(_, info, model_file):
     else:
         raise OSError("File not saved")
     
-@convert_kwargs_to_snake_case
 def resolve_upload_file(_, info, file): #TODO Deduplicate code from upload model endpoint
     save_path = os.path.join(os.getcwd(), SERVER_CONFIG.UPLOAD_FOLDER_PATH, file.name)
     file.save(save_path)
@@ -29,17 +27,21 @@ def resolve_upload_file(_, info, file): #TODO Deduplicate code from upload model
     else:
         raise OSError("File not saved")
 
-@convert_kwargs_to_snake_case
 def resolve_run_inference(_, info, model_name, sample_filenames):
     run_id = int(time.time()) #TODO Better way to generate ID?
     
     # load the model
     model_path = get_model_path(model_name)
-    model = eq.load_equine_model(model_path)
+    # model = eq.load_equine_model(model_path)
+    model = model_manager.get_model(
+        model_path,
+        eq.load_equine_model
+    )
     input_dtype = next(model.embedding_model.parameters()).dtype
     
     # run inference on the samples
     sample_dataset = combine_data_files(sample_filenames)
+    # transform sample_dataset.dataset.tensors[0] if necessary here
     predictions = model.predict(sample_dataset.dataset.tensors[0].to(input_dtype))
 
     # get the string names of the labels that the model was trained on
@@ -52,9 +54,9 @@ def resolve_run_inference(_, info, model_name, sample_filenames):
     for sample_idx in range(len(sample_dataset.dataset)):
         json_data = {
             "coordinates": predictions.embeddings[sample_idx],
-            "inputData": {
+            "input_data": {
                 "file": sample_dataset.filenames[sample_idx],
-                "dataIndex" : sample_idx
+                "data_index" : sample_idx
             },
             "labels": [{
                 "label": label_names[label_idx] if label_names is not None else str(label_idx),
@@ -71,11 +73,10 @@ def resolve_run_inference(_, info, model_name, sample_filenames):
     return {
         "samples": samples_json,
         "version": eq.__version__,
-        "runId" : run_id
+        "run_id" : run_id
     }
 
 
-@convert_kwargs_to_snake_case
 def resolve_train_model(_, info, episodes, sample_filenames, embed_model_name, new_model_name, train_model_type, emb_out_dim = 0):
     model_file = embed_model_name if ".jit" in embed_model_name else embed_model_name + ".jit"
     model_path = os.path.join(os.getcwd(), SERVER_CONFIG.MODEL_FOLDER_PATH, model_file)

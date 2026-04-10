@@ -5,9 +5,12 @@ import os
 import sys
 
 import torch
+from torch.utils.data import TensorDataset
 import equine as eq
 from pathlib import Path
 from typing import Optional
+
+from equine_webapp.model_manager import model_manager
 
 class Config:
     MODEL_EXT: str = ".eq"
@@ -57,27 +60,32 @@ def combine_data_files(filename_list, is_train=False):
             data_array = dataframe.to_numpy()
             torch_data = torch.from_numpy(data_array)
             if is_train:
-                tensor_dataset = torch.utils.data.TensorDataset(torch_data, torch_labels)
+                tensor_dataset = TensorDataset(torch_data, torch_labels)
             else:
-                tensor_dataset = torch.utils.data.TensorDataset(torch_data)
+                tensor_dataset = TensorDataset(torch_data)
 
             column_headers = dataframe.columns
             
         elif file_ext == ".pt":
-            tensor_dataset = torch.load(file_path)
+            data = torch.load(file_path)
+            if isinstance(data, TensorDataset):
+                tensor_dataset = data
+            elif isinstance(data, torch.Tensor): # this is a Tensor
+                tensor_dataset = TensorDataset(data) # convert this to a TensorDataset
+            else:
+                raise ValueError(f"We do not support data type {type(data)}. Please package your data as a Tensor or TensorDataset")
         else:
             raise ValueError(f"Given file '{filename} has unsupported file type '{file_ext}'")
-        
         dataset_filenames += [filename]*len(tensor_dataset.tensors[0])
         dataset_list.append(tensor_dataset)
 
     dataset = torch.concat([data.tensors[0] for data in dataset_list], dim=0)
     
     if is_train:
-        dataset_labels = torch.concat([data.tensors[1] for data in dataset_list], dim=0)
-        tensor_dataset = torch.utils.data.TensorDataset(dataset, dataset_labels) #TODO Typechecking?
+        dataset_labels = torch.concat([data[1] for data in dataset_list], dim=0)
+        tensor_dataset = TensorDataset(dataset, dataset_labels) #TODO Typechecking?
     else:
-        tensor_dataset = torch.utils.data.TensorDataset(dataset) #TODO Typechecking?
+        tensor_dataset = TensorDataset(dataset) #TODO Typechecking?
 
     if len(column_headers) == 0:
         column_headers = [x for x in range(0, tensor_dataset.tensors[0].shape[1])]
@@ -90,7 +98,10 @@ def get_support_example_from_data_index(model_name, data_index):
     assert data_index >= 0
     
     model_path = get_model_path(model_name)
-    model = eq.load_equine_model(model_path)
+    model = model_manager.get_model(
+        model_path,
+        eq.load_equine_model
+    )
     support = model.get_support()
     feature_names = model.get_feature_names()
 
@@ -101,6 +112,7 @@ def get_support_example_from_data_index(model_name, data_index):
     support_idx = data_index % num_support_per_class
     class_idx = int(data_index / num_support_per_class)
 
+    # inverse transform support[class_idx][support_idx] if necessary here
     return support[class_idx][support_idx], support, feature_names
 
 def get_sample_from_data_index(run_id, data_index, model_name:Optional[str]=None):
@@ -110,7 +122,10 @@ def get_sample_from_data_index(run_id, data_index, model_name:Optional[str]=None
     feature_names = None
     if model_name is not None:
         model_path = get_model_path(model_name)
-        model = eq.load_equine_model(model_path)
+        model = model_manager.get_model(
+            model_path,
+            eq.load_equine_model
+        )
         feature_names = model.get_feature_names()
 
     run_id = int(run_id)

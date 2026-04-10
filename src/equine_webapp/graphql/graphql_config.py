@@ -21,4 +21,4 @@ mutation.set_field("uploadModel", equine_webapp.graphql.mutation_resolvers.resol
 mutation.set_field("runInference", equine_webapp.graphql.mutation_resolvers.resolve_run_inference)
 mutation.set_field("startTraining", equine_webapp.graphql.mutation_resolvers.resolve_train_model)
 
-schema = make_executable_schema(type_defs, query, mutation)
+schema = make_executable_schema(type_defs, query, mutation, convert_names_case=True)
