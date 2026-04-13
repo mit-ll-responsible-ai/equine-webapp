@@ -32,7 +32,43 @@ class ModelManager:
         self._models: Dict[str, Any] = {}
         self._model_locks: Dict[str, threading.Lock] = {}
         self._initialized = True
+
+        file_dir = Path(__file__).parent.resolve()
+        self._allowed_base_dir = (file_dir / "webapp-output" / "models").resolve()
         print("ModelManager initialized")
+
+    def _validate_model_path(self, model_path: str) -> Path:
+        """
+        Validate and resolve model path to prevent path traversal attacks.
+        Only allows paths within the current working directory.
+        
+        Args:
+            model_path: Path to validate
+            
+        Returns:
+            Resolved Path object
+            
+        Raises:
+            ValueError: If path is outside allowed directory
+            FileNotFoundError: If path doesn't exist
+        """
+        # Resolve to absolute path
+        resolved_path = Path(model_path).resolve()
+        
+        # Check if path exists
+        if not resolved_path.exists():
+            raise FileNotFoundError(f"Model file not found: {model_path}")
+        
+        # Verify path is within allowed base directory
+        try:
+            resolved_path.relative_to(self._allowed_base_dir)
+        except ValueError:
+            raise ValueError(
+                f"Model path must be within allowed directory. "
+                f"Path: {resolved_path}, Allowed: {self._allowed_base_dir}"
+            )
+        
+        return resolved_path
     
     def get_model(
         self, 
@@ -51,6 +87,10 @@ class ModelManager:
         Returns:
             The loaded model
         """
+        # Validate and resolve path
+        resolved_path = self._validate_model_path(model_path)
+        path_str = str(resolved_path)
+        
         # Ensure we have a lock for this model path
         if model_path not in self._model_locks:
             with self._lock:

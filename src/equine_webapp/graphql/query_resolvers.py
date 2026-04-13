@@ -27,7 +27,6 @@ def resolve_available_models(_, info, extension):
         model_path = os.path.join(model_folder, file_name)
         last_mod_time = os.path.getmtime(model_path)
         request_data.append({"name": file_name, "last_modified" : last_mod_time})
-    print("request_data",request_data)
     return request_data
 
 def resolve_model_summary(_, info, model_name):

@@ -57,6 +57,10 @@ def graphql_server():
     status_code = 200 if success else 400
     return jsonify(result), status_code
 
+@app.route('/api')
+def handle_api_route():
+    return "This is the EQUINE webapp API. <a href='/'>Click here</a> to use the webapp. <a href='/graphql'>Click here</a> to view the GraphQL API."
+
 @app.route("/api/render-image/inference/<run_id>/<data_index>", methods=["GET"])
 def handle_render_inference_image(run_id, data_index):
     sample, _, _ = get_sample_from_data_index(run_id, data_index)
