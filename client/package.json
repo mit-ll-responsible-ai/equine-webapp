@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "cp -r out/* ../src/equine_webapp/client/",
+    "postbuild": "mkdir -p ../src/equine_webapp/client && cp -r out/. ../src/equine_webapp/client/",
     "start": "next start",
     "lint": "next lint",
     "graphql-codegen": "env-cmd -f .env.local graphql-codegen",
