@@ -38,5 +38,6 @@ jobs:
       - name: Set env
         run: echo "GITHUB_PAGES=true" >> $GITHUB_ENV
 
+      # Intentionally runnning `next build` to avoid the postbuild step in package.json
       - name: Build Next.js
-        run: npm run build
+        run: next build

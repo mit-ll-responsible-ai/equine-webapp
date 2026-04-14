@@ -39,6 +39,7 @@ jobs:
         working-directory: client
         run: npm ci
 
+      # postbuild step in package.json will export the build outputs to the python package
       - name: Build client
         working-directory: client
         run: npm run build

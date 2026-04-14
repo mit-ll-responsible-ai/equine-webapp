@@ -50,11 +50,9 @@ jobs:
       - name: Set env
         run: echo "GITHUB_PAGES=true" >> $GITHUB_ENV
 
+      # Intentionally runnning `next build` to avoid the postbuild step in package.json
       - name: Build Next.js
-        run: npm run build
-
-      - name: Export static site
-        run: npx next export
+        run: next build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
