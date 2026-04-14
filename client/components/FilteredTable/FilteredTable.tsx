@@ -1,11 +1,8 @@
 // Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
-import React, { useMemo } from "react";
-
 import { useAppSelector } from "@/redux/reduxHooks";
 
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
 
@@ -41,20 +38,17 @@ const FilteredTable = ({
   plotDataForSamples,
 }: Props) => {
   // Define columns with custom renderers
-  const columns = useMemo<ColumnDef<PlotDataForSample>[]>(
-    () => [
-      {
-        accessorKey: 'id',
-        cell: (info) => (
-          <LocalPlot
-            inDistributionThreshold={inDistributionThreshold}
-            plotDataForSample={info.row.original}
-          />
-        ),
-      },
-    ],
-    []
-  );
+  const columns: ColumnDef<PlotDataForSample>[] = [
+    {
+      accessorKey: 'id',
+      cell: (info) => (
+        <LocalPlot
+          inDistributionThreshold={inDistributionThreshold}
+          plotDataForSample={info.row.original}
+        />
+      ),
+    },
+  ];
 
   // Initialize table
   const table = useReactTable({

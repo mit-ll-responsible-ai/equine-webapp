@@ -5,7 +5,6 @@ import React, { useEffect, useMemo, useState } from "react"
 import Alert from "react-bootstrap/Alert"
 import Button from "react-bootstrap/Button"
 
-import { useAppSelector } from "@/redux/reduxHooks"
 import type { ClassProbabilitiesType, InputDataType, SampleType } from "@/redux/inferenceSettings"
 
 import { GetPrototypeSupportEmbeddingsQuery } from "@/graphql/generated"
@@ -15,7 +14,6 @@ import useFilters, { sampleMatchesFilters } from "@/hooks/useFilters"
 import ControlBar from "@/components/ControlBar/ControlBar"
 import Filters from "@/components/Filters/Filters"
 import InfoTooltip from "@/components/InfoTooltip/InfoTooltip"
-import NoDataMessage from "@/components/NoDataMessage"
 import SamplesBarChart from "@/components/SamplesBarChart/SamplesBarChart"
 import ScatterUQ from "@/components/ScatterUQ/ScatterUQ"
 import { ScatterUQDataProps, StructuredDimRedOutputType } from "@/components/ScatterUQ/types"
@@ -40,7 +38,6 @@ import vnatSupportExamplesInput from "./vnat-support-examples-input.json"
 import vnatGlobalUmapUnpopulated from "./vnat-global-umap.json"
 
 import styles from "./ScatterUQDemoDashboard.module.scss"
-import { Container } from "react-bootstrap"
 import { SampleConditionText } from "@/components/ScatterUQ/SampleConditionText"
 import { PaginationControls } from "@/components/PaginationControls/PaginationControls"
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
@@ -307,39 +304,36 @@ const FilteredTable = ({
   inputDataType: InputDataType,
 }) => {
   // Define columns with custom renderers
-  const columns = useMemo<ColumnDef<typeof data[number]>[]>(
-    () => [
-      {
-        accessorKey: 'id',
-        cell: (info) => {
-          const d = info.row.original
-          const labelsSortedByProbability = getLabelsSortedByProbability(d.samples[0], d.prototypeSupportEmbeddings)
-          const sampleCondition = determineSampleCondition(d.processedClassesProbabilities[0])
+  const columns:ColumnDef<typeof data[number]>[] = [
+    {
+      accessorKey: 'id',
+      cell: (info) => {
+        const d = info.row.original
+        const labelsSortedByProbability = getLabelsSortedByProbability(d.samples[0], d.prototypeSupportEmbeddings)
+        const sampleCondition = determineSampleCondition(d.processedClassesProbabilities[0])
 
-          return (
-            <div className="test">
-              <br/>
-              <br/>
-              <SampleConditionText condition={sampleCondition} sortedLabels={labelsSortedByProbability}/>
-              <ScatterUQ
-                {...d}
-                inputDataType={inputDataType}
-                getInferenceSampleImageSrc={getInferenceSampleImageSrc}
-                getInferenceSampleTabularData={getInferenceSampleTabularData}
-                getSupportExampleImageSrc={getSupportExampleImageSrc}
-                getSupportExampleTabularData={getSupportExampleTabularData}
-                height={800}
-                thresholds={10}
-              />
-              <br/>
-              <br/>
-            </div>
-          )
-        },
+        return (
+          <div className="test">
+            <br/>
+            <br/>
+            <SampleConditionText condition={sampleCondition} sortedLabels={labelsSortedByProbability}/>
+            <ScatterUQ
+              {...d}
+              inputDataType={inputDataType}
+              getInferenceSampleImageSrc={getInferenceSampleImageSrc}
+              getInferenceSampleTabularData={getInferenceSampleTabularData}
+              getSupportExampleImageSrc={getSupportExampleImageSrc}
+              getSupportExampleTabularData={getSupportExampleTabularData}
+              height={800}
+              thresholds={10}
+            />
+            <br/>
+            <br/>
+          </div>
+        )
       },
-    ],
-    []
-  );
+    },
+  ]
 
   // Initialize table
   const table = useReactTable({
