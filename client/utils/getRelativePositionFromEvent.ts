@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Massachusetts Institute of Technology
+// Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 /**
  * this function returns the relative position of the mouse in an element from the event.

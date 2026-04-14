@@ -1,7 +1,7 @@
 # EQUINE Webapp
 
 <p align="center">
-  <img width="500" src="client/public/EQUI(NE)^2_Full_Logo.svg">
+  <img width="720" src="https://raw.githubusercontent.com/mit-ll-responsible-ai/equine-webapp/main/client/public/EQUI(NE)%5E2_Full_Logo.svg">
 </p>
 
 ![TypeScript](https://badgen.net/badge/-/TypeScript/blue?icon=typescript&label)
@@ -10,69 +10,97 @@
 </p>
 
 <p align="center">
-  The EQUINE repository is here https://github.com/mit-ll-responsible-ai/equine
+  The EQUINE repository is here <a href="https://github.com/mit-ll-responsible-ai/equine">https://github.com/mit-ll-responsible-ai/equine</a>
 </p>
+
+## ScatterUQ Static Demo
+You can view a static demo of ScatterUQ here:
+
+https://mit-ll-responsible-ai.github.io/equine-webapp/demo
+
+[![ScatterUQ Out of Distribution Example](https://github.com/mit-ll-responsible-ai/equine-webapp/blob/main/client/public/ood.png?raw=true)](https://mit-ll-responsible-ai.github.io/equine-webapp/demo)
 
 ## ScatterUQ at IEEE VIS 2023
 We presented ScatterUQ at IEEE VIS 2023: https://ieeexplore.ieee.org/document/10360884
 
 Our data and analysis script can be found in this release: https://github.com/mit-ll-responsible-ai/equine-webapp/releases/tag/ScatterUQ-VIS-2023-Data
 
-## React Frontend
 
-### ScatterUQ Static Demo
-We deployed the frontend application to GitHub pages. You can view a static demo of ScatterUQ here:
+## Usage with Python and PyPI
 
-https://mit-ll-responsible-ai.github.io/equine-webapp/demo
+You can install and run the equine-webapp as a command in your terminal with python. These commands create a new conda environment, activate the environment, install [equine-webapp from PyPI](https://pypi.org/project/equine-webapp/), and start the equine-webapp which will be available at `localhost:8080`.
+```
+conda create --name my-environment-name python=3.10
+conda activate my-environment-name
+pip install equine-webapp
+equine-webapp
+```
 
-[![ScatterUQ Out of Distribution Example](client/public/ood.png)](https://mit-ll-responsible-ai.github.io/equine-webapp/demo)
+## Reproducing demo site
 
-### Development Server Setup
+You can reproduce the demo site by running the example EQUINE notebook https://github.com/mit-ll-responsible-ai/equine/blob/main/docs/example_notebooks/MNIST_OOD_detection.ipynb
+
+## Local Development
+
+You can also develop the webapp locally in two ways:
+1. Run equine-webapp as a locally installed package with local web files
+2. Run equine-webapp with local Node.js/Next.js and Python/Flask development servers
+
+### Run equine-webapp as a locally installed package with local web files
 1. Install node packages
 ```
 cd client
 npm i
 ```
 
-2. Start the development server
+2. Make a copy of `client/.env.example` and rename to `client/.env.local`. This new file should be git-ignored by default.
+
+3. Build the local static web files
 ```
+npm run build
+```
+
+4. Install the package locally from the root of the repo and run it
+```
+../
+conda create --name equine-webapp python=3.10
+conda activate equine-webapp
+pip install -e .
+equine-webapp
+```
+
+
+### Run equine-webapp with local Node.js/Next.js and Python/Flask development servers
+
+#### Node.js/Next.js Frontend Development Server
+1. Make a copy of `client/.env.example` and rename to `client/.env.local`. This new file should be git-ignored by default.
+
+2. Install node packages and start the development server
+```
+cd client
+npm i
 npm run dev
 ```
 
+##### Frontend testing
+```
+npm run test
+```
 
-## Python Flask Server
+#### Python/Flask Development Server
 
-### Development Server Setup
-1. Create a new Anaconda environment
+Create a new Anaconda environment, activate it, install the requirements, and start the dev server
 ```
 conda create --name equine-webapp python=3.10
-```
-
-2. Activate your new environment
-```
 conda activate equine-webapp
-```
-
-3. Install the necessary packages from pip
-```
 pip install -r requirements.txt
+python start_dev_server.py
 ```
 
-4. Start the Flask server
-```
-python start_server.py
-```
-
-### Flask Testing
-If you'd like to run our flask tests:
-1. Install pytest
+##### Python Testing
 ```
 pip install pytest
-```
-
-2. Run pytest
-```
-pytest
+python -m pytest
 ```
 
 ## Bibliography

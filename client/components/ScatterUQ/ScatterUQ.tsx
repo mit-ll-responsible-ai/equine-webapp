@@ -14,8 +14,7 @@ import { Coordinate2DType, ScatterUQDataProps, StructuredDimRedOutputType, Weigh
 import styles from "./ScatterUQ.module.scss"
 
 type Props = ScatterUQDataProps & {
-  startingHeight?: number,
-  startingWidth?: number,
+  height?: number,
   thresholds?: number,
 }
 
@@ -35,6 +34,7 @@ export default function ScatterUQ({
   getInferenceSampleTabularData,
   getSupportExampleImageSrc,
   getSupportExampleTabularData,
+  height=400,
   inDistributionThreshold,
   inputDataType,
   stress,
@@ -42,33 +42,34 @@ export default function ScatterUQ({
   samples,
   scree,
   srho,
-  startingHeight=400,
-  startingWidth=500,
   structuredEmbeddings,
   thresholds=10,
   trustworthiness,
   prototypeSupportEmbeddings,
 }:Props) {
-  const height = startingHeight
-  const [width, setWidth] = useState<number>(startingWidth)
-  const resizeObserver = useRef<ResizeObserver | null>(null)
-  const ref = useRef<HTMLDivElement | null>(null)
+  const [containerWidth, setContainerWidth] = useState<number>(500)
+
+  const sidebarWidth = containerWidth > 1000 ? 300 : 200
+
+  const svgWidth = containerWidth - 2*sidebarWidth
+  const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    resizeObserver.current = new ResizeObserver(entries => {
-      window.requestAnimationFrame(() => { //https://stackoverflow.com/a/58701523
-        if (!Array.isArray(entries) || !entries.length) {
-          return;
-        }
-        setWidth(entries[0].contentRect.width)
-      });
-    })
-  },[])
-  useEffect(() => {
-    if(resizeObserver.current && ref.current) {
-      resizeObserver.current.observe(ref.current)
-    }
-    return () => resizeObserver.current?.disconnect()
-  }, [resizeObserver, ref])
+    if (!containerRef.current) return;
+
+    const element = containerRef.current;
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      setContainerWidth(entry.contentRect.width);
+    });
+
+    observer.observe(element);
+
+    return () => {
+      observer.unobserve(element);
+      observer.disconnect();
+    };
+  }, []);
 
   //calculate the domain of the data, ie the min and max values for the data of the x and y axes
   const { domainX, domainY } = useMemo(() => {
@@ -94,10 +95,10 @@ export default function ScatterUQ({
   const { rangeX, rangeY, usedWidth } = useMemo(() => {
     const aspectRatio = (domainX[1]-domainX[0]) / (domainY[1]-domainY[0]) //width/height of the data
     const availableHeight = height - PADDING.b - PADDING.t //height minus padding
-    const availableWidth = width - PADDING.r - PADDING.l //width minus padding
+    const availableWidth = svgWidth - PADDING.r - PADDING.l //width minus padding
 
     //get the desired width based off the height and aspect ratio, and restrict to the available width
-    //then calcuate the used height from the used width
+    //then calculate the used height from the used width
     const usedWidth = Math.min(availableWidth, availableHeight*aspectRatio) //the pixel width we will actually use
     const usedHeight = usedWidth / aspectRatio //the pixel height we will actually use
 
@@ -107,7 +108,7 @@ export default function ScatterUQ({
       usedHeight,
       usedWidth,
     }
-  }, [domainX, domainY, height, width])
+  }, [domainX, domainY, height, svgWidth])
 
 
   /* Scales, Axes, Contours */
@@ -140,7 +141,7 @@ export default function ScatterUQ({
       [l.prototype].concat(l.trainingExamples)
     )).map((labelPoints,i) => { //for each label
       //initialize a contour function for this label
-      const contourFunction = contourDensity<WeightedCoordinate2DType>().size([width, height])
+      const contourFunction = contourDensity<WeightedCoordinate2DType>().size([svgWidth, height])
       .cellSize(4).thresholds(thresholds).bandwidth(40).weight(getWeight).x(getX).y(getY)
       
       return contourFunction( //calculate the contours for all the points for this label
@@ -153,7 +154,7 @@ export default function ScatterUQ({
         }))
       )
     })
-  }, [height, scaleX, scaleY, structuredEmbeddings, thresholds, width])
+  }, [height, scaleX, scaleY, structuredEmbeddings, thresholds, svgWidth])
   
   const opacityScales = contours.map((c,i) => (
     scaleLinear().domain([0, c.length]).range([0.08, 0.5])
@@ -168,7 +169,7 @@ export default function ScatterUQ({
     setRightFocusPoint({ msg, x, y }) //only update the right focus point
   }, [samples])
   const onClickPoint = useCallback((x: number, y: number, msg: React.ReactNode) => {
-    if(!samples || samples.length > 1) { //if there are mulitple samples (ex dashboard global view) or no samples (ex model summary page)
+    if(!samples || samples.length > 1) { //if there are multiple samples (ex dashboard global view) or no samples (ex model summary page)
       setLeftFocusPoint({ msg, x, y }) //update the left hover point
     }
     //else there is only one sample, don't do anything
@@ -272,15 +273,15 @@ export default function ScatterUQ({
 
 
   return (
-    <div className={styles["uq-viz-container"]}>
-      <div className={styles["uq-viz-sidebar"]} style={{marginRight: "1rem"}}>
+    <div className={styles["uq-viz-container"]} ref={containerRef}>
+      <div className={styles["uq-viz-sidebar"]} style={{width: sidebarWidth}}>
         {leftFocusPoint && leftFocusPoint.msg}
       </div>
 
       <div>
-        <div ref={ref} style={{position: "relative"}}>
+        <div style={{position: "relative"}}>
           <svg
-            style={{ width, height }}
+            style={{ width: svgWidth, height }}
             // onClick={onClickInvertSvgPixelSpace}
           >
             <g className="xAxis" ref={xAxisRef} transform={`translate(0,${height - 20})`}/>
@@ -337,14 +338,14 @@ export default function ScatterUQ({
                       <circle
                         key={pointIdx}
     
-                        className="point"
+                        className={`point ${styles["training-example-point"]}`}
                         cx={cx}
                         cy={cy}
                         fill={getColorFromLabel(label.label)}
                         onClick={() => onClickPoint(cx, cy, msg)}
                         onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
                         opacity={samples ? confidence/2 + 0.5 : 1}
-                        r={5}
+                        // r={5}
                         stroke="white"
                         strokeWidth="2"
                       />
@@ -364,13 +365,13 @@ export default function ScatterUQ({
               return (
                 <g key={labelIdx}>
                   <circle
-                    className="prototype point"
+                    className={`point ${styles["prototype-point"]}`}
                     cx={cx}
                     cy={cy}
                     fill="black"
                     onClick={() => onClickPoint(cx, cy, msg)}
                     onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
-                    r={5}
+                    // r={5}
                     stroke="white"
                     strokeWidth="2"
                   />
@@ -397,13 +398,13 @@ export default function ScatterUQ({
                   <circle
                     key={sIdx}
   
-                    className="point"
+                    className={`point ${styles["inference-sample-point"]}`}
                     cx={cx}
                     cy={cy}
                     fill={getColorFromLabel(getMaxLabel(processedClassProbabilities))}
                     onClick={() => onClickPoint(cx, cy, msg)}
                     onMouseEnter={() => onMouseEnterPoint(cx, cy, msg)}
-                    r={7}
+                    // r={7}
                     stroke="black"
                     strokeWidth="2"
                   />
@@ -416,19 +417,19 @@ export default function ScatterUQ({
             position: "absolute",
             top: rightFocusPoint.y - 2,
             left: rightFocusPoint.x + 7,
-            right: "-1rem",
+            right: 0,
             border: "2px dashed gray",
           }}/>}
 
           {leftFocusPoint && <div style={{
             position: "absolute",
             top: leftFocusPoint.y - 2,
-            left: "-1rem",
-            right: width - leftFocusPoint.x + 7,
+            left: 0,
+            right: svgWidth - leftFocusPoint.x + 7,
             border: "2px dashed gray",
           }}/>}
           
-          <div style={{position: "absolute", top: 0, right: 0}}>
+          <div style={{position: "absolute", top: 0, right: "0.5rem"}}>
             <InfoTooltip placement='left' tooltipContent={(
               <div style={{textAlign: "left"}}>
                 <p><b>Dimensionality Reduction Metrics</b></p>
@@ -446,7 +447,7 @@ export default function ScatterUQ({
         
       </div>
 
-      <div className={styles["uq-viz-sidebar"]} style={{marginLeft: "1rem"}}>
+      <div className={styles["uq-viz-sidebar"]} style={{width: sidebarWidth}}>
         {rightFocusPoint && rightFocusPoint.msg}
       </div>
     </div>
@@ -480,7 +481,7 @@ const TrainingLabelMessage = ({
       <div style={{padding: "0.5em"}}>
         <p>This is an example from training with a true label of <LabelAndCircle label={label}/></p>
         <p><b>Class Confidence Scores</b></p>
-        <div style={{height: "3rem", overflowY: "auto"}}>
+        <div className={styles["uq-sidebar-table-container"]}>
           <table>
             <tbody>
               {pedictiveLabels.map(({label,confidence}) => (
@@ -531,7 +532,7 @@ const InferenceExampleMessage = ({
           ))}
         </div>
         <p><b>Class Confidence Scores</b></p>
-        <div style={{height: "3rem", overflowY: "auto"}}>
+        <div className={styles["uq-sidebar-table-container"]}>
           <table>
             <tbody>
               {Object.entries(sample.classProbabilities).sort(

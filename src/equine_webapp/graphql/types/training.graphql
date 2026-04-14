@@ -1,0 +1,25 @@
+# Copyright (c) 2026 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+type StartTrainingResult {
+    success: Boolean!
+}
+
+type StartRetrainingResult {
+    success: Boolean!
+}
+
+extend type Query {
+    trainingProgress(modelName:String!): Float
+}
+
+extend type Mutation {
+    startTraining(
+        episodes: Int!,
+        sampleFilenames: [Upload]!,
+        embedModelName: String!,
+        newModelName: String!,
+        trainModelType: String!,
+        embOutDim: Int = 0
+    ): StartTrainingResult!
+
+}

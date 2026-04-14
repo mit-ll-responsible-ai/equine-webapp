@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Massachusetts Institute of Technology
+// Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import React, { useEffect, useMemo, useState } from "react"
 import Button from 'react-bootstrap/Button'
@@ -241,8 +241,7 @@ function DashboardContent() {
                 {props => (
                   <ScatterUQ
                     {...props}
-                    startingHeight={600}
-                    startingWidth={800}
+                    height={800}
                     thresholds={5}
                   />
                 )}

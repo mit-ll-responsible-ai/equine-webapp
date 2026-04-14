@@ -1,0 +1,9 @@
+# Copyright (c) 2026 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+type UploadFileResult {
+    success: Boolean!
+}
+
+extend type Mutation {
+    uploadFile(file: Upload!): UploadFileResult
+}

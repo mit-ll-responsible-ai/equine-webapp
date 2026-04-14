@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Massachusetts Institute of Technology
+// Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import React, { useMemo } from "react"
 import { ColumnChart } from 'react-chartkick';

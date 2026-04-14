@@ -1,0 +1,224 @@
+[build-system]
+requires = ["setuptools>=61.0","setuptools_scm[toml]>=6.2","numpy>=2.0, <= 2.2.3"] 
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "equine-webapp"
+dynamic = ["version"]
+authors = [
+    { name = "Allan Wollaber"},
+    { name = "Steven Jorgensen"},
+    { name = "Harry Li" },
+]
+maintainers = [
+    { name = "Allan Wollaber"}, 
+    { name = "Steven Jorgensen"},
+    { name = "Harry Li" },
+]
+description = "Companion web application for EQUINE^2: Establishing Quantified Uncertainty for Neural Networks"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "ariadne",
+    "equine>=0.1.5",
+    "flask",
+    "flask-cors",
+    "numpy<2.0, >= 1.26",
+    "scikit-learn",
+    "torch<2.6",
+    "torchvision",
+    "umap-learn",
+    "waitress",
+    "zadu==0.1.1"
+] 
+license = { text = "MIT" }
+keywords = ["machine learning", "robustness", "pytorch", "responsible", "AI"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: 3 :: Only",
+]
+
+[project.scripts]
+equine-webapp = "equine_webapp:main"
+
+[project.optional-dependencies]
+tests = [
+    "pytest >= 3.8",
+    "hypothesis >= 6.105.0, < 6.113.0",
+    "pre-commit >= 2.19",
+    "codespell"
+]
+
+docs = [
+    "mkdocs>=1.3",
+    "mkdocs-material",
+    "mkdocstrings-python",
+    "mkdocs-jupyter",
+    "mkdocs-literate-nav",
+    "mkdocs-gen-files",
+    "mkdocs-section-index",
+]
+
+[project.urls]
+"Homepage" = "https://mit-ll-responsible-ai.github.io/equine-webapp/"
+"Bug Tracker" = "https://github.com/mit-ll-responsible-ai/equine-webapp/issues"
+"Source" = "https://github.com/mit-ll-responsible-ai/equine-webapp"
+
+[tool.setuptools_scm]
+write_to = "src/equine_webapp/_version.py"
+local_scheme = "no-local-version"
+#version_scheme = "no-guess-dev"
+
+[tool.setuptools.package-data]
+equine_webapp = ["py.typed","client/**/*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E501"]
+exclude = "src/equine_webapp/_version.py"
+
+
+[tool.isort]
+known_first_party = ["equine_webapp", "tests"]
+profile = "black"
+combine_as_imports = true
+known_third_party = "torch,torchmetrics,numpy,tqdm,beartype,icontract,scikit-learn,scipy"
+known_standard_library = "typing"
+line_length = 88
+include_trailing_comma = true
+
+[tool.pytest]
+addopts = "--cov=equine_webapp --cov-report=term-missing --cov-report=xml --cov-report=html --cov-fail-under=100 --durations=0"
+testpaths = "tests"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+omit = ["src/equine_webapp/_version.py"]
+exclude_lines = [
+       'pragma: no cover',
+       'def __repr__',
+       'raise NotImplementedError',
+       'raise ValueError',
+       '@(abc\.)?abstractmethod',
+       '@(typing\.)?overload',
+       'except ImportError:',
+       'except ModuleNotFoundError:',
+       'if (typing\.)?TYPE_CHECKING:',
+       'if sys\.version_info',
+]
+
+[tool.pyright]
+include = ["src"]
+exclude = [
+       "**/node_modules",
+       "**/__pycache__",
+       "src/equine_webapp/_version.py",
+       "**/.hypothesis",
+       "**/docs",
+       "**/.tox",
+]
+reportUnnecessaryTypeIgnoreComment = true
+reportUnnecessaryIsInstance = false
+
+[tool.codespell]
+skip = ['docs/*', './client/node_modules', '*package-lock.json', '*package.json','./src/equine_webapp/client/_next/*']
+
+[tool.tox]
+legacy_tox_ini = """
+
+[tox]
+isolated_build = True
+envlist = py39, py310, py311, py312
+
+[gh-actions]
+python =
+  3.9: py39
+  3.10: py310
+  3.11: py311
+  3.12: py312
+
+
+[testenv]
+description = Runs test suite parallelized in the specified python environment and 
+              against number of available processes (up to 4). 
+              Run `tox -e py39 -- -n 0` to run tests in a python 3.9 with 
+              parallelization disabled.
+passenv = *
+deps = pytest
+       hypothesis
+       pytest-xdist
+       tzdata
+commands = pytest tests/ {posargs: -n auto --maxprocesses=4}
+
+
+[testenv:coverage]
+description = Runs test suite and measures test-coverage. Fails if coverage is 
+              below 100 prcnt. Run `tox -e coverage -- -n 0` to disable parallelization.
+setenv = NUMBA_DISABLE_JIT=1
+usedevelop = true
+basepython = python3.11
+deps = {[testenv]deps}
+       coverage[toml]
+       pytest-cov
+commands = pytest --cov-report term-missing --cov-config=pyproject.toml --cov-fail-under=97 --cov=equine_webapp tests {posargs: -n auto --maxprocesses=4}
+
+
+[testenv:pyright]
+description = Ensure that the equine_webapp source code and test suite scan clean
+              under pyright and that the public API has a 100 percent
+              type-completeness score.
+usedevelop = true
+basepython = python3.11
+deps = pyright
+
+commands = pyright src/ --level=error
+           pyright --ignoreexternal --verifytypes --level=warning equine_webapp
+
+[testenv:format]
+description = Applies auto-flake (e.g. remove unused imports), black, and isort 
+              in-place on source files and test suite. Running this can help fix a 
+              failing `enforce-format` run.
+skip_install=true
+deps =
+    autoflake
+    black
+    isort
+commands =
+    autoflake --recursive --in-place --remove-duplicate-keys --remove-unused-variables src/ tests/
+    isort src/ tests/
+    black src/ tests/
+
+[testenv:enforce-format]
+description = Ensures that source materials code and docs and test suite adhere to 
+              formatting and code-quality standards.
+skip_install=true
+basepython=python3.11
+deps=black
+     isort
+     Flake8-pyproject
+     codespell
+commands=
+    black src/ tests/ --diff --check
+    isort src/ tests/ --diff --check
+    flake8 src/ tests/
+    codespell src/ docs/
+
+[testenv:docs]
+description = Uses mkdocs to generate html for the docs. Stores the
+              results in `.tox/docs/build/html/`.
+basepython=python3.11
+deps=[docs]
+commands=
+    mkdocs build --clean --strict
+"""

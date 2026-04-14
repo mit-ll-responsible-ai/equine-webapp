@@ -1,11 +1,11 @@
-// Copyright (c) 2023 Massachusetts Institute of Technology
+// Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import React, { useMemo } from "react";
-import DataTable from 'react-data-table-component';
 
 import { useAppSelector } from "@/redux/reduxHooks";
 
 import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
 
@@ -16,27 +16,18 @@ import NoDataMessage from "@/components/NoDataMessage"
 import ScatterUQ from "@/components/ScatterUQ/ScatterUQ";
 import ScatterUQDataWrapper from "@/components/ScatterUQ/ScatterUQDataWrapper";
 
-import { getSampleConditionText } from "@/utils/determineSampleCondition";
-
 import styles from "./FilteredTable.module.scss"
 import { PlotDataForSample } from "@/utils/getPlotDataForSample";
+import { SampleConditionText } from "../ScatterUQ/SampleConditionText";
 
-//https://www.npmjs.com/package/react-data-table-component
-//https://github.com/jbetancur/react-data-table-component/blob/master/src/DataTable/themes.js
-
-type TableRowType = {
-  id: number;
-  labels: string;
-  dim_red: React.JSX.Element;
-}
-
-const COLUMNS = [
-  {
-    name: 'Local Dimensionality Reduction Plots using PCA',
-    selector: (row:TableRowType) => row.dim_red,
-    sortable: false,
-  },
-];
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  flexRender,
+  ColumnDef,
+} from '@tanstack/react-table';
+import { PaginationControls } from "../PaginationControls/PaginationControls";
 
 type Props = {
   downloadFilteredData: () => void,
@@ -49,24 +40,34 @@ const FilteredTable = ({
   inDistributionThreshold,
   plotDataForSamples,
 }: Props) => {
-  const darkMode = useAppSelector(state => state.uiSettings.darkMode)
-
-  const tableData:TableRowType[] = useMemo(() => (
-    plotDataForSamples.map((plotDataForSample, sampleIndex) => {
-      const { processedClassProbabilities } = plotDataForSample
-
-      return {
-        id: sampleIndex,
-        labels: Object.keys(processedClassProbabilities).filter((label:string) => processedClassProbabilities[label]===1).join(", "),
-        dim_red: (
+  // Define columns with custom renderers
+  const columns = useMemo<ColumnDef<PlotDataForSample>[]>(
+    () => [
+      {
+        accessorKey: 'id',
+        cell: (info) => (
           <LocalPlot
             inDistributionThreshold={inDistributionThreshold}
-            plotDataForSample={plotDataForSample}
+            plotDataForSample={info.row.original}
           />
         ),
-      }
-    })
-  ), [inDistributionThreshold, plotDataForSamples])
+      },
+    ],
+    []
+  );
+
+  // Initialize table
+  const table = useReactTable({
+    data: plotDataForSamples,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 10,
+      },
+    },
+  });
 
 
   return (
@@ -90,15 +91,29 @@ const FilteredTable = ({
             <h3>Scatter UQ Inference Samples</h3>
           </div>
 
-          <DataTable
-            //@ts-ignore
-            columns={COLUMNS}
-            data={tableData}
-            noDataComponent={<div className={styles.filteredTableNoData}><NoDataMessage/></div>}
-            noHeader
-            pagination
-            theme={darkMode ? "dark" : ""}
-          />
+          {plotDataForSamples.length===0 && <NoDataMessage/>}
+
+          <div>
+            <div style={{marginLeft:"-1rem",marginRight:"-1rem",marginBottom:"1rem"}}>
+              {table.getRowModel().rows.map((row) => (
+                <div key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <div
+                      key={cell.id}
+                      style={{
+                        border: '1px solid #ddd',
+                        padding: '1rem',
+                      }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <PaginationControls numRows={plotDataForSamples.length} table={table}/>
+          </div>
         </div>
       </div>
     </div>
@@ -129,15 +144,13 @@ function LocalPlot({
   } = useAppSelector(state => state.inferenceSettings)
   const serverUrl = useAppSelector(state => state.uiSettings.serverUrl)
 
-  
-  const confidenceMsg: React.ReactNode = getSampleConditionText(sampleCondition, labelsSortedByProbability)
-
   return (
+    //this styling is necessary for responsiveness in the table
     <div>
       <br/>
       {(
         <div>
-          <p style={{width: "calc(900px + 2em)"}}>{confidenceMsg}</p>
+          <SampleConditionText condition={sampleCondition} sortedLabels={labelsSortedByProbability}/>
           {getPrototypeSupportEmbeddings ? (
             <ScatterUQDataWrapper
               inDistributionThreshold={inDistributionThreshold}
@@ -149,7 +162,7 @@ function LocalPlot({
               samples={[sample]}
               serverUrl={serverUrl}
             >
-              {props => <ScatterUQ {...props}/>}
+              {props => <ScatterUQ height={800} {...props}/>}
             </ScatterUQDataWrapper>
           ) : <p>There was an error getting the prototype support embeddings for this sample.</p>}
         </div>

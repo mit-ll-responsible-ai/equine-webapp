@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Massachusetts Institute of Technology
+// SPDX-License-Identifier: MIT
 import { SampleType, setSamples } from "@/redux/inferenceSettings";
 import { showModal } from "@/redux/modal";
 import { useDispatch } from "react-redux";

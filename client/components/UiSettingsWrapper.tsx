@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/redux/reduxHooks'
 
-import 'chartkick/chart.js'
 import { useEffect } from 'react'
 import getLocalStorageItem from '@/utils/localStorage/getLocalStorageItem'
 import LOCAL_STORAGE_KEYS from '@/utils/localStorage/localStorageKeys'
@@ -17,7 +16,6 @@ export default function UiSettingsWrapper({children}:{children: JSX.Element[]}) 
     dispatch(setDarkMode(darkModeCookie))
 
     const serverUrlCookie = getLocalStorageItem(LOCAL_STORAGE_KEYS.serverUrl, "")
-    console.log("serverUrlCookie",serverUrlCookie)
     if(serverUrlCookie) {
       dispatch(setServerUrl(serverUrlCookie))
     }

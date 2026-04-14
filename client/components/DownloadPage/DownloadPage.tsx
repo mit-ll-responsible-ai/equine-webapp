@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Massachusetts Institute of Technology
+// Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import React, { useEffect } from "react"
 
@@ -11,6 +11,7 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import { timeFormat } from 'd3'
 
 import { downloadUrlAsFile } from "@/utils/downloadFile"
+import { ROUTES } from "@/utils/routes"
 import setDocumentTitle from "@/utils/setDocumentTitle"
 
 import { useModelsQuery } from "@/graphql/generated"
@@ -37,7 +38,7 @@ function DownloadPage() {
 
   const downloadModel = (modelName: string) => {
     downloadUrlAsFile(
-      `${serverUrl}/models/${modelName}`,
+      `${serverUrl}${ROUTES.API_DOWNLOAD_MODEL}/${modelName}`,
       `${modelName}`,
     ).catch(err => {
       dispatch(showModal({

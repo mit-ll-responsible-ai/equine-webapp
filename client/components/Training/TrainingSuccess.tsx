@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Massachusetts Institute of Technology
+// Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 import React from "react"
 import Link from "next/link"
@@ -37,7 +37,7 @@ const TrainingSuccess = ({
 
   const downloadModel = () => {
     downloadUrlAsFile(
-      `${serverUrl}/models/${modelNameWithExtension}`,
+      `${serverUrl}${ROUTES.API_DOWNLOAD_MODEL}/${modelNameWithExtension}`,
       `${modelNameWithExtension}`,
     ).catch(err => {
       dispatch(

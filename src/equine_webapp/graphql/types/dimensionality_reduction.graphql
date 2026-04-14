@@ -1,0 +1,19 @@
+# Copyright (c) 2026 Massachusetts Institute of Technology
+# SPDX-License-Identifier: MIT
+type DimensionalityReductionOutput {
+  continuity: Float!,
+  embeddings: [[Float!]!]!,
+  stress: Float!,
+  scree: [Float!],
+  srho: Float!,
+  trustworthiness: Float!,
+}
+
+extend type Query {
+  dimensionalityReduction(
+    method: String!,
+    data:[[Float!]!]!,
+    nNeighbors: Int!,
+    random_state: Int,
+  ): DimensionalityReductionOutput!
+}

@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Massachusetts Institute of Technology
+// Copyright (c) 2026 Massachusetts Institute of Technology
 // SPDX-License-Identifier: MIT
 
 import React from "react"
@@ -32,7 +32,7 @@ export default function Settings() {
             <Form.Label>Server URL <FontAwesomeIcon icon={faLink}/></Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter server url, ex: http://localhost:5252"
+              placeholder="Enter server url, ex: http://localhost:8080"
               onChange={(e) => dispatch(setServerUrl(e.target.value))}
               value={serverUrl}
             />

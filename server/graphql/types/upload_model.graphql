@@ -1,9 +1,0 @@
-# Copyright (c) 2023 Massachusetts Institute of Technology
-# SPDX-License-Identifier: MIT
-type UploadModelResult {
-    success: Boolean!
-}
-
-extend type Mutation {
-    uploadModel(modelFile: Upload!): UploadModelResult
-}
