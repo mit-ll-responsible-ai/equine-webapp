@@ -40,4 +40,4 @@ jobs:
 
       # Intentionally runnning `next build` to avoid the postbuild step in package.json
       - name: Build Next.js
-        run: next build
+        run: npx next build
