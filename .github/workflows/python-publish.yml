@@ -13,72 +13,54 @@ jobs:
     runs-on: ubuntu-latest
     environment: python-publish
     permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Detect package manager
-      id: detect-package-manager
-      working-directory: client
-      run: |
-        if [ -f "${{ github.workspace }}/client/yarn.lock" ]; then
-          echo "manager=yarn" >> $GITHUB_OUTPUT
-          echo "command=install" >> $GITHUB_OUTPUT
-          echo "runner=yarn" >> $GITHUB_OUTPUT
-          exit 0
-        elif [ -f "${{ github.workspace }}/client/package.json" ]; then
-          echo "manager=npm" >> $GITHUB_OUTPUT
-          echo "command=ci" >> $GITHUB_OUTPUT
-          echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-          exit 0
-        else
-          echo "Unable to determine package manager"
-          exit 1
-        fi
+      # ---- Build client (cleaned up) ----
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
 
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: "lts/*"
-        cache: ${{ steps.detect-package-manager.outputs.manager }}
-        cache-dependency-path: '**/package-lock.json'
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: client/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('client/package-lock.json') }}-${{ hashFiles('client/**/*.[jt]s', 'client/**/*.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('client/package-lock.json') }}-
 
-    - name: Restore cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          .next/cache
-        # Generate a new cache whenever packages or source files change.
-        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-        # If source files changed but packages didn't, rebuild from a prior cache.
-        restore-keys: |
-          ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+      - name: Install client dependencies
+        working-directory: client
+        run: npm ci
 
-    - name: Install dependencies
-      working-directory: client
-      run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Build client
+        working-directory: client
+        run: npm run build
 
-    - name: Build with Next.js
-      working-directory: client
-      run: ${{ steps.detect-package-manager.outputs.runner }} next build
+      # ---- Python package ----
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
+      - name: Install build tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install build
+      - name: Build package
+        run: python -m build
 
-    - name: Build package
-      run: python -m build
+      - name: Show version from built wheel
+        run: |
+          WHEEL_FILE=$(ls dist/*.whl | head -n 1)
+          unzip -p "$WHEEL_FILE" '*/METADATA' | grep -E '^(Name|Version|Metadata-Version)'
 
-    - name: Show version from built wheel
-      run: |
-        WHEEL_FILE=$(ls dist/*.whl | head -n 1)
-        unzip -p "$WHEEL_FILE" '*/METADATA' | grep -E '^(Name|Version|Metadata-Version)'
-
-    - name: Publish package
-      uses: pypa/gh-action-pypi-publish@v1.12.4
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@v1.12.4
