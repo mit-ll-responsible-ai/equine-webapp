@@ -14,6 +14,7 @@ import equine as eq
 import torch
 import os
 
+from equine_webapp.model_manager import model_manager
 from equine_webapp.utils import SERVER_CONFIG, get_support_example_from_data_index, get_sample_from_data_index, get_model_path, use_label_names
 
 def resolve_available_models(_, info, extension):
@@ -38,7 +39,10 @@ def resolve_model_summary(_, info, model_name):
 
 def resolve_get_protonet_support_embeddings(_, info, model_name):
     model_path = get_model_path(model_name)
-    model = eq.load_equine_model(model_path)
+    # Reuse the process-wide cached model (same as resolve_run_inference) so the
+    # model is not reloaded from disk on every request and any state EQUINE
+    # caches on the model object (e.g. per-class OOD score tables) is reused.
+    model = model_manager.get_model(model_path, eq.load_equine_model)
     support_examples = model.get_support()
     prototypes = model.get_prototypes()
     
